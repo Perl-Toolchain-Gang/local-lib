@@ -19,15 +19,15 @@ sub import {
   $class->setup_local_lib_for($path);
 }
 
-sub compose;
+sub pipeline;
 
-sub compose {
+sub pipeline {
   my @methods = @_;
   my $last = pop(@methods);
   if (@methods) {
     \sub {
       my ($obj, @args) = @_;
-      $obj->${compose @methods}(
+      $obj->${pipeline @methods}(
         $obj->$last(@args)
       );
     };
@@ -44,13 +44,13 @@ package local::lib;
 
 { package Foo; sub foo { -$_[1] } sub bar { $_[1]+2 } sub baz { $_[1]+3 } }
 my $foo = bless({}, 'Foo');                                                 
-ok($foo->${compose qw(foo bar baz)}(10) == -15);
+ok($foo->${pipeline qw(foo bar baz)}(10) == -15);
 
 =cut
 
 sub resolve_path {
   my ($class, $path) = @_;
-  $class->${compose qw(
+  $class->${pipeline qw(
     resolve_relative_path
     resolve_home_path
     resolve_empty_path
