@@ -38,13 +38,13 @@ sub pipeline {
   }
 }
 
-=for test
+=for test pipeline
 
 package local::lib;
 
 { package Foo; sub foo { -$_[1] } sub bar { $_[1]+2 } sub baz { $_[1]+3 } }
 my $foo = bless({}, 'Foo');                                                 
-ok($foo->${pipeline qw(foo bar baz)}(10) == -15);
+Test::More::ok($foo->${pipeline qw(foo bar baz)}(10) == -15);
 
 =cut
 
@@ -223,7 +223,7 @@ sub build_environment_vars_for {
 
 File::Path::rmtree('t/var/splat');
 
-$c->resolve_relative_path('t/var/splat');
+$c->ensure_dir_structure_for('t/var/splat');
 
 ok(-d 't/var/splat');
 
