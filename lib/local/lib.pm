@@ -250,6 +250,13 @@ From the shell -
   export PERL5LIB='/home/username/perl/lib/perl5:/home/username/perl/lib/perl5/i386-linux'
   export PATH="/home/username/perl/bin:$PATH"
 
+To bootstrap if you don't have local::lib itself installed -
+
+  perl -MCPAN -eshell
+  cpan> look local::lib
+  $ perl Makefile.PL --bootstrap
+  $ make test && make install
+
 =head1 AUTHOR
 
 Matt S Trout <mst@shadowcat.co.uk> http://www.shadowcat.co.uk/
