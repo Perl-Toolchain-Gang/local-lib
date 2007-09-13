@@ -90,7 +90,7 @@ sub resolve_home_path {
       if (defined $user) {
         File::HomeDir->users_home($user);
       } else {
-        File::HomeDir->my_homedir;
+        File::HomeDir->my_home;
       }
     } else {
       if (defined $user) {
@@ -252,10 +252,26 @@ From the shell -
 
 To bootstrap if you don't have local::lib itself installed -
 
-  perl -MCPAN -eshell
+  $ perl -MCPAN -eshell
   cpan> look local::lib
   $ perl Makefile.PL --bootstrap
   $ make test && make install
+  cpan> exit
+  $ echo 'eval $(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)' >>~/.bashrc
+
+You can also pass --boostrap=~/foo to get a different location (adjust the
+bashrc line appropriately)
+
+=head1 LIMITATIONS
+
+No support for non-bourne shells.
+
+Bootstrap is a hack and will use CPAN.pm for ExtUtils::MakeMaker even if you
+have CPANPLUS installed.
+
+Kills any existing PERL5LIB, PERL_MM_OPT or MODULEBUILDRC.
+
+Patches very much welcome for any of the above.
 
 =head1 AUTHOR
 
