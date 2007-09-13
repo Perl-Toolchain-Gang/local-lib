@@ -252,11 +252,11 @@ From the shell -
 
 To bootstrap if you don't have local::lib itself installed -
 
-  $ perl -MCPAN -eshell
-  cpan> look local::lib
+  $ perl -MCPAN -eshell # you only need to do this if you don't have a ~/.cpan
+  cpan> exit
+  <download local::lib tarball from CPAN, unpack and cd into dir>
   $ perl Makefile.PL --bootstrap
   $ make test && make install
-  cpan> exit
   $ echo 'eval $(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)' >>~/.bashrc
 
 You can also pass --boostrap=~/foo to get a different location (adjust the
@@ -270,6 +270,8 @@ Bootstrap is a hack and will use CPAN.pm for ExtUtils::MakeMaker even if you
 have CPANPLUS installed.
 
 Kills any existing PERL5LIB, PERL_MM_OPT or MODULEBUILDRC.
+
+Should probably auto-fixup CPAN config if not already done.
 
 Patches very much welcome for any of the above.
 
