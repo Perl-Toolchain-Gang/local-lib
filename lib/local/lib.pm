@@ -135,6 +135,7 @@ sub setup_local_lib_for {
     exit 0;
   } else {
     $class->setup_env_hash_for($path);
+    unshift(@INC, split(':', $ENV{PERL5LIB}));
   }
 }
 
