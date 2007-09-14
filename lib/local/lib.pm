@@ -322,6 +322,8 @@ commands to add to the shell configuration file.
 
 Matt S Trout <mst@shadowcat.co.uk> http://www.shadowcat.co.uk/
 
+auto_install fixes kindly sponsored by http://www.takkle.com/
+
 =head1 LICENSE
 
 This library is free software under the same license as perl itself
