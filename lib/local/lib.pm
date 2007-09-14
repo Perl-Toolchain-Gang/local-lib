@@ -188,20 +188,20 @@ sub print_environment_vars_for {
   my ($class, $path) = @_;
   my @envs = $class->build_environment_vars_for($path, LITERAL_PATH);
   my $out = '';
+  # rather basic csh detection, goes on the assumption that something won't
+  # call itself csh unless it really is. also, default to bourne in the
+  # pathological situation where a user doesn't have $ENV{SHELL} defined.
+  # note also that shells with funny names, like zoid, are assumed to be
+  # bourne.
+  my $shellbin = 'sh';
+  if(defined $ENV{'SHELL'}) {
+      my @shell_bin_path_parts = File::Spec->splitpath($ENV{'SHELL'});
+      $shellbin = $shell_bin_path_parts[-1];
+  }
   while (@envs) {
     my ($name, $value) = (shift(@envs), shift(@envs));
     $value =~ s/(\\")/\\$1/g;
 
-    # rather basic csh detection, goes on the assumption that something won't
-    # call itself csh unless it really is. also, default to bourne in the
-    # pathological situation where a user doesn't have $ENV{SHELL} defined.
-    # note also that shells with funny names, like zoid, are assumed to be
-    # bourne.
-    my $shellbin = 'sh';
-    if(defined $ENV{'SHELL'}) {
-      my @shell_bin_path_parts = File::Spec->splitpath($ENV{'SHELL'});
-      $shellbin = $shell_bin_path_parts[-1];
-    }
     if($shellbin =~ /csh/) {
       $out .= qq{setenv ${name} "${value}"\n};
     }
