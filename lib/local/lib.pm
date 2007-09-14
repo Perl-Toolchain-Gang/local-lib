@@ -191,7 +191,23 @@ sub print_environment_vars_for {
   while (@envs) {
     my ($name, $value) = (shift(@envs), shift(@envs));
     $value =~ s/(\\")/\\$1/g;
-    $out .= qq{export ${name}="${value}"\n};
+
+    # rather basic csh detection, goes on the assumption that something won't
+    # call itself csh unless it really is. also, default to bourne in the
+    # pathological situation where a user doesn't have $ENV{SHELL} defined.
+    # note also that shells with funny names, like zoid, are assumed to be
+    # bourne.
+    my $shellbin = 'sh';
+    if(defined $ENV{'SHELL'}) {
+      my @shell_bin_path_parts = File::Spec->splitpath($ENV{'SHELL'});
+      $shellbin = $shell_bin_path_parts[-1];
+    }
+    if($shellbin =~ /csh/) {
+      $out .= qq{setenv ${name} "${value}"\n};
+    }
+    else {
+      $out .= qq{export ${name}="${value}"\n};
+    }
   }
   print $out;
 }
@@ -258,13 +274,29 @@ To bootstrap if you don't have local::lib itself installed -
   $ perl Makefile.PL --bootstrap
   $ make test && make install
   $ echo 'eval $(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)' >>~/.bashrc
+  # Or for C shells...
+  $ /bin/csh
+  % echo $SHELL
+  /bin/csh
+  % perl -I$HOME/perl5/lib/perl5 -Mlocal::lib >> ~/.cshrc
 
 You can also pass --boostrap=~/foo to get a different location (adjust the
-bashrc line appropriately)
+bashrc / cshrc line appropriately)
+
+=head1 DESCRIPTION
+
+This module provides a quick, convenient way of bootstrapping a user-local Perl
+module library located within the user's home directory. It also constructs and
+prints out for the user the list of environment variables using the syntax
+appropriate for the user's current shell (as specified by the C<SHELL>
+environment variable), suitable for directly adding to one's shell configuration
+file.
 
 =head1 LIMITATIONS
 
-No support for non-bourne shells.
+Rather basic shell detection. Right now anything with csh in its name is
+assumed to be a C shell or something compatible, and everything else is assumed
+to be Bourne.
 
 Bootstrap is a hack and will use CPAN.pm for ExtUtils::MakeMaker even if you
 have CPANPLUS installed.
@@ -274,6 +306,17 @@ Kills any existing PERL5LIB, PERL_MM_OPT or MODULEBUILDRC.
 Should probably auto-fixup CPAN config if not already done.
 
 Patches very much welcome for any of the above.
+
+=head1 ENVIRONMENT
+
+=over 4
+
+=item SHELL
+
+local::lib looks at the user's C<SHELL> environment variable when printing out
+commands to add to the shell configuration file.
+
+=back
 
 =head1 AUTHOR
 
