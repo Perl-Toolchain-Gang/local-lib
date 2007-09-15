@@ -38,13 +38,17 @@ sub pipeline {
   }
 }
 
-=for test pipeline
+=begin testing
+
+#:: test pipeline
 
 package local::lib;
 
 { package Foo; sub foo { -$_[1] } sub bar { $_[1]+2 } sub baz { $_[1]+3 } }
 my $foo = bless({}, 'Foo');                                                 
 Test::More::ok($foo->${pipeline qw(foo bar baz)}(10) == -15);
+
+=end testing
 
 =cut
 
@@ -66,16 +70,22 @@ sub resolve_empty_path {
   }
 }
 
-=for test classmethod setup
+=begin testing
+
+#:: test classmethod setup
 
 my $c = 'local::lib';
 
-=cut
+=end testing
 
-=for test classmethod
+=begin testing
+
+#:: test classmethod
 
 is($c->resolve_empty_path, '~/perl5');
 is($c->resolve_empty_path('foo'), 'foo');
+
+=end testing
 
 =cut
 
@@ -120,10 +130,14 @@ sub resolve_relative_path {
   File::Spec->rel2abs($path);
 }
 
-=for test classmethod
+=begin testing
+
+#:: test classmethod
 
 local *File::Spec::rel2abs = sub { shift; 'FOO'.shift; };
 is($c->resolve_relative_path('bar'),'FOObar');
+
+=end testing
 
 =cut
 
@@ -236,7 +250,9 @@ sub build_environment_vars_for {
   )
 }
 
-=for test classmethod
+=begin testing
+
+#:: test classmethod
 
 File::Path::rmtree('t/var/splat');
 
@@ -245,6 +261,8 @@ $c->ensure_dir_structure_for('t/var/splat');
 ok(-d 't/var/splat');
 
 ok(-f 't/var/splat/.modulebuildrc');
+
+=end testing
 
 =head1 NAME
 

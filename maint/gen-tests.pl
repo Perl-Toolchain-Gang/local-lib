@@ -12,11 +12,25 @@ my ($test, $segment, $text);
 
 sub mode::outer {
   shift;
-  if (shift =~ /^=for test (\S+)(?:\s+(\S+))?/) {
+  my $line = $_[0];
+  if ($line =~ /^=for test (\S+)(?:\s+(\S+))?/) {
     $mode = 'inner';
     ($test, $segment) = ($1, $2);
     $segment ||= '';
     $text = '';
+  } elsif ($line =~ /^=begin testing/) {
+    $mode = 'find_comment';
+    ($test, $segment, $text) = ('', '', '');
+  }
+}
+
+sub mode::find_comment {
+  shift;
+  my $line = $_[0];
+  if ($line =~ /^\#\:\: test (\S+)(?:\s+(\S+))?/) {
+    $mode = 'inner';
+    ($test, $segment) = ($1, $2);
+    $segment ||= '';
   }
 }
 
