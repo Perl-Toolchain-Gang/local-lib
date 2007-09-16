@@ -215,12 +215,9 @@ sub print_environment_vars_for {
   }
   my $shelltype = do {
       local $_ = $shellbin;
-      if(/csh/)
-      {
+      if(/csh/) {
           'csh'
-      }
-      else
-      {
+      } else {
           'bourne'
       }
   };
