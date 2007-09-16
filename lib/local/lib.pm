@@ -202,6 +202,7 @@ sub print_environment_vars_for {
   my ($class, $path) = @_;
   my @envs = $class->build_environment_vars_for($path, LITERAL_PATH);
   my $out = '';
+
   # rather basic csh detection, goes on the assumption that something won't
   # call itself csh unless it really is. also, default to bourne in the
   # pathological situation where a user doesn't have $ENV{SHELL} defined.
@@ -212,18 +213,39 @@ sub print_environment_vars_for {
       my @shell_bin_path_parts = File::Spec->splitpath($ENV{'SHELL'});
       $shellbin = $shell_bin_path_parts[-1];
   }
+  my $shelltype = do {
+      local $_ = $shellbin;
+      if(/csh/)
+      {
+          'csh'
+      }
+      else
+      {
+          'bourne'
+      }
+  };
+
   while (@envs) {
     my ($name, $value) = (shift(@envs), shift(@envs));
     $value =~ s/(\\")/\\$1/g;
-
-    if($shellbin =~ /csh/) {
-      $out .= qq{setenv ${name} "${value}"\n};
-    }
-    else {
-      $out .= qq{export ${name}="${value}"\n};
-    }
+    $out .= $class->${\"build_${shelltype}_env_declaration"}($name, $value);
   }
   print $out;
+}
+
+# simple routines that take two arguments: an %ENV key and a value. return
+# strings that are suitable for passing directly to the relevant shell to set
+# said key to said value.
+sub build_bourne_env_declaration {
+  my $class = shift;
+  my($name, $value) = @_;
+  return qq{export ${name}="${value}"\n};
+}
+
+sub build_csh_env_declaration {
+  my $class = shift;
+  my($name, $value) = @_;
+  return qq{setenv ${name} "${value}"\n};
 }
 
 sub setup_env_hash_for {
@@ -276,6 +298,10 @@ In code -
 
   use local::lib '~/foo'; # same, but ~/foo
 
+  # Or...
+  use FindBin;
+  use local::lib "$FindBin::Bin/../support";  # app-local support library
+
 From the shell -
 
   $ perl -Mlocal::lib
@@ -310,11 +336,37 @@ appropriate for the user's current shell (as specified by the C<SHELL>
 environment variable), suitable for directly adding to one's shell configuration
 file.
 
+More generally, local::lib allows for the bootstrapping and usage of a directory
+containing Perl modules outside of Perl's C<@INC>. This makes it easier to ship
+an application with an app-specific copy of a Perl module, or collection of
+modules. Useful in cases like when an upstream maintainer hasn't applied a patch
+to a module of theirs that you need for your application.
+
+On import, local::lib sets the following environment variables to appropriate
+values:
+
+=over 4
+
+=item MODULEBUILDRC
+
+=item PERL_MM_OPT
+
+=item PERL5LIB
+
+=item PATH
+
+PATH is appended to, rather than clobbered.
+
+=back
+
+These values are then available for reference by any code after import.
+
 =head1 LIMITATIONS
 
 Rather basic shell detection. Right now anything with csh in its name is
 assumed to be a C shell or something compatible, and everything else is assumed
-to be Bourne.
+to be Bourne. If the C<SHELL> environment variable is not set, a
+Bourne-compatible shell is assumed.
 
 Bootstrap is a hack and will use CPAN.pm for ExtUtils::MakeMaker even if you
 have CPANPLUS installed.
