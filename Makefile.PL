@@ -50,6 +50,16 @@ requires 'ExtUtils::ParseXS';
 requires 'Module::Build' => '0.28'; # lib -> lib/perl5 change
 requires 'CPAN' => '1.80'; # sudo support
 
+# No, really. See
+# https://rt.cpan.org/Public/Bug/Display.html?id=23735
+# for why CPAN now sets the CPANPLUS env var.
+# trouble is this means we can't auto_install(_now) CPAN itself
+# without this beautiful hack
+
+my $no_cpanplus_env = !exists $ENV{PERL5_CPANPLUS_IS_RUNNING};
+require CPAN;
+delete $ENV{PERL5_CPANPLUS_IS_RUNNING} if $no_cpanplus_env;
+
 if ($bootstrapping) {
   auto_install_now;
 } else {
