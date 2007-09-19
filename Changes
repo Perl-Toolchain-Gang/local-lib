@@ -1,0 +1,10 @@
+Revision history for local::lib
+
+1.001000 2007-09-19
+        - refactored shell command generation
+        - implemented C shell command generation based on this (checks $SHELL}
+        - improved docs
+        - modified Makefile.PL to install an up-to-date CPAN.pm if needed
+
+1.000000 2007-09-13
+        - initial release

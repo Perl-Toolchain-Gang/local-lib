@@ -11,7 +11,7 @@ use File::Path ();
 use Carp ();
 use Config;
 
-our $VERSION = '1.000000'; # 1.0.0
+our $VERSION = '1.001000'; # 1.1.0
 
 sub import {
   my ($class, $path) = @_;
