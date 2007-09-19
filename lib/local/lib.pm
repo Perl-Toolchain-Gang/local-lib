@@ -391,6 +391,11 @@ Matt S Trout <mst@shadowcat.co.uk> http://www.shadowcat.co.uk/
 
 auto_install fixes kindly sponsored by http://www.takkle.com/
 
+=head1 CONTRIBUTORS
+
+Patches to correctly output commands for csh style shells, as well as some
+documentation additions, contributed by Christopher Nehren <apeiron@cpan.org>.
+
 =head1 LICENSE
 
 This library is free software under the same license as perl itself
