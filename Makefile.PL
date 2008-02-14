@@ -7,6 +7,7 @@ BEGIN {
     $bootstrapping = 1;
     my @args = (defined $1 ? ($1) : ());
 
+    $ENV{PERL_MM_USE_DEFAULT} = 1;
     {
       local @INC = @INC;
       unshift(@INC, 'lib');
@@ -24,6 +25,17 @@ BEGIN {
     my $cpan = $? >> 8;
     my $cpan_command = '';
 
+    system($^X, '-MCPAN', '-e',
+      'CPAN::Config->load;
+       unless (-w $CPAN::Config->{keep_source_where}) {
+         $ENV{PERL_MM_USE_DEFAULT} = 0;
+         my $save = $CPAN::Config->{urllist};
+         delete @{$CPAN::Config}{keys %$CPAN::Config};
+         $CPAN::Config->{urllist} = $save;
+         CPAN::Config->init;
+       }'
+    );
+
     # XXX - remove the force on EUMM once its test suite survive PERL_MM_OPT
 
     if ($eumm) { # non-zero exit
@@ -35,7 +47,9 @@ BEGIN {
     if(length $cpan_command) {
       system($^X, '-MCPAN', '-e', $cpan_command);
     }
-
+    if ($cpan) {
+      system($^X, '-MCPAN', '-e', 'CPAN::Config->load; CPAN::Config->commit;');
+    }
   }
 }
 

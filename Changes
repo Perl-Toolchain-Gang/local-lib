@@ -1,5 +1,7 @@
 Revision history for local::lib
 
+        - make bootstrap auto-init CPAN config and set USE_DEFAULT for deps
+
 1.001000 2007-09-19
         - refactored shell command generation
         - implemented C shell command generation based on this (checks $SHELL}

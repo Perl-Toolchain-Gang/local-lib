@@ -309,13 +309,15 @@ From the shell -
 
 To bootstrap if you don't have local::lib itself installed -
 
-  $ perl -MCPAN -eshell # you only need to do this if you don't have a ~/.cpan
-  cpan> exit
   <download local::lib tarball from CPAN, unpack and cd into dir>
+
   $ perl Makefile.PL --bootstrap
   $ make test && make install
+
   $ echo 'eval $(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)' >>~/.bashrc
+
   # Or for C shells...
+
   $ /bin/csh
   % echo $SHELL
   /bin/csh
