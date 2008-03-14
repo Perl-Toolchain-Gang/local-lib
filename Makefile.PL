@@ -3,8 +3,10 @@ use warnings;
 use vars qw($bootstrapping);
 
 BEGIN {
-  if (grep { /^--bootstrap(?:=(.*))?$/ } @ARGV) {
+  if (my ($x) = grep { /^--bootstrap(?:=.*)?$/ } @ARGV) {
+    @ARGV = grep { !/^--bootstrap(?:=.*)?$/ } @ARGV;
     $bootstrapping = 1;
+    $x =~ /^--bootstrap(?:=(.*))?$/;
     my @args = (defined $1 ? ($1) : ());
 
     $ENV{PERL_MM_USE_DEFAULT} = 1;
@@ -42,7 +44,7 @@ BEGIN {
       $cpan_command .= 'force("install","ExtUtils::MakeMaker"); ';
     }
     if ($cpan) {
-      $cpan_command .= 'install("CPAN"); ';
+      $cpan_command .= 'force("install","CPAN"); ';
     }
     if(length $cpan_command) {
       system($^X, '-MCPAN', '-e', $cpan_command);

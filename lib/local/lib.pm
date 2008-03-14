@@ -195,12 +195,12 @@ sub ensure_dir_structure_for {
   }
 }
 
-sub INTERPOLATE_PATH () { 1 }
-sub LITERAL_PATH     () { 0 }
+sub INTERPOLATE_ENV () { 1 }
+sub LITERAL_ENV     () { 0 }
 
 sub print_environment_vars_for {
   my ($class, $path) = @_;
-  my @envs = $class->build_environment_vars_for($path, LITERAL_PATH);
+  my @envs = $class->build_environment_vars_for($path, LITERAL_ENV);
   my $out = '';
 
   # rather basic csh detection, goes on the assumption that something won't
@@ -247,7 +247,7 @@ sub build_csh_env_declaration {
 
 sub setup_env_hash_for {
   my ($class, $path) = @_;
-  my %envs = $class->build_environment_vars_for($path, INTERPOLATE_PATH);
+  my %envs = $class->build_environment_vars_for($path, INTERPOLATE_ENV);
   @ENV{keys %envs} = values %envs;
 }
 
@@ -259,10 +259,15 @@ sub build_environment_vars_for {
     PERL5LIB => join(':',
                   $class->install_base_perl_path($path),
                   $class->install_base_arch_path($path),
+                  ($ENV{PERL5LIB} ?
+                    ($interpolate == INTERPOLATE_ENV
+                      ? ($ENV{PERL5LIB})
+                      : ('$PERL5LIB'))
+                    : ())
                 ),
     PATH => join(':',
               $class->install_base_bin_path($path),
-              ($interpolate == INTERPOLATE_PATH
+              ($interpolate == INTERPOLATE_ENV
                 ? $ENV{PATH}
                 : '$PATH')
              ),
