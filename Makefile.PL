@@ -19,6 +19,7 @@ BEGIN {
     local::lib->import(@args);
 
     push(@ARGV,$ENV{PERL_MM_OPT});
+    push(@ARGV, map { "-I$_" } split(':',$ENV{PERL5LIB}));
 
     system($^X, '-MExtUtils::MakeMaker 6.31', '-e1');
     my $eumm = $? >> 8;
@@ -30,10 +31,18 @@ BEGIN {
     system($^X, '-MCPAN', '-e',
       'CPAN::Config->load;
        unless (-w $CPAN::Config->{keep_source_where}) {
-         $ENV{PERL_MM_USE_DEFAULT} = 0;
          my $save = $CPAN::Config->{urllist};
          delete @{$CPAN::Config}{keys %$CPAN::Config};
          $CPAN::Config->{urllist} = $save;
+         my $orig = ExtUtils::MakeMaker->can("prompt");
+         my $done;
+         *ExtUtils::MakeMaker::prompt = sub {
+           if (!$done && $_[0] =~ /manual configuration/) {
+             $done++;
+             return "no";
+           }
+           return $orig->(@_);
+         };
          CPAN::Config->init;
        }'
     );
