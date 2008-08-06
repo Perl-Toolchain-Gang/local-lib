@@ -1,5 +1,7 @@
 Revision history for local::lib
 
+1.002000 2008-08-06
+        - make CPAN config reinit non-prompting but still robust
         - make bootstrap auto-init CPAN config and set USE_DEFAULT for deps
 
 1.001000 2007-09-19
