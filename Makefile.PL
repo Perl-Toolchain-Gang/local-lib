@@ -9,7 +9,6 @@ BEGIN {
     $x =~ /^--bootstrap(?:=(.*))?$/;
     my @args = (defined $1 ? ($1) : ());
 
-    $ENV{PERL_MM_USE_DEFAULT} = 1;
     {
       local @INC = @INC;
       unshift(@INC, 'lib');
@@ -29,23 +28,25 @@ BEGIN {
     my $cpan_command = '';
 
     system($^X, '-MCPAN', '-e',
-      'CPAN::Config->load;
-       unless (-w $CPAN::Config->{keep_source_where}) {
+      'my $done; require ExtUtils::MakeMaker;
+       my $orig = ExtUtils::MakeMaker->can("prompt");
+       *ExtUtils::MakeMaker::prompt = sub {
+         if (!$done && $_[0] =~ /manual configuration/) {
+           $done++;
+           return "no";
+         }
+         return $orig->(@_);
+       };
+       CPAN::Config->load;
+       unless ($done || -w $CPAN::Config->{keep_source_where}) {
          my $save = $CPAN::Config->{urllist};
          delete @{$CPAN::Config}{keys %$CPAN::Config};
          $CPAN::Config->{urllist} = $save;
-         my $orig = ExtUtils::MakeMaker->can("prompt");
-         my $done;
-         *ExtUtils::MakeMaker::prompt = sub {
-           if (!$done && $_[0] =~ /manual configuration/) {
-             $done++;
-             return "no";
-           }
-           return $orig->(@_);
-         };
          CPAN::Config->init;
        }'
     );
+
+    $ENV{PERL_MM_USE_DEFAULT} = 1;
 
     # XXX - remove the force on EUMM once its test suite survive PERL_MM_OPT
 
