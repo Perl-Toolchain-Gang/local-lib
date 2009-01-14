@@ -14,9 +14,24 @@ use Config;
 our $VERSION = '1.002000'; # 1.2.0
 
 sub import {
-  my ($class, $path) = @_;
+  my ($class, @args) = @_;
+
+  # The path is required, but last in the list, so we pop, not shift here. 
+  my $path = pop @args;
   $path = $class->resolve_path($path);
   $class->setup_local_lib_for($path);
+
+  # Handle the '--self-contained' option
+  my $flag = shift @args;  
+  no warnings 'uninitialized'; # the flag is optional 
+  if ($flag eq '--self-contained') {
+    # The only directories that remain are those that we just defined and those where core modules are stored. 
+    @INC = ($Config::Config{privlibexp}, $Config::Config{archlibexp}, split ':', $ENV{PERL5LIB});
+  }
+  elsif (defined $flag) {
+      die "unrecognized import argument: $flag";
+  }
+
 }
 
 sub pipeline;
@@ -306,6 +321,13 @@ In code -
 
 From the shell -
 
+  # Install LWP and it's missing dependencies to the 'my_lwp' directory
+  perl -MCPAN -Mlocal::lib=my_lwp -e 'CPAN::install(LWP)'
+
+  # Install LWP and *all non-core* dependencies to the 'my_lwp' directory 
+  perl -MCPAN -Mlocal::lib=--self-contained,my_lwp -e 'CPAN::install(LWP)'
+
+  # Just print out useful shell commands
   $ perl -Mlocal::lib
   export MODULEBUILDRC=/home/username/perl/.modulebuildrc
   export PERL_MM_OPT='INSTALL_BASE=/home/username/perl'
@@ -365,6 +387,16 @@ PATH is appended to, rather than clobbered.
 
 These values are then available for reference by any code after import.
 
+=head1 A WARNING ABOUT UNINST=1
+
+Be careful about using local::lib in combination with "make install UNINST=1".
+The idea of this feature is that will uninstall an old version of a module
+before installing a new one. However it lacks a safety check that the old
+version and the new version will go in the same directory. Used in combination
+with local::lib, you can potentially delete a globally accessible version of a
+module while installing the new version in a local place. Only combine if "make
+install UNINST=1" and local::lib if you understand these possible consequences.
+
 =head1 LIMITATIONS
 
 Rather basic shell detection. Right now anything with csh in its name is
@@ -402,6 +434,8 @@ auto_install fixes kindly sponsored by http://www.takkle.com/
 
 Patches to correctly output commands for csh style shells, as well as some
 documentation additions, contributed by Christopher Nehren <apeiron@cpan.org>.
+
+'--self-contained' feature contributed by Mark Stosberg <mark@summersault.com>.
 
 =head1 LICENSE
 
