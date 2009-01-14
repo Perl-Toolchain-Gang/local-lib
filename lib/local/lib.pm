@@ -11,7 +11,7 @@ use File::Path ();
 use Carp ();
 use Config;
 
-our $VERSION = '1.003000'; # 1.2.0
+our $VERSION = '1.003001'; # 1.3.1
 
 sub import {
   my ($class, @args) = @_;
@@ -24,6 +24,17 @@ sub import {
   # Handle the '--self-contained' option
   my $flag = shift @args;  
   no warnings 'uninitialized'; # the flag is optional 
+  # make sure fancy dashes cause an error
+  if ($flag =~ /−/) {
+      die <<'DEATH';
+WHOA THERE! It looks like you've got some fancy dashes in your commandline!
+These are *not* the traditional -- dashes that software recognizes. You
+probably got these by copy-pasting from the perldoc for this module as
+rendered by a UTF8-capable formatter. This most typically happens on an OS X
+terminal, but can happen elsewhere too. Please try again after replacing the
+dashes with normal minus signs.
+DEATH
+  }
   if ($flag eq '--self-contained') {
     # The only directories that remain are those that we just defined and those where core modules are stored. 
     @INC = ($Config::Config{privlibexp}, $Config::Config{archlibexp}, split ':', $ENV{PERL5LIB});

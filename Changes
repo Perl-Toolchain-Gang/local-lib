@@ -1,5 +1,10 @@
 Revision history for local::lib
 
+1.003001 2009-01-14
+        - Properly bail if given fancy dashes obtained by copy-pasting from a
+          UTF8-happy POD formatter. This will bail in both the Makefile.PL and
+          in local::lib::import().
+
 1.003000 2009-01-13
         - Add the --self-contained flag from Mark Stosberg, which also contains
           a doc patch warning about the dangers of UNINST=1. Thanks, Mark!

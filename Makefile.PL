@@ -3,6 +3,22 @@ use warnings;
 use vars qw($bootstrapping);
 
 BEGIN {
+  # watch out for fancy dashes. these can wind up in our @ARGV if the user is
+  # copypasting the bootstrap command from the POD displayed e.g. by perldoc
+  # on a Mac OS X terminal. since no software recognizes and handles these
+  # dashes, it's better to die loudly telling the user exactly what happened
+  # so they don't make the same mistake again rather than being the only
+  # program in the universe that works with them.
+  if(grep { /−/ } @ARGV) {
+      die <<'DEATH';
+WHOA THERE! It looks like you've got some fancy dashes in your commandline!
+These are *not* the traditional -- dashes that software recognizes. You
+probably got these by copy-pasting from the perldoc for this module as
+rendered by a UTF8-capable formatter. This most typically happens on an OS X
+terminal, but can happen elsewhere too. Please try again after replacing the
+dashes with normal minus signs.
+DEATH
+  }
   if (my ($x) = grep { /^--bootstrap(?:=.*)?$/ } @ARGV) {
     @ARGV = grep { !/^--bootstrap(?:=.*)?$/ } @ARGV;
     $bootstrapping = 1;
