@@ -11,7 +11,7 @@ use File::Path ();
 use Carp ();
 use Config;
 
-our $VERSION = '1.002000'; # 1.2.0
+our $VERSION = '1.003000'; # 1.2.0
 
 sub import {
   my ($class, @args) = @_;
@@ -394,7 +394,7 @@ The idea of this feature is that will uninstall an old version of a module
 before installing a new one. However it lacks a safety check that the old
 version and the new version will go in the same directory. Used in combination
 with local::lib, you can potentially delete a globally accessible version of a
-module while installing the new version in a local place. Only combine if "make
+module while installing the new version in a local place. Only combine "make
 install UNINST=1" and local::lib if you understand these possible consequences.
 
 =head1 LIMITATIONS
