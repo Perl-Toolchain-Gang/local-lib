@@ -1,5 +1,9 @@
 Revision history for local::lib
 
+1.003000 2009-01-13
+        - Add the --self-contained flag from Mark Stosberg, which also contains
+          a doc patch warning about the dangers of UNINST=1. Thanks, Mark!
+
 1.002000 2008-08-06
         - make CPAN config reinit non-prompting but still robust
         - make bootstrap auto-init CPAN config and set USE_DEFAULT for deps
