@@ -1,2 +1,1 @@
-^(?!lib|inc|t|README$|Makefile.PL$|META.yml$)
-(\.svn)
+^(?!script/|examples/|lib/|inc/|t/|Makefile.PL$|README$|MANIFEST$|Changes$|META.yml$)
