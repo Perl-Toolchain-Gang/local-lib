@@ -11,7 +11,7 @@ use File::Path ();
 use Carp ();
 use Config;
 
-our $VERSION = '1.003001'; # 1.3.1
+our $VERSION = '1.003002'; # 1.3.2
 
 sub import {
   my ($class, @args) = @_;
@@ -361,8 +361,12 @@ To bootstrap if you don't have local::lib itself installed -
   /bin/csh
   % perl -I$HOME/perl5/lib/perl5 -Mlocal::lib >> ~/.cshrc
 
-You can also pass --boostrap=~/foo to get a different location (adjust the
-bashrc / cshrc line appropriately)
+You can also pass --boostrap=~/foo to get a different location -
+
+  $ perl Makefile.PL --bootstrap=~/foo
+  $ make test && make install
+
+  $ echo 'eval $(perl -I$HOME/foo/lib/perl5 -Mlocal::lib=$HOME/foo)' >>~/.bashrc
 
 =head1 DESCRIPTION
 
@@ -447,6 +451,9 @@ Patches to correctly output commands for csh style shells, as well as some
 documentation additions, contributed by Christopher Nehren <apeiron@cpan.org>.
 
 '--self-contained' feature contributed by Mark Stosberg <mark@summersault.com>.
+
+Doc patches for a custom local::lib patch contributed by Torsten Raudssus
+<torsten@raudssus.de>.
 
 =head1 LICENSE
 

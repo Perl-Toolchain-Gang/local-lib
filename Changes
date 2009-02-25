@@ -1,5 +1,9 @@
 Revision history for local::lib
 
+1.003002 2009-02-25
+        - Add a doc patch from Torsten Raudssus <torsten@raudssus.de> that
+          clarifies how to specify a directory other than ~/perl5.
+
 1.003001 2009-01-14
         - Properly bail if given fancy dashes obtained by copy-pasting from a
           UTF8-happy POD formatter. This will bail in both the Makefile.PL and
