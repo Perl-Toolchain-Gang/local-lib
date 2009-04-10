@@ -1,5 +1,9 @@
 Revision history for local::lib
 
+1.003003 2009-04-09
+        - Expose the internals per RT #36846.
+        - Fix the MANIFEST up a bit.
+
 1.003002 2009-02-25
         - Add a doc patch from Torsten Raudssus <torsten@raudssus.de> that
           clarifies how to specify a directory other than ~/perl5.

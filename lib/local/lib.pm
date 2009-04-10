@@ -11,7 +11,7 @@ use File::Path ();
 use Carp ();
 use Config;
 
-our $VERSION = '1.003002'; # 1.3.2
+our $VERSION = '1.003003'; # 1.3.3
 
 sub import {
   my ($class, @args) = @_;
@@ -401,6 +401,138 @@ PATH is appended to, rather than clobbered.
 =back
 
 These values are then available for reference by any code after import.
+
+=head1 METHODS
+
+=head2 ensure_directory_structure_for
+
+=over 4
+
+=item Arguments: path
+
+=back
+
+Attempts to create the given path, and all required parent directories. Throws
+an exception on failure.
+
+=head2 print_environment_vars_for
+
+=over 4
+
+=item Arguments: path
+
+=back
+
+Prints to standard output the variables listed above, properly set to use the
+given path as the base directory.
+
+=head2 setup_env_hash_for
+
+=over 4
+
+=item Arguments: path
+
+=back
+
+Constructs the C<%ENV> keys for the given path, by calling
+C<build_environment_vars_for>.
+
+=head2 install_base_perl_path
+
+=over 4
+
+=item Arguments: path
+
+=back
+
+Returns a path describing where to install the Perl modules for this local
+library installation. Appends the directories C<lib> and C<perl5> to the given
+path.
+
+=head2 install_base_arch_path
+
+=over 4
+
+=item Arguments: path
+
+=back
+
+Returns a path describing where to install the architecture-specific Perl
+modules for this local library installation. Based on the
+L</install_base_perl_path> method's return value, and appends the value of
+C<$Config{archname}>.
+
+=head2 install_base_bin_path
+
+=over 4
+
+=item Arguments: path
+
+=back
+
+Returns a path describing where to install the executable programs for this
+local library installation. Based on the L</install_base_perl_path> method's
+return value, and appends the directory C<bin>.
+
+=head2 modulebuildrc_path
+
+=over 4
+
+=item Arguments: path
+
+=back
+
+Returns a path describing where to install the C<.modulebuildrc> file, based on
+the given path.
+
+=head2 resolve_empty_path
+
+=over 4
+
+=item Arguments: path
+
+=back
+
+Builds and returns the base path into which to set up the local module
+installation. Defaults to C<~/perl5>.
+
+=head2 resolve_home_path
+
+=over 4
+
+=item Arguments: path
+
+=back
+
+Attempts to find the user's home directory. If installed, uses C<File::HomeDir>
+for this purpose. If no definite answer is available, throws an exception.
+
+=head2 resolve_relative_path
+
+=over 4
+
+=item Arguments: path
+
+=back
+
+Translates the given path into an absolute path.
+
+=head2 resolve_path
+
+=over 4
+
+=item Arguments: path
+
+=back
+
+Calls the following in a pipeline, passing the result from the previous to the
+next, in an attempt to find where to configure the environment for a local
+library installation: L</resolve_empty_path>, L</resolve_home_path>,
+L</resolve_relative_path>. Passes the given path argument to
+L</resolve_empty_path> which then returns a result that is passed to
+L</resolve_home_path>, which then has its result passed to
+L</resolve_relative_path>. The result of this final call is returned from
+L</resolve_path>.
 
 =head1 A WARNING ABOUT UNINST=1
 
