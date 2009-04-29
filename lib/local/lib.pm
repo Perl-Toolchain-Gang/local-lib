@@ -368,6 +368,32 @@ You can also pass --boostrap=~/foo to get a different location -
 
   $ echo 'eval $(perl -I$HOME/foo/lib/perl5 -Mlocal::lib=$HOME/foo)' >>~/.bashrc
 
+If you want to install multiple Perl module environments, say for application evelopment, 
+install local::lib globally and then:
+
+    $ cd ~/mydir1
+    $ perl -Mlocal::lib=./
+    $ eval $(perl -Mlocal::lib=./)  ### To set the environment for this shell alone
+    $ printenv  ### You will see that ~/mydir1 is in the PERL5LIB
+    $ perl -MCPAN -e install ...    ### whatever modules you want
+    $ cd ../mydir2
+    ... REPEAT ...
+
+For multiple environments for multiple apps you may need to include a modified version of 
+the C<< use FindBin >> instructions in the "In code" sample above. If you did something like
+the above, you have a set of Perl modules at C<< ~/mydir1/lib >>. If you have a script at
+C<< ~/mydir1/scripts/myscript.pl >>, you need to tell it where to find the modules you installed 
+for it at C<< ~/mydir1/lib>>. 
+
+In C<< ~/mydir1/scripts/myscript.pl >>:
+
+    use strict;
+    use warnings;
+    use local::lib "$FindBin::Bin/..";  ### points to ~/mydir1 and local::lib finds lib
+    use lib "$FindBin::Bin/../lib";     ### points to ~/mydir1/lib
+
+Put this before any BEGIN { ... } blocks that require the modules you installed.
+
 =head1 DESCRIPTION
 
 This module provides a quick, convenient way of bootstrapping a user-local Perl
