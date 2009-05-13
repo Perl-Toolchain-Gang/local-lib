@@ -11,7 +11,7 @@ use File::Path ();
 use Carp ();
 use Config;
 
-our $VERSION = '1.003003'; # 1.3.3
+our $VERSION = '1.003004'; # 1.3.4
 
 sub import {
   my ($class, @args) = @_;
@@ -612,6 +612,9 @@ documentation additions, contributed by Christopher Nehren <apeiron@cpan.org>.
 
 Doc patches for a custom local::lib patch contributed by Torsten Raudssus
 <torsten@raudssus.de>.
+
+Hans Dieter Pearcey <hdp@cpan.org> sent in some additional tests for ensuring
+things will install properly.
 
 =head1 LICENSE
 
