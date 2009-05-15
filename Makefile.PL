@@ -1,8 +1,12 @@
 use strict;
 use warnings;
-use vars qw($bootstrapping);
+use File::Spec;
+use Cwd;
+use vars qw($bootstrapping $bootstrapping_args);
 
+my $cwd;
 BEGIN {
+  $cwd = Cwd::cwd();
   # watch out for fancy dashes. these can wind up in our @ARGV if the user is
   # copypasting the bootstrap command from the POD displayed e.g. by perldoc
   # on a Mac OS X terminal. since no software recognizes and handles these
@@ -22,8 +26,8 @@ DEATH
   if (my ($x) = grep { /^--bootstrap(?:=.*)?$/ } @ARGV) {
     @ARGV = grep { !/^--bootstrap(?:=.*)?$/ } @ARGV;
     $bootstrapping = 1;
-    $x =~ /^--bootstrap(?:=(.*))?$/;
-    my @args = (defined $1 ? ($1) : ());
+    my ($path) = $x =~ /^--bootstrap(?:=(.*))?$/;
+    my @args = $path ? $path : ();
 
     {
       local @INC = @INC;
@@ -33,8 +37,10 @@ DEATH
 
     local::lib->import(@args);
 
+    my @libs = map { "-I$_" } split ':', $ENV{PERL5LIB};
+    $bootstrapping_args = "@libs";
     push(@ARGV,$ENV{PERL_MM_OPT});
-    push(@ARGV, map { "-I$_" } split(':',$ENV{PERL5LIB}));
+    push(@ARGV, @libs);
 
     system($^X, '-MExtUtils::MakeMaker 6.31', '-e1');
     my $eumm = $? >> 8;
@@ -78,6 +84,8 @@ DEATH
     if ($cpan) {
       system($^X, '-MCPAN', '-e', 'CPAN::Config->load; CPAN::Config->commit;');
     }
+
+    chdir($cwd);
   }
 }
 
@@ -102,10 +110,30 @@ my $no_cpanplus_env = !exists $ENV{PERL5_CPANPLUS_IS_RUNNING};
 require CPAN;
 delete $ENV{PERL5_CPANPLUS_IS_RUNNING} if $no_cpanplus_env;
 
+# and make sure that the user doesn't have any existing CPAN config that'll
+# cause us problems for the next few steps.
+require CPAN::HandleConfig;
+CPAN::HandleConfig->load;
+for my $eumm_setting ( qw/makepl_arg make_install_arg/ ) {
+    if ($CPAN::Config->{$eumm_setting} =~ /(?:PREFIX|INSTALL_BASE)/) {
+        die "Possibly invalid config detected in $eumm_setting: " . $CPAN::Config->{$eumm_setting};
+    }
+}
+
+for my $mb_setting (qw/mbuild_arg mbuild_install_arg mbuildpl_arg/) {
+    if ($CPAN::Config->{$mb_setting} =~ /(?:--prefix|--install_base)/) {
+        die "Possibly invalid config detected in $mb_setting: " . $CPAN::Config->{$mb_setting};
+    }
+}
+
 if ($bootstrapping) {
   auto_install_now;
+  postamble <<"END";
+PERL     += $bootstrapping_args
+FULLPERL += $bootstrapping_args
+END
 } else {
   auto_install;
 }
-
+chdir($cwd);
 WriteAll;

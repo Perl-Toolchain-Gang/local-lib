@@ -1,5 +1,12 @@
 Revision history for local::lib
 
+1.004000 2009-05-14
+        - Don't allow dangerous settings for CPAN.pm that affect where CPAN
+          installs stuff, as this conflicts with what we're trying to do.
+
+        - Make sure that our Makefile is written to the correct directory when
+          bootstrapping (confound).
+
 1.003004 2009-05-12
         - Additional documentation and examples concerning having multiple
           local::lib enviornments (amiri)

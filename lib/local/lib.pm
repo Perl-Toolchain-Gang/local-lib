@@ -11,7 +11,7 @@ use File::Path ();
 use Carp ();
 use Config;
 
-our $VERSION = '1.003004'; # 1.3.4
+our $VERSION = '1.004000'; # 1.4.0
 
 sub import {
   my ($class, @args) = @_;
@@ -383,7 +383,7 @@ For multiple environments for multiple apps you may need to include a modified v
 the C<< use FindBin >> instructions in the "In code" sample above. If you did something like
 the above, you have a set of Perl modules at C<< ~/mydir1/lib >>. If you have a script at
 C<< ~/mydir1/scripts/myscript.pl >>, you need to tell it where to find the modules you installed 
-for it at C<< ~/mydir1/lib>>. 
+for it at C<< ~/mydir1/lib >>.
 
 In C<< ~/mydir1/scripts/myscript.pl >>:
 
@@ -610,11 +610,12 @@ documentation additions, contributed by Christopher Nehren <apeiron@cpan.org>.
 
 '--self-contained' feature contributed by Mark Stosberg <mark@summersault.com>.
 
-Doc patches for a custom local::lib patch contributed by Torsten Raudssus
+Doc patches for a custom local::lib directory contributed by Torsten Raudssus
 <torsten@raudssus.de>.
 
 Hans Dieter Pearcey <hdp@cpan.org> sent in some additional tests for ensuring
-things will install properly.
+things will install properly, and furthermore submitted a fix for the bug
+causing problems with writing Makefiles during bootstrapping. Many thanks!
 
 =head1 LICENSE
 
