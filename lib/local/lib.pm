@@ -11,7 +11,7 @@ use File::Path ();
 use Carp ();
 use Config;
 
-our $VERSION = '1.004000'; # 1.4.0
+our $VERSION = '1.004001'; # 1.4.1
 
 sub import {
   my ($class, @args) = @_;
@@ -586,6 +586,22 @@ Should probably auto-fixup CPAN config if not already done.
 
 Patches very much welcome for any of the above.
 
+=head1 TROUBLESHOOTING
+
+If you've configured local::lib to install CPAN modules somewhere in to your
+home directory, and at some point later you try to install a module with C<cpan
+-i Foo::Bar>, but it fails with an error like: C<Warning: You do not have
+permissions to install into /usr/lib64/perl5/site_perl/5.8.8/x86_64-linux at
+/usr/lib64/perl5/5.8.8/Foo/Bar.pm> and buried within the install log is an
+error saying C<'INSTALL_BASE' is not a known MakeMaker parameter name>, then
+you've somehow lost your updated ExtUtils::MakeMaker module.
+
+To remedy this situation, rerun the bootstrapping procedure documented above.
+
+Then, run C<rm -r ~/.cpan/build/Foo-Bar*>
+
+Finally, re-run C<cpan -i Foo::Bar> and it should install without problems.
+
 =head1 ENVIRONMENT
 
 =over 4
@@ -614,8 +630,13 @@ Doc patches for a custom local::lib directory contributed by Torsten Raudssus
 <torsten@raudssus.de>.
 
 Hans Dieter Pearcey <hdp@cpan.org> sent in some additional tests for ensuring
-things will install properly, and furthermore submitted a fix for the bug
-causing problems with writing Makefiles during bootstrapping. Many thanks!
+things will install properly, submitted a fix for the bug causing problems with
+writing Makefiles during bootstrapping, contributed an example program, and
+submitted yet another fix to ensure that local::lib can install and bootstrap
+properly. Many, many thanks!
+
+pattern of Freenode IRC contributed the beginnings of the Troubleshooting
+section. Many thanks!
 
 =head1 LICENSE
 

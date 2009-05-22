@@ -107,8 +107,10 @@ requires 'CPAN' => '1.80'; # sudo support
 # without this beautiful hack
 
 my $no_cpanplus_env = !exists $ENV{PERL5_CPANPLUS_IS_RUNNING};
+my $no_cpan_env = !exists $ENV{PERL5_CPAN_IS_RUNNING};
 require CPAN;
 delete $ENV{PERL5_CPANPLUS_IS_RUNNING} if $no_cpanplus_env;
+delete $ENV{PERL5_CPAN_IS_RUNNING} if $no_cpan_env;
 
 # and make sure that the user doesn't have any existing CPAN config that'll
 # cause us problems for the next few steps.

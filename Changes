@@ -1,5 +1,12 @@
 Revision history for local::lib
 
+1.004001 2009-05-21
+        - Clean up CPAN.pm's environment variable the same way we do for
+          CPANPLUS. Add an example program showing local::lib employed
+          programmatically (confound).
+
+        - Add the beginnings of a troubleshooting section (pattern).
+
 1.004000 2009-05-14
         - Don't allow dangerous settings for CPAN.pm that affect where CPAN
           installs stuff, as this conflicts with what we're trying to do.
