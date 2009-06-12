@@ -1,5 +1,11 @@
 Revision history for local::lib
 
+        - Put PERL5LIB first, so it'll be favored over privlibexp and
+          archlibexp when self contained.
+        - Automatically untaint @INC
+        - Prevent @INC from growing when you have multiple scripts using
+          --self-contained called from inside one another.
+
 1.004001 2009-05-21
         - Clean up CPAN.pm's environment variable the same way we do for
           CPANPLUS. Add an example program showing local::lib employed

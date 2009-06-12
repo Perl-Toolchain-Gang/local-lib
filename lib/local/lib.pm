@@ -16,6 +16,9 @@ our $VERSION = '1.004001'; # 1.4.1
 sub import {
   my ($class, @args) = @_;
 
+  # Remember what PERL5LIB was when we started
+  my $perl5lib = $ENV{PERL5LIB};
+
   # The path is required, but last in the list, so we pop, not shift here. 
   my $path = pop @args;
   $path = $class->resolve_path($path);
@@ -37,12 +40,17 @@ DEATH
   }
   if ($flag eq '--self-contained') {
     # The only directories that remain are those that we just defined and those where core modules are stored. 
-    @INC = ($Config::Config{privlibexp}, $Config::Config{archlibexp}, split ':', $ENV{PERL5LIB});
+    # We put PERL5LIB first, so it'll be favored over privlibexp and archlibexp
+    @INC = ( $class->install_base_perl_path($path), $class->install_base_arch_path($path), split( ':', $perl5lib ), $Config::Config{privlibexp}, $Config::Config{archlibexp} );
+    
+    # We explicitly set PERL5LIB here (back to what it was originally) to prevent @INC from growing with each invocation 
+    $ENV{PERL5LIB} = $perl5lib;
   }
   elsif (defined $flag) {
       die "unrecognized import argument: $flag";
   }
 
+  m/(.*)/ and $_ = $1 for @INC; # Untaint @INC
 }
 
 sub pipeline;
