@@ -1,5 +1,8 @@
 Revision history for local::lib
 
+        - Fixed up INC untaint procedure to skip/ignore CODE, ARRAY, blessed entries.
+        - Include test in xt/ for the above
+
         - Put PERL5LIB first, so it'll be favored over privlibexp and
           archlibexp when self contained.
         - Automatically untaint @INC

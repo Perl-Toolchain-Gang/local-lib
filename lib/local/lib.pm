@@ -50,7 +50,10 @@ DEATH
       die "unrecognized import argument: $flag";
   }
 
-  m/(.*)/ and $_ = $1 for @INC; # Untaint @INC
+  for (@INC) { # Untaint @INC
+    next if ref; # Skip entry if it is an ARRAY, CODE, blessed, etc.
+    m/(.*)/ and $_ = $1;
+  }
 }
 
 sub pipeline;
