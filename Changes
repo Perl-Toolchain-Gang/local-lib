@@ -1,7 +1,12 @@
 Revision history for local::lib
 
+        - Set PERL5LIB back to calculated @INC with --self-contained, to stop
+          invoking other perl scripts from losing the local::lib if they
+          mangle @INC from $ENV{PERL5LIB} (t0m)
+
 1.004002 2009-06-15
-        - Fixed up INC untaint procedure to skip/ignore CODE, ARRAY, blessed entries.
+        - Fixed up INC untaint procedure to skip/ignore CODE, ARRAY,
+          blessed entries. (grink)
         - Include test in xt/ for the above
 
         - Put PERL5LIB first, so it'll be favored over privlibexp and

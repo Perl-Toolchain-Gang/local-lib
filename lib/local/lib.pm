@@ -41,8 +41,8 @@ DEATH
   if ($flag eq '--self-contained') {
     # The only directories that remain are those that we just defined and those where core modules are stored. 
     # We put PERL5LIB first, so it'll be favored over privlibexp and archlibexp
-    @INC = ($Config::Config{privlibexp}, $Config::Config{archlibexp}, split $Config{path_sep}, $ENV{PERL5LIB});
-    @INC = (
+    my %seen;
+    @INC = grep { ! $seen{$_}++ } (
       $class->install_base_perl_path($path),
       $class->install_base_arch_path($path),
       split( $Config{path_sep}, $perl5lib ),
@@ -50,8 +50,9 @@ DEATH
       $Config::Config{archlibexp}
   );
     
-    # We explicitly set PERL5LIB here (back to what it was originally) to prevent @INC from growing with each invocation 
-    $ENV{PERL5LIB} = $perl5lib;
+    # We explicitly set PERL5LIB here to the above de-duped list to prevent
+    # @INC from growing with each invocation 
+    $ENV{PERL5LIB} = join( $Config{path_sep}, @INC );
   }
   elsif (defined $flag) {
       die "unrecognized import argument: $flag";
