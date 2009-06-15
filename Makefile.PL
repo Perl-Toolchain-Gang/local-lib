@@ -3,6 +3,7 @@ use warnings;
 use File::Spec;
 use Cwd;
 use vars qw($bootstrapping $bootstrapping_args);
+use Config;
 
 my $cwd;
 BEGIN {
@@ -37,7 +38,7 @@ DEATH
 
     local::lib->import(@args);
 
-    my @libs = map { "-I$_" } split ':', $ENV{PERL5LIB};
+    my @libs = map { "-I$_" } split $Config{path_sep}, $ENV{PERL5LIB};
     $bootstrapping_args = "@libs";
     push(@ARGV,$ENV{PERL_MM_OPT});
     push(@ARGV, @libs);

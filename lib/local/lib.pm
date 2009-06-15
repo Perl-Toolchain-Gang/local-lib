@@ -11,7 +11,7 @@ use File::Path ();
 use Carp ();
 use Config;
 
-our $VERSION = '1.004001'; # 1.4.1
+our $VERSION = '1.004002'; # 1.4.2
 
 sub import {
   my ($class, @args) = @_;
@@ -41,7 +41,14 @@ DEATH
   if ($flag eq '--self-contained') {
     # The only directories that remain are those that we just defined and those where core modules are stored. 
     # We put PERL5LIB first, so it'll be favored over privlibexp and archlibexp
-    @INC = ( $class->install_base_perl_path($path), $class->install_base_arch_path($path), split( ':', $perl5lib ), $Config::Config{privlibexp}, $Config::Config{archlibexp} );
+    @INC = ($Config::Config{privlibexp}, $Config::Config{archlibexp}, split $Config{path_sep}, $ENV{PERL5LIB});
+    @INC = (
+      $class->install_base_perl_path($path),
+      $class->install_base_arch_path($path),
+      split( $Config{path_sep}, $perl5lib ),
+      $Config::Config{privlibexp},
+      $Config::Config{archlibexp}
+  );
     
     # We explicitly set PERL5LIB here (back to what it was originally) to prevent @INC from growing with each invocation 
     $ENV{PERL5LIB} = $perl5lib;
@@ -164,7 +171,7 @@ sub resolve_home_path {
 
 sub resolve_relative_path {
   my ($class, $path) = @_;
-  File::Spec->rel2abs($path);
+  $path = File::Spec->rel2abs($path);
 }
 
 =begin testing
@@ -180,13 +187,13 @@ is($c->resolve_relative_path('bar'),'FOObar');
 
 sub setup_local_lib_for {
   my ($class, $path) = @_;
-  $class->ensure_dir_structure_for($path);
+  $path = $class->ensure_dir_structure_for($path);
   if ($0 eq '-') {
     $class->print_environment_vars_for($path);
     exit 0;
   } else {
     $class->setup_env_hash_for($path);
-    unshift(@INC, split(':', $ENV{PERL5LIB}));
+    unshift(@INC, split($Config{path_sep}, $ENV{PERL5LIB}));
   }
 }
 
@@ -216,6 +223,9 @@ sub ensure_dir_structure_for {
     warn "Attempting to create directory ${path}\n";
   }
   File::Path::mkpath($path);
+  # Need to have the path exist to make a short name for it, so
+  # converting to a short name here.
+  $path = Win32::GetShortPathName($path) if $^O eq 'MSWin32';
   my $modulebuildrc_path = $class->modulebuildrc_path($path);
   if (-e $modulebuildrc_path) {
     unless (-f _) {
@@ -230,6 +240,8 @@ sub ensure_dir_structure_for {
     close MODULEBUILDRC
       || Carp::croak("Couldn't close file ${modulebuildrc_path}: $@");
   }
+
+  return $path;
 }
 
 sub INTERPOLATE_ENV () { 1 }
@@ -259,6 +271,24 @@ sub print_environment_vars_for {
       }
   };
 
+  # Win32 uses this variable.
+  if (defined $ENV{'COMSPEC'}) {
+      my @shell_bin_path_parts = File::Spec->splitpath($ENV{'COMSPEC'});
+      $shellbin = $shell_bin_path_parts[-1];
+         $shelltype = do {
+                 local $_ = $shellbin;
+                 if(/command\.com/) {
+                         'win32'
+                 } elsif(/cmd\.exe/) {
+                         'win32'
+                 } elsif(/4nt\.exe/) {
+                         'win32'
+                 } else {
+                         $shelltype
+                 }
+         };
+  }
+
   while (@envs) {
     my ($name, $value) = (shift(@envs), shift(@envs));
     $value =~ s/(\\")/\\$1/g;
@@ -282,6 +312,12 @@ sub build_csh_env_declaration {
   return qq{setenv ${name} "${value}"\n};
 }
 
+sub build_win32_env_declaration {
+  my $class = shift;
+  my($name, $value) = @_;
+  return qq{set ${name}=${value}\n};
+}
+
 sub setup_env_hash_for {
   my ($class, $path) = @_;
   my %envs = $class->build_environment_vars_for($path, INTERPOLATE_ENV);
@@ -293,20 +329,20 @@ sub build_environment_vars_for {
   return (
     MODULEBUILDRC => $class->modulebuildrc_path($path),
     PERL_MM_OPT => "INSTALL_BASE=${path}",
-    PERL5LIB => join(':',
+    PERL5LIB => join($Config{path_sep},
                   $class->install_base_perl_path($path),
                   $class->install_base_arch_path($path),
                   ($ENV{PERL5LIB} ?
                     ($interpolate == INTERPOLATE_ENV
                       ? ($ENV{PERL5LIB})
-                      : ('$PERL5LIB'))
+                      : (($^O ne 'MSWin32') ? '$PERL5LIB' : '%PERL5LIB%' ))
                     : ())
                 ),
-    PATH => join(':',
+    PATH => join($Config{path_sep},
               $class->install_base_bin_path($path),
               ($interpolate == INTERPOLATE_ENV
                 ? $ENV{PATH}
-                : '$PATH')
+                : (($^O ne 'MSWin32') ? '$PATH' : '%PATH%' ))
              ),
   )
 }
@@ -372,7 +408,7 @@ To bootstrap if you don't have local::lib itself installed -
   /bin/csh
   % perl -I$HOME/perl5/lib/perl5 -Mlocal::lib >> ~/.cshrc
 
-You can also pass --boostrap=~/foo to get a different location -
+You can also pass --bootstrap=~/foo to get a different location -
 
   $ perl Makefile.PL --bootstrap=~/foo
   $ make test && make install
@@ -404,6 +440,27 @@ In C<< ~/mydir1/scripts/myscript.pl >>:
     use lib "$FindBin::Bin/../lib";     ### points to ~/mydir1/lib
 
 Put this before any BEGIN { ... } blocks that require the modules you installed.
+
+=head2 Differences when using this module under Win32
+
+    C:\>perl -Mlocal::lib
+    set MODULEBUILDRC=C:\DOCUME~1\ADMINI~1\perl5\.modulebuildrc
+    set PERL_MM_OPT=INSTALL_BASE=C:\DOCUME~1\ADMINI~1\perl5
+    set PERL5LIB=C:\DOCUME~1\ADMINI~1\perl5\lib\perl5;C:\DOCUME~1\ADMINI~1\perl5\lib\perl5\MSWin32-x86-multi-thread
+    set PATH=C:\DOCUME~1\ADMINI~1\perl5\bin;%PATH%
+
+       ### To set the environment for this shell alone
+    C:\>perl -Mlocal::lib > %TEMP%\tmp.bat && %TEMP%\tmp.bat && del %TEMP%\temp.bat
+    ### instead of $(perl -Mlocal::lib=./)
+
+If you want the environment entries to persist, you'll need to add then to the
+Control Panel's System applet yourself at the moment.
+
+The "~" is translated to the user's profile directory (the directory named for
+the user under "Documents and Settings" (Windows XP or earlier) or "Users"
+(Windows Vista or later) unless $ENV{HOME} exists. After that, the home
+directory is translated to a short name (which means the directory must exist)
+and the subdirectories are created.
 
 =head1 DESCRIPTION
 
@@ -585,8 +642,8 @@ install UNINST=1" and local::lib if you understand these possible consequences.
 
 Rather basic shell detection. Right now anything with csh in its name is
 assumed to be a C shell or something compatible, and everything else is assumed
-to be Bourne. If the C<SHELL> environment variable is not set, a
-Bourne-compatible shell is assumed.
+to be Bourne, except on Win32 systems. If the C<SHELL> environment variable is
+not set, a Bourne-compatible shell is assumed.
 
 Bootstrap is a hack and will use CPAN.pm for ExtUtils::MakeMaker even if you
 have CPANPLUS installed.
@@ -596,6 +653,9 @@ Kills any existing PERL5LIB, PERL_MM_OPT or MODULEBUILDRC.
 Should probably auto-fixup CPAN config if not already done.
 
 Patches very much welcome for any of the above.
+
+On Win32 systems, does not have a way to write the created environment variables
+to the registry, so that they can persist through a reboot.
 
 =head1 TROUBLESHOOTING
 
@@ -619,8 +679,12 @@ Finally, re-run C<cpan -i Foo::Bar> and it should install without problems.
 
 =item SHELL
 
+=item COMSPEC
+
 local::lib looks at the user's C<SHELL> environment variable when printing out
 commands to add to the shell configuration file.
+
+On Win32 systems, C<COMSPEC> is also examined.
 
 =back
 
@@ -649,9 +713,11 @@ properly. Many, many thanks!
 pattern of Freenode IRC contributed the beginnings of the Troubleshooting
 section. Many thanks!
 
+Patch to add Win32 support contributed by Curtis Jewell <csjewell@cpan.org>.
+
 =head1 LICENSE
 
-This library is free software under the same license as perl itself
+This library is free software under the same license as perl itself.
 
 =cut
 
