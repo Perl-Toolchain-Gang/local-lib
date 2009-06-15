@@ -1,5 +1,6 @@
 Revision history for local::lib
 
+        - Fix warning from Makefile.PL about ExtUtils::MakeMaker::prompt (t0m)
         - Set PERL5LIB back to calculated @INC with --self-contained, to stop
           invoking other perl scripts from losing the local::lib if they
           mangle @INC from $ENV{PERL5LIB} (t0m)

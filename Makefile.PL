@@ -53,7 +53,7 @@ DEATH
     system($^X, '-MCPAN', '-e',
       'my $done; require ExtUtils::MakeMaker;
        my $orig = ExtUtils::MakeMaker->can("prompt");
-       *ExtUtils::MakeMaker::prompt = sub {
+       *ExtUtils::MakeMaker::prompt = sub ($;$) {
          if (!$done && $_[0] =~ /manual configuration/) {
            $done++;
            return "no";
