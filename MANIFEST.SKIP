@@ -1,2 +1,2 @@
-^(?!script/|examples/|lib/|inc/|t/|Makefile.PL$|README$|MANIFEST$|Changes$|META.yml$)
+^(?!script/|examples/|lib/|inc/|t/.+\.t|t/dist/\w+/(\w+\.PL|lib/\w+\.pm)|Makefile.PL$|README$|MANIFEST$|Changes$|META.yml$)
 .svn

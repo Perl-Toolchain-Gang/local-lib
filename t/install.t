@@ -11,7 +11,7 @@ use Config;
 
 plan tests => 2;
 
-my $dir = tempdir(DIR => Cwd::abs_path('t'), CLEANUP => 1);
+my $dir = tempdir('test_local_lib-XXXXX', DIR => Cwd::abs_path('t'), CLEANUP => 1);
 
 use local::lib ();
 local::lib->import($dir);

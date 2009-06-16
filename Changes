@@ -1,12 +1,14 @@
 Revision history for local::lib
 
+1.004003 2009-16-16
         - Stop Makefile.PL exploding if your CPAN is too old to have
           CPAN::HandleConfig. Needed when installing local::lib via CPAN
           using an old CPAN version (t0m)
         - Fix warning from Makefile.PL about ExtUtils::MakeMaker::prompt (t0m)
         - Set PERL5LIB back to calculated @INC with --self-contained, to stop
           invoking other perl scripts from losing the local::lib if they
-          mangle @INC from $ENV{PERL5LIB} (t0m)
+          mangle @INC from $ENV{PERL5LIB}, and fix install of 'difficult'
+          modules with such as Test::Deep (t0m)
 
 1.004002 2009-06-15
         - Fixed up INC untaint procedure to skip/ignore CODE, ARRAY,
