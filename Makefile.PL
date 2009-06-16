@@ -99,7 +99,8 @@ requires 'ExtUtils::MakeMaker' => '6.31'; # version INSTALL_BASE was added
 requires 'ExtUtils::CBuilder'; # this and ParseXS are needed for MB C_support
 requires 'ExtUtils::ParseXS';
 requires 'Module::Build' => '0.28'; # lib -> lib/perl5 change
-requires 'CPAN' => '1.80'; # sudo support
+my $required_CPAN = '1.80';
+requires 'CPAN' => $required_CPAN; # sudo support + CPAN::HandleConfig
 
 # No, really. See
 # https://rt.cpan.org/Public/Bug/Display.html?id=23735
@@ -115,17 +116,34 @@ delete $ENV{PERL5_CPAN_IS_RUNNING} if $no_cpan_env;
 
 # and make sure that the user doesn't have any existing CPAN config that'll
 # cause us problems for the next few steps.
-require CPAN::HandleConfig;
-CPAN::HandleConfig->load;
-for my $eumm_setting ( qw/makepl_arg make_install_arg/ ) {
-    if ($CPAN::Config->{$eumm_setting} =~ /(?:PREFIX|INSTALL_BASE)/) {
-        die "Possibly invalid config detected in $eumm_setting: " . $CPAN::Config->{$eumm_setting};
-    }
-}
+{
+    local $@;
+    eval { require CPAN::HandleConfig; };
+    # Need newish CPAN.pm for this, ergo skip it if that version of CPAN isn't
+    # installed yet.
+    # It will already be installed by the time we reach here if bootstrapping,
+    # otherwise, if we're running from CPAN then it will be installed soon
+    # enough, and we'll come back here..
+    if (!$@) {
+        CPAN::HandleConfig->load;
+        for my $eumm_setting ( qw/makepl_arg make_install_arg/ ) {
+            if ($CPAN::Config->{$eumm_setting} =~ /(?:PREFIX|INSTALL_BASE)/) {
+                die "Possibly invalid config detected in $eumm_setting: " . $CPAN::Config->{$eumm_setting};
+            }
+        }
 
-for my $mb_setting (qw/mbuild_arg mbuild_install_arg mbuildpl_arg/) {
-    if ($CPAN::Config->{$mb_setting} =~ /(?:--prefix|--install_base)/) {
-        die "Possibly invalid config detected in $mb_setting: " . $CPAN::Config->{$mb_setting};
+        for my $mb_setting (qw/mbuild_arg mbuild_install_arg mbuildpl_arg/) {
+            if ($CPAN::Config->{$mb_setting} =~ /(?:--prefix|--install_base)/) {
+                die "Possibly invalid config detected in $mb_setting: " . $CPAN::Config->{$mb_setting};
+            }
+        }
+    }
+    else {
+        my $error = $@;
+        require CPAN;
+        # Explode if it looks like requiring CPAN::HandleConfig should
+        # have worked, but didn't.
+        die($error) if $CPAN::VERSION >= $required_CPAN;
     }
 }
 
