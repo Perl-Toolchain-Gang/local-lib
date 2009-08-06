@@ -1,7 +1,11 @@
 Revision history for local::lib
 
+1.004004 2009-08-05
+
         - Add dependency on Extutils::Install 1.43 and install in --bootstrap
           otherwise we fail to build with latest MakeMaker on OpenSolaris (t0m)
+
+        - Fix Win32 / Cygwin detection (emazep).
 
 1.004003 2009-16-16
         - Stop Makefile.PL exploding if your CPAN is too old to have

@@ -11,7 +11,7 @@ use File::Path ();
 use Carp ();
 use Config;
 
-our $VERSION = '1.004003'; # 1.4.3
+our $VERSION = '1.004004'; # 1.4.4
 
 sub import {
   my ($class, @args) = @_;
@@ -272,8 +272,8 @@ sub print_environment_vars_for {
       }
   };
 
-  # Win32 uses this variable.
-  if (defined $ENV{'COMSPEC'}) {
+  # Both Win32 and Cygwin have $ENV{COMSPEC} set.
+  if (defined $ENV{'COMSPEC'} && $^O ne 'cygwin') {
       my @shell_bin_path_parts = File::Spec->splitpath($ENV{'COMSPEC'});
       $shellbin = $shell_bin_path_parts[-1];
          $shelltype = do {
