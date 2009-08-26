@@ -1,5 +1,17 @@
 Revision history for local::lib
 
+1.004006 2009-08-25
+        - Fix parsing of --self-contained and local lib directory. It's now
+          possible to specify flags and the directory in any order. Also made
+          adding future flags easier in the future. Thanks to
+          frew@irc.perl.org/#catalyst for pointing out that --self-contained
+          wouldn't work without a directory.
+
+1.004005 2009-08-23
+        - Add the --no-manpages option to bootstraping to tell EUMM / MB to not
+          generate manpages from POD. Thanks to RKITOVER for providing the
+          necessary values for CPAN.pm's configuration.
+
 1.004004 2009-08-05
 
         - Add dependency on Extutils::Install 1.43 and install in --bootstrap

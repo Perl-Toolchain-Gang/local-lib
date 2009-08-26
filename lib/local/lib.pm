@@ -11,24 +11,22 @@ use File::Path ();
 use Carp ();
 use Config;
 
-our $VERSION = '1.004004'; # 1.4.4
+our $VERSION = '1.004006'; # 1.4.6
+my @KNOWN_FLAGS = (qw/--self-contained/);
 
 sub import {
   my ($class, @args) = @_;
+  @args <= 1 + @KNOWN_FLAGS or die <<'DEATH';
+Please see `perldoc local::lib` for directions on using this module.
+DEATH
 
   # Remember what PERL5LIB was when we started
   my $perl5lib = $ENV{PERL5LIB};
 
-  # The path is required, but last in the list, so we pop, not shift here. 
-  my $path = pop @args;
-  $path = $class->resolve_path($path);
-  $class->setup_local_lib_for($path);
-
-  # Handle the '--self-contained' option
-  my $flag = shift @args;  
-  no warnings 'uninitialized'; # the flag is optional 
-  # make sure fancy dashes cause an error
-  if ($flag =~ /−/) {
+  my %arg_store;
+  for my $arg (@args) {
+    # check for lethal dash first to stop processing before causing problems
+    if ($arg =~ /−/) {
       die <<'DEATH';
 WHOA THERE! It looks like you've got some fancy dashes in your commandline!
 These are *not* the traditional -- dashes that software recognizes. You
@@ -37,14 +35,28 @@ rendered by a UTF8-capable formatter. This most typically happens on an OS X
 terminal, but can happen elsewhere too. Please try again after replacing the
 dashes with normal minus signs.
 DEATH
+    }
+    elsif(grep { $arg eq $_ } @KNOWN_FLAGS) {
+      (my $flag = $arg) =~ s/--//;
+      $arg_store{$flag} = 1;
+    }
+    elsif($arg =~ /^--/) {
+      die "Unknown import argument: $arg";
+    }
+    else {
+      # assume that what's left is a path
+      $arg_store{path} = $arg;
+    }
   }
-  if ($flag eq '--self-contained') {
-    # The only directories that remain are those that we just defined and those where core modules are stored. 
-    # We put PERL5LIB first, so it'll be favored over privlibexp and archlibexp
+
+  if($arg_store{'self-contained'}) {
+    # The only directories that remain are those that we just defined and those
+    # where core modules are stored.  We put PERL5LIB first, so it'll be favored
+    # over privlibexp and archlibexp
     my %seen;
     @INC = grep { ! $seen{$_}++ } (
-      $class->install_base_perl_path($path),
-      $class->install_base_arch_path($path),
+      $class->install_base_perl_path($arg_store{path}),
+      $class->install_base_arch_path($arg_store{path}),
       split( $Config{path_sep}, $perl5lib ),
       $Config::Config{privlibexp},
       $Config::Config{archlibexp}
@@ -54,9 +66,9 @@ DEATH
     # @INC from growing with each invocation 
     $ENV{PERL5LIB} = join( $Config{path_sep}, @INC );
   }
-  elsif (defined $flag) {
-      die "unrecognized import argument: $flag";
-  }
+
+  $arg_store{path} = $class->resolve_path($arg_store{path});
+  $class->setup_local_lib_for($arg_store{path});
 
   for (@INC) { # Untaint @INC
     next if ref; # Skip entry if it is an ARRAY, CODE, blessed, etc.
@@ -416,6 +428,12 @@ You can also pass --bootstrap=~/foo to get a different location -
 
   $ echo 'eval $(perl -I$HOME/foo/lib/perl5 -Mlocal::lib=$HOME/foo)' >>~/.bashrc
 
+If you're on a slower machine, or are operating under draconian disk space
+limitations, you can disable the automatic generation of manpages from POD when
+installing modules by using the C<--no-manpages> argument when bootstrapping:
+
+  $ perl Makefile.PL --bootstrap --no-manpages
+
 If you want to install multiple Perl module environments, say for application evelopment, 
 install local::lib globally and then:
 
@@ -701,6 +719,9 @@ Patches to correctly output commands for csh style shells, as well as some
 documentation additions, contributed by Christopher Nehren <apeiron@cpan.org>.
 
 '--self-contained' feature contributed by Mark Stosberg <mark@summersault.com>.
+
+Ability to pass '--self-contained' without a directory inspired by frew on
+irc.perl.org/#catalyst.
 
 Doc patches for a custom local::lib directory contributed by Torsten Raudssus
 <torsten@raudssus.de>.

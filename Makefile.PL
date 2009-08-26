@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use File::Spec;
 use Cwd;
-use vars qw($bootstrapping $bootstrapping_args);
+use vars qw($bootstrapping $bootstrapping_args $no_manpages);
 use Config;
 
 my $cwd;
@@ -27,6 +27,10 @@ DEATH
   if (my ($x) = grep { /^--bootstrap(?:=.*)?$/ } @ARGV) {
     @ARGV = grep { !/^--bootstrap(?:=.*)?$/ } @ARGV;
     $bootstrapping = 1;
+    if(my ($x) = grep { /^--no-manpages/ } @ARGV) {
+      $no_manpages = 1;
+      @ARGV = grep { !/^--no-manpages/ } @ARGV;
+    }
     my ($path) = $x =~ /^--bootstrap(?:=(.*))?$/;
     my @args = $path ? $path : ();
 
@@ -90,6 +94,23 @@ DEATH
     }
     if ($cpan) {
       system($^X, '-MCPAN', '-e', 'CPAN::Config->load; CPAN::Config->commit;');
+    }
+    if($no_manpages) {
+      # if we call this code directly, the changes get written to
+      # $BOOTSTRAP/lib/perl5/CPAN/Config.pm, not where the user expects them to
+      # be in their ~/.cpan/CPAN/MyConfig.pm.
+      system($^X, '-MCPAN',
+        '-e', 
+        q[CPAN::HandleConfig->load;],
+        '-e', 
+        q[$CPAN::Config->{makepl_arg}  = ] . 
+          q['INSTALLMAN1DIR=none INSTALLMAN3DIR=none';],
+        '-e',
+        q[$CPAN::Config->{buildpl_arg} = ] .
+          q['--install_path libdoc="" --install_path bindoc=""';],
+        '-e',
+        q[CPAN::Config->commit;],
+      );
     }
 
     chdir($cwd);
