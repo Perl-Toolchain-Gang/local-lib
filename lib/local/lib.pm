@@ -53,17 +53,17 @@ DEATH
     # The only directories that remain are those that we just defined and those
     # where core modules are stored.  We put PERL5LIB first, so it'll be favored
     # over privlibexp and archlibexp
-    my %seen;
-    @INC = grep { ! $seen{$_}++ } (
+
+    @INC = _uniq(
       $class->install_base_perl_path($arg_store{path}),
       $class->install_base_arch_path($arg_store{path}),
       split( $Config{path_sep}, $perl5lib ),
       $Config::Config{privlibexp},
       $Config::Config{archlibexp}
-  );
-    
+    );
+
     # We explicitly set PERL5LIB here to the above de-duped list to prevent
-    # @INC from growing with each invocation 
+    # @INC from growing with each invocation
     $ENV{PERL5LIB} = join( $Config{path_sep}, @INC );
   }
 
@@ -108,6 +108,11 @@ Test::More::ok($foo->${pipeline qw(foo bar baz)}(10) == -15);
 =end testing
 
 =cut
+
+sub _uniq {
+    my %seen;
+    grep { ! $seen{$_}++ } @_;
+}
 
 sub resolve_path {
   my ($class, $path) = @_;
@@ -206,7 +211,7 @@ sub setup_local_lib_for {
     exit 0;
   } else {
     $class->setup_env_hash_for($path);
-    unshift(@INC, split($Config{path_sep}, $ENV{PERL5LIB}));
+    @INC = _uniq(split($Config{path_sep}, $ENV{PERL5LIB}), @INC);
   }
 }
 
