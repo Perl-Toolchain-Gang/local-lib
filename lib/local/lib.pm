@@ -11,7 +11,7 @@ use File::Path ();
 use Carp ();
 use Config;
 
-our $VERSION = '1.004006'; # 1.4.6
+our $VERSION = '1.004007'; # 1.4.7
 my @KNOWN_FLAGS = (qw/--self-contained/);
 
 sub import {
@@ -410,72 +410,92 @@ From the shell -
   export PERL5LIB='/home/username/perl/lib/perl5:/home/username/perl/lib/perl5/i386-linux'
   export PATH="/home/username/perl/bin:$PATH"
 
-To bootstrap if you don't have local::lib itself installed -
+The bootstrapping technique
 
-  <download local::lib tarball from CPAN, unpack and cd into dir>
+A typical way to install local::lib is using what is known as the
+"bootstrapping" technique.  You would do this if your system administrator
+hasn't already installed local::lib.  In this case, you'll need to install
+local::lib in your home directory.
 
-  $ perl Makefile.PL --bootstrap
-  $ make test && make install
+1. Download and unpack the local::lib tarball from CPAN (search for "Download"
+on the CPAN page about local::lib).  Do this as an ordinary user, not as root
+or administrator.  Unpack the file in your home directory or in any other
+convenient location.
 
-  $ echo 'eval $(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)' >>~/.bashrc
+2. Run this:
 
-  # Or for C shells...
+  perl Makefile.PL --bootstrap
 
-  $ /bin/csh
-  % echo $SHELL
+If the system asks you whether it should automatically configure as much
+as possible, you would typically answer yes.
+
+3. Run this:
+
+  make test && make install
+
+4. Arrange for Perl to use your own packages instead of the system
+packages.  If you are using bash, you can do this as follows:
+
+  echo 'eval $(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)' >>~/.bashrc
+
+If you are using C shell, you can do this as follows:
+
   /bin/csh
-  % perl -I$HOME/perl5/lib/perl5 -Mlocal::lib >> ~/.cshrc
+  echo $SHELL
+  /bin/csh
+  perl -I$HOME/perl5/lib/perl5 -Mlocal::lib >> ~/.cshrc
 
 You can also pass --bootstrap=~/foo to get a different location -
 
-  $ perl Makefile.PL --bootstrap=~/foo
-  $ make test && make install
+  perl Makefile.PL --bootstrap=~/foo
+  make test && make install
 
-  $ echo 'eval $(perl -I$HOME/foo/lib/perl5 -Mlocal::lib=$HOME/foo)' >>~/.bashrc
+  echo 'eval $(perl -I$HOME/foo/lib/perl5 -Mlocal::lib=$HOME/foo)' >>~/.bashrc
 
 If you're on a slower machine, or are operating under draconian disk space
 limitations, you can disable the automatic generation of manpages from POD when
 installing modules by using the C<--no-manpages> argument when bootstrapping:
 
-  $ perl Makefile.PL --bootstrap --no-manpages
+  perl Makefile.PL --bootstrap --no-manpages
 
 If you want to install multiple Perl module environments, say for application evelopment, 
 install local::lib globally and then:
 
-    $ cd ~/mydir1
-    $ perl -Mlocal::lib=./
-    $ eval $(perl -Mlocal::lib=./)  ### To set the environment for this shell alone
-    $ printenv  ### You will see that ~/mydir1 is in the PERL5LIB
-    $ perl -MCPAN -e install ...    ### whatever modules you want
-    $ cd ../mydir2
-    ... REPEAT ...
+  cd ~/mydir1
+  perl -Mlocal::lib=./
+  eval $(perl -Mlocal::lib=./)  ### To set the environment for this shell alone
+  printenv  ### You will see that ~/mydir1 is in the PERL5LIB
+  perl -MCPAN -e install ...    ### whatever modules you want
+  cd ../mydir2
+  ... REPEAT ...
 
-For multiple environments for multiple apps you may need to include a modified version of 
-the C<< use FindBin >> instructions in the "In code" sample above. If you did something like
-the above, you have a set of Perl modules at C<< ~/mydir1/lib >>. If you have a script at
-C<< ~/mydir1/scripts/myscript.pl >>, you need to tell it where to find the modules you installed 
-for it at C<< ~/mydir1/lib >>.
+For multiple environments for multiple apps you may need to include a modified
+version of the C<< use FindBin >> instructions in the "In code" sample above.
+If you did something like the above, you have a set of Perl modules at C<<
+~/mydir1/lib >>. If you have a script at C<< ~/mydir1/scripts/myscript.pl >>,
+you need to tell it where to find the modules you installed for it at C<<
+~/mydir1/lib >>.
 
 In C<< ~/mydir1/scripts/myscript.pl >>:
 
-    use strict;
-    use warnings;
-    use local::lib "$FindBin::Bin/..";  ### points to ~/mydir1 and local::lib finds lib
-    use lib "$FindBin::Bin/../lib";     ### points to ~/mydir1/lib
+  use strict;
+  use warnings;
+  use local::lib "$FindBin::Bin/..";  ### points to ~/mydir1 and local::lib finds lib
+  use lib "$FindBin::Bin/../lib";     ### points to ~/mydir1/lib
 
 Put this before any BEGIN { ... } blocks that require the modules you installed.
 
 =head2 Differences when using this module under Win32
 
-    C:\>perl -Mlocal::lib
-    set MODULEBUILDRC=C:\DOCUME~1\ADMINI~1\perl5\.modulebuildrc
-    set PERL_MM_OPT=INSTALL_BASE=C:\DOCUME~1\ADMINI~1\perl5
-    set PERL5LIB=C:\DOCUME~1\ADMINI~1\perl5\lib\perl5;C:\DOCUME~1\ADMINI~1\perl5\lib\perl5\MSWin32-x86-multi-thread
-    set PATH=C:\DOCUME~1\ADMINI~1\perl5\bin;%PATH%
-
-       ### To set the environment for this shell alone
-    C:\>perl -Mlocal::lib > %TEMP%\tmp.bat && %TEMP%\tmp.bat && del %TEMP%\temp.bat
-    ### instead of $(perl -Mlocal::lib=./)
+  C:\>perl -Mlocal::lib
+  set MODULEBUILDRC=C:\DOCUME~1\ADMINI~1\perl5\.modulebuildrc
+  set PERL_MM_OPT=INSTALL_BASE=C:\DOCUME~1\ADMINI~1\perl5
+  set PERL5LIB=C:\DOCUME~1\ADMINI~1\perl5\lib\perl5;C:\DOCUME~1\ADMINI~1\perl5\lib\perl5\MSWin32-x86-multi-thread
+  set PATH=C:\DOCUME~1\ADMINI~1\perl5\bin;%PATH%
+  
+    ### To set the environment for this shell alone
+  C:\>perl -Mlocal::lib > %TEMP%\tmp.bat && %TEMP%\tmp.bat && del %TEMP%\temp.bat
+  ### instead of $(perl -Mlocal::lib=./)
 
 If you want the environment entries to persist, you'll need to add then to the
 Control Panel's System applet yourself at the moment.
@@ -486,20 +506,42 @@ the user under "Documents and Settings" (Windows XP or earlier) or "Users"
 directory is translated to a short name (which means the directory must exist)
 and the subdirectories are created.
 
+=head1 RATIONALE
+
+The version of a Perl package on your machine is not always the version you
+need.  Obviously, the best thing to do would be to update to the version you
+need.  However, you might be in a situation where you're prevented from doing
+this.  Perhaps you don't have system administrator privileges; or perhaps you
+are using a package management system such as Debian, and nobody has yet gotten
+around to packaging up the version you need.
+
+local::lib solves this problem by allowing you to create your own directory of
+Perl packages downloaded from CPAN (in a multi-user system, this would typically
+be within your own home directory).  The existing system Perl installation is
+not affected; you simply invoke Perl with special options so that Perl uses the
+packages in your own local package directory rather than the system packages.
+local::lib arranges things so that your locally installed version of the Perl
+packages takes precedence over the system installation.
+
+If you are using a package management system (such as Debian), you don't need to
+worry about Debian and CPAN stepping on each other's toes.  Your local version
+of the packages will be written to an entirely separate directory from those
+installed by Debian.  
+
 =head1 DESCRIPTION
 
 This module provides a quick, convenient way of bootstrapping a user-local Perl
 module library located within the user's home directory. It also constructs and
 prints out for the user the list of environment variables using the syntax
 appropriate for the user's current shell (as specified by the C<SHELL>
-environment variable), suitable for directly adding to one's shell configuration
-file.
+environment variable), suitable for directly adding to one's shell
+configuration file.
 
-More generally, local::lib allows for the bootstrapping and usage of a directory
-containing Perl modules outside of Perl's C<@INC>. This makes it easier to ship
-an application with an app-specific copy of a Perl module, or collection of
-modules. Useful in cases like when an upstream maintainer hasn't applied a patch
-to a module of theirs that you need for your application.
+More generally, local::lib allows for the bootstrapping and usage of a
+directory containing Perl modules outside of Perl's C<@INC>. This makes it
+easier to ship an application with an app-specific copy of a Perl module, or
+collection of modules. Useful in cases like when an upstream maintainer hasn't
+applied a patch to a module of theirs that you need for your application.
 
 On import, local::lib sets the following environment variables to appropriate
 values:
