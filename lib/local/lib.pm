@@ -410,7 +410,7 @@ From the shell -
   export PERL5LIB='/home/username/perl/lib/perl5:/home/username/perl/lib/perl5/i386-linux'
   export PATH="/home/username/perl/bin:$PATH"
 
-The bootstrapping technique
+=head2 The bootstrapping technique
 
 A typical way to install local::lib is using what is known as the
 "bootstrapping" technique.  You would do this if your system administrator
