@@ -11,7 +11,7 @@ use File::Path ();
 use Carp ();
 use Config;
 
-our $VERSION = '1.004007'; # 1.4.7
+our $VERSION = '1.004008'; # 1.4.7
 my @KNOWN_FLAGS = (qw/--self-contained/);
 
 sub import {
@@ -789,9 +789,15 @@ section. Many thanks!
 
 Patch to add Win32 support contributed by Curtis Jewell <csjewell@cpan.org>.
 
+=head1 COPYRIGHT
+
+Copyright (c) 2007 - 2009 the local::lib L</AUTHOR> and L</CONTRIBUTORS> as
+listed above.
+
 =head1 LICENSE
 
-This library is free software under the same license as perl itself.
+This library is free software and may be distributed under the same terms
+as perl itself.
 
 =cut
 
