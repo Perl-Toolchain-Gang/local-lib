@@ -1,5 +1,11 @@
 Revision history for local::lib
 
+1.004008 2009-10-13
+
+        - Clarify re-reading the shell config file after writing to it.
+
+        - Clarify copyright and licensing for packaging by vendors.
+
 1.004007 2009-09-02
 
         - Ensure that $ENV{PERL5LIB} and @INC are always de-duped, stopping
