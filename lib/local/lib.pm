@@ -452,6 +452,11 @@ You can also pass --bootstrap=~/foo to get a different location -
 
   echo 'eval $(perl -I$HOME/foo/lib/perl5 -Mlocal::lib=$HOME/foo)' >>~/.bashrc
 
+After writing your shell configuration file, be sure to re-read it to get the
+changed settings into your current shell's environment. Bourne shells use C<.
+~/.bashrc> for this, whereas C shells use C<source ~/.cshrc>. Replace .bashrc or
+.cshrc with the name of the file you wrote above with the echo command.
+
 If you're on a slower machine, or are operating under draconian disk space
 limitations, you can disable the automatic generation of manpages from POD when
 installing modules by using the C<--no-manpages> argument when bootstrapping:
