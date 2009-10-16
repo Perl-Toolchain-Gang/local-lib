@@ -1,7 +1,6 @@
 Revision history for local::lib
 
-        - Use CPAN::Version (if available) to do version comparison for loading
-          File::HomeDir is it works more correctly with development releases
+        - Suppress warning if a File::HomeDir dev release is installed.
 
 1.004008 2009-10-13
 
