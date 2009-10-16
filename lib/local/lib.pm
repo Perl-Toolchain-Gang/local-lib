@@ -157,7 +157,11 @@ sub resolve_home_path {
   my ($user) = ($path =~ /^~([^\/]+)/); # can assume ^~ so undef for 'us'
   my $tried_file_homedir;
   my $homedir = do {
-    if (eval { require File::HomeDir } && $File::HomeDir::VERSION >= 0.65) {
+    if (
+        eval { require File::HomeDir }
+        # Use CPAN::Version if available as it deals correctly with dev releases
+        && (eval { require CPAN::Version; } ? CPAN::Version->vgt($File::HomeDir::VERSION, 0.65) : $File::HomeDir::VERSION >= 0.65
+    )) {
       $tried_file_homedir = 1;
       if (defined $user) {
         File::HomeDir->users_home($user);
