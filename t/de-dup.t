@@ -17,8 +17,6 @@ local::lib->import($dir);
     map { $inc{$_}++ } @INC;
     map { $perl5lib{$_} } split /:/, $ENV{PERL5LIB};
     ok ! grep({ $inc{$_} > 1 } keys %inc), '@INC entries not duplicated';
-use Data::Dumper;
-warn Dumper(\@INC);
     ok ! grep({ $perl5lib{$_} > 1 } keys %perl5lib), 'ENV{PERL5LIB} entries not duplicated';
 }
 
