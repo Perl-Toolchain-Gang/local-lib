@@ -157,7 +157,6 @@ sub resolve_home_path {
   my ($user) = ($path =~ /^~([^\/]+)/); # can assume ^~ so undef for 'us'
   my $tried_file_homedir;
   my $homedir = do {
-    no warnings 'numeric'; # Disable warning caused by version comparison with dev releases..
     if (eval { require File::HomeDir } && $File::HomeDir::VERSION >= 0.65) {
       $tried_file_homedir = 1;
       if (defined $user) {
