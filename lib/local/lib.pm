@@ -21,7 +21,7 @@ Please see `perldoc local::lib` for directions on using this module.
 DEATH
 
   # Remember what PERL5LIB was when we started
-  my $perl5lib = $ENV{PERL5LIB};
+  my $perl5lib = $ENV{PERL5LIB} || '';
 
   my %arg_store;
   for my $arg (@args) {

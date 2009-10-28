@@ -1,5 +1,7 @@
 Revision history for local::lib
 
+        - Fix warning if your $ENV{PERL5LIB} is undef
+
 1.004008 2009-10-13
 
         - Clarify re-reading the shell config file after writing to it.
