@@ -1,5 +1,7 @@
 Revision history for local::lib
 
+        - Require CPAN-1.81 because 1.80 threw the error "Can't locate
+          CPAN/HandleConfig.pm"
         - Fix warning if your $ENV{PERL5LIB} is undef
 
 1.004008 2009-10-13

@@ -53,7 +53,7 @@ DEATH
     system($^X, '-MExtUtils::Install 1.43', '-e1');
     my $eui = $? >> 8;
 
-    system($^X, '-MCPAN 1.80', '-e1');
+    system($^X, '-MCPAN 1.81', '-e1');
     my $cpan = $? >> 8;
     my $cpan_command = '';
 
@@ -127,7 +127,7 @@ requires 'ExtUtils::Install' => '1.43'; # ditto
 requires 'ExtUtils::CBuilder'; # this and ParseXS are needed for MB C_support
 requires 'ExtUtils::ParseXS';
 requires 'Module::Build' => '0.28'; # lib -> lib/perl5 change
-my $required_CPAN = '1.80';
+my $required_CPAN = '1.81';
 requires 'CPAN' => $required_CPAN; # sudo support + CPAN::HandleConfig
 
 # No, really. See
