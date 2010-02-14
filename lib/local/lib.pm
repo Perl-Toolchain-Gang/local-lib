@@ -11,7 +11,7 @@ use File::Path ();
 use Carp ();
 use Config;
 
-our $VERSION = '1.004009'; # 1.4.9
+our $VERSION = '1.005000'; # 1.5.0
 my @KNOWN_FLAGS = (qw/--self-contained/);
 
 sub import {
@@ -566,6 +566,26 @@ PATH is appended to, rather than clobbered.
 =back
 
 These values are then available for reference by any code after import.
+
+=head1 CREATING A SELF-CONTAINED SET OF MODULES
+
+You can use local::lib to prepare a directory which contains a module and all
+of its non-core dependencies.  The C<--self-contained> option ignores any
+globally installed modules when resolving dependencies, only considering
+modules installed in a "local::lib" directory or provided by core Perl.
+
+A use-case for this feature would be to prepare to deploy a whole "stack" of
+module dependencies on a new machine, even if you have copies of the same
+dependencies installed globally already.
+
+The C<--self-contained> option should be used like this: 
+
+  # Install LWP and *all non-core* dependencies to the 'my_lwp' directory 
+  perl -MCPAN -Mlocal::lib=--self-contained,my_lwp -e 'CPAN::install(LWP)'
+
+Note that some dependencies may involve C-based "XS" code even if your target
+module doesn't. The issue of dealing with XS vs Pure Perl code is beyond the scope
+of what local::lib provides. 
 
 =head1 METHODS
 

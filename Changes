@@ -1,5 +1,8 @@
 Revision history for local::lib
 
+        - Start of better docs for C<--self-contained> thanks to
+          markstos@cpan.org.
+
 1.004009 2009-11-07
 
         - Fix warning if your $ENV{PERL5LIB} is undef
