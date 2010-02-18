@@ -350,7 +350,7 @@ sub build_environment_vars_for {
     PERL5LIB => join($Config{path_sep},
                   $class->install_base_perl_path($path),
                   $class->install_base_arch_path($path),
-                  ($ENV{PERL5LIB} ?
+                  (($ENV{PERL5LIB}||()) ?
                     ($interpolate == INTERPOLATE_ENV
                       ? ($ENV{PERL5LIB})
                       : (($^O ne 'MSWin32') ? '$PERL5LIB' : '%PERL5LIB%' ))
@@ -359,7 +359,7 @@ sub build_environment_vars_for {
     PATH => join($Config{path_sep},
               $class->install_base_bin_path($path),
               ($interpolate == INTERPOLATE_ENV
-                ? $ENV{PATH}
+                ? ($ENV{PATH}||())
                 : (($^O ne 'MSWin32') ? '$PATH' : '%PATH%' ))
              ),
   )
@@ -808,6 +808,9 @@ pattern of Freenode IRC contributed the beginnings of the Troubleshooting
 section. Many thanks!
 
 Patch to add Win32 support contributed by Curtis Jewell <csjewell@cpan.org>.
+
+Warnings for missing PATH/PERL5LIB (as when not running interactively) silenced
+by a patch from Marco Emilio Poleggi.
 
 =head1 COPYRIGHT
 
