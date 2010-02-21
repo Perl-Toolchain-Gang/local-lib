@@ -28,7 +28,7 @@ if(exists $ENV{PERL_LL_TAR}) {
   $have_gtar ||= -x $ENV{PERL_LL_TAR};
 }
 
-die <<'DEATH' unless $has_gtar;
+die <<'DEATH' unless $have_gtar;
 You are using Solaris (or another traditional Unix) that does not provide a sane
 tar, capable of dealing with the output of GNU tar. Please either set the
 PERL_LL_TAR environment variable to the location of a version of tar that
