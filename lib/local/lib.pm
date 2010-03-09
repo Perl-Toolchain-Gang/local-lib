@@ -463,7 +463,7 @@ installing modules by using the C<--no-manpages> argument when bootstrapping:
 
   perl Makefile.PL --bootstrap --no-manpages
 
-If you want to install multiple Perl module environments, say for application evelopment, 
+If you want to install multiple Perl module environments, say for application development, 
 install local::lib globally and then:
 
   cd ~/mydir1
