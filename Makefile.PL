@@ -112,7 +112,7 @@ DEATH
        # <mst> ExtUtils::ParseXS uses Module::Build
        # <mst> but Module::Build depends on it
        # <mst> so you need to set prefer_installer MM
-       # <mst> so cpan uses EU::ParseXS' Makefile.PL
+       # <mst> so cpan uses EU::ParseXS Makefile.PL
        # <mst> since we already got EUMM, *that* works
        $CPAN::Config->{prefer_installer} = "EUMM";
        CPAN::Config->load;
