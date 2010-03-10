@@ -49,7 +49,7 @@ DEATH
     }
   }
 
-  if($arg_store{self-contained}) {
+  if($arg_store{'self-contained'}) {
     # The only directories that remain are those that we just defined and those
     # where core modules are stored.  We put PERL5LIB first, so it'll be favored
     # over privlibexp and archlibexp
