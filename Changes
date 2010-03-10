@@ -1,5 +1,7 @@
 Revision history for local::lib
 
+1.005000 2010-03-10
+
         - More robust handling of running new toolchains on older perls. This
           should sort out issues users have with bootstrapping on e.g. Solaris
           and other traditional Unices. In addition, try to find a GNU tar
