@@ -102,7 +102,8 @@ DEATH
          }
          return $orig->(@_);
        };
-       $CPAN::Config->{urllist} = ["http://cpan.shadowcatprojects.net"];
+       # not yet -- apeiron, 2010-03-10 
+       #$CPAN::Config->{urllist} = ["http://cpan.shadowcatprojects.net"];
        # <mst> all bootstrapped fine on one DH account
        # <mst> on another, it tries to install man stuff into /usr/local
        # <mst> cannot for the life of me figure out why
