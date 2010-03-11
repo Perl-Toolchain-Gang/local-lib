@@ -1,5 +1,9 @@
 Revision history for local::lib
 
+1.005001 2010-03-10
+
+        - I am an idiot.
+
 1.005000 2010-03-10
 
         - More robust handling of running new toolchains on older perls. This

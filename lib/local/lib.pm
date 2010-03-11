@@ -11,7 +11,7 @@ use File::Path ();
 use Carp ();
 use Config;
 
-our $VERSION = '1.005000'; # 1.5.0
+our $VERSION = '1.005001'; # 1.5.1
 my @KNOWN_FLAGS = (qw/--self-contained/);
 
 sub import {
