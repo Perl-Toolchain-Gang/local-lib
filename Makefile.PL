@@ -204,13 +204,21 @@ delete $ENV{PERL5_CPAN_IS_RUNNING} if $no_cpan_env;
         CPAN::HandleConfig->load;
         for my $eumm_setting ( qw/makepl_arg make_install_arg/ ) {
             if ($CPAN::Config->{$eumm_setting} =~ /(?:PREFIX|INSTALL_BASE)/) {
-                die "Possibly invalid config detected in $eumm_setting: " . $CPAN::Config->{$eumm_setting};
+                die <<"DEATH";
+WHOA THERE! It looks like you've got $CPAN::Config->{$eumm_setting} set. This is
+known to cause problems with local::lib. Please either remove this setting or
+clear out your .cpan directory.
+DEATH
             }
         }
 
         for my $mb_setting (qw/mbuild_arg mbuild_install_arg mbuildpl_arg/) {
             if ($CPAN::Config->{$mb_setting} =~ /(?:--prefix|--install_base)/) {
-                die "Possibly invalid config detected in $mb_setting: " . $CPAN::Config->{$mb_setting};
+                die <<"DEATH";
+WHOA THERE! It looks like you've got $CPAN::Config->{$mb_setting} set. This is
+known to cause problems with local::lib. Please either remove this setting or
+clear out your .cpan directory.
+DEATH
             }
         }
     }

@@ -397,8 +397,8 @@ In code -
 
 From the shell -
 
-  # Install LWP and its missing dependencies to the 'my_lwp' directory
-  perl -MCPAN -Mlocal::lib=my_lwp -e 'CPAN::install(LWP)'
+  # Install LWP and its missing dependencies to the '~/perl5' directory
+  perl -MCPAN -Mlocal::lib -e 'CPAN::install(LWP)'
 
   # Install LWP and *all non-core* dependencies to the 'my_lwp' directory 
   perl -MCPAN -Mlocal::lib=--self-contained,my_lwp -e 'CPAN::install(LWP)'
