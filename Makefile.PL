@@ -183,24 +183,26 @@ all_from 'lib/local/lib.pm';
 requires 'ExtUtils::MakeMaker' => '6.31'; # version INSTALL_BASE was added
 requires 'ExtUtils::Install' => '1.43'; # ditto
 requires 'Module::Build' => '0.36'; # PERL_MB_OPT
-my $required_CPAN = '1.82';
-requires 'CPAN' => $required_CPAN; # sudo support + CPAN::HandleConfig
 
-# No, really. See
-# https://rt.cpan.org/Public/Bug/Display.html?id=23735
-# for why CPAN now sets the CPANPLUS env var.
-# trouble is this means we can't auto_install(_now) CPAN itself
-# without this beautiful hack
+# don't bother fixing CPAN.pm if bootstrapped from cpanminus
+unless ($ENV{PERL5_CPANM_IS_RUNNING}) {
+    my $required_CPAN = '1.82';
+    requires 'CPAN' => $required_CPAN; # sudo support + CPAN::HandleConfig
 
-my $no_cpanplus_env = !exists $ENV{PERL5_CPANPLUS_IS_RUNNING};
-my $no_cpan_env = !exists $ENV{PERL5_CPAN_IS_RUNNING};
-require CPAN;
-delete $ENV{PERL5_CPANPLUS_IS_RUNNING} if $no_cpanplus_env;
-delete $ENV{PERL5_CPAN_IS_RUNNING} if $no_cpan_env;
+    # No, really. See
+    # https://rt.cpan.org/Public/Bug/Display.html?id=23735
+    # for why CPAN now sets the CPANPLUS env var.
+    # trouble is this means we can't auto_install(_now) CPAN itself
+    # without this beautiful hack
 
-# and make sure that the user doesn't have any existing CPAN config that'll
-# cause us problems for the next few steps.
-{
+    my $no_cpanplus_env = !exists $ENV{PERL5_CPANPLUS_IS_RUNNING};
+    my $no_cpan_env = !exists $ENV{PERL5_CPAN_IS_RUNNING};
+    require CPAN;
+    delete $ENV{PERL5_CPANPLUS_IS_RUNNING} if $no_cpanplus_env;
+    delete $ENV{PERL5_CPAN_IS_RUNNING} if $no_cpan_env;
+
+    # and make sure that the user doesn't have any existing CPAN config that'll
+    # cause us problems for the next few steps.
     local $@;
     eval { require CPAN::HandleConfig; };
     # Need newish CPAN.pm for this, ergo skip it if that version of CPAN isn't
