@@ -12,13 +12,11 @@ use Carp ();
 use Config;
 
 our $VERSION = '1.005001'; # 1.5.1
-my @KNOWN_FLAGS = (qw/--self-contained/);
+
+our @KNOWN_FLAGS = qw(--self-contained);
 
 sub import {
   my ($class, @args) = @_;
-  @args <= 1 + @KNOWN_FLAGS or die <<'DEATH';
-Please see `perldoc local::lib` for directions on using this module.
-DEATH
 
   # Remember what PERL5LIB was when we started
   my $perl5lib = $ENV{PERL5LIB} || '';
@@ -50,21 +48,7 @@ DEATH
   }
 
   if($arg_store{'self-contained'}) {
-    # The only directories that remain are those that we just defined and those
-    # where core modules are stored.  We put PERL5LIB first, so it'll be favored
-    # over privlibexp and archlibexp
-
-    @INC = _uniq(
-      $class->install_base_perl_path($arg_store{path}),
-      $class->install_base_arch_path($arg_store{path}),
-      split( $Config{path_sep}, $perl5lib ),
-      $Config::Config{privlibexp},
-      $Config::Config{archlibexp}
-    );
-
-    # We explicitly set PERL5LIB here to the above de-duped list to prevent
-    # @INC from growing with each invocation
-    $ENV{PERL5LIB} = join( $Config{path_sep}, @INC );
+    die "FATAL: The local::lib --self-contained flag has never worked reliably and the original author, Mark Stosberg, was unable or unwilling to maintain it. As such, this flag has been removed from the local::lib codebase in order to prevent misunderstandings and potentially broken builds. The local::lib authors recommend that you look at the lib::core::only module shipped with this distribution in order to create a more robust environment that is equivalent to what --self-contained provided (although quite possibly not what you originally thought it provided due to the poor quality of the documentation, for which we apologise).\n";
   }
 
   $arg_store{path} = $class->resolve_path($arg_store{path});
@@ -790,11 +774,6 @@ auto_install fixes kindly sponsored by http://www.takkle.com/
 Patches to correctly output commands for csh style shells, as well as some
 documentation additions, contributed by Christopher Nehren <apeiron@cpan.org>.
 
-'--self-contained' feature contributed by Mark Stosberg <mark@summersault.com>.
-
-Ability to pass '--self-contained' without a directory inspired by frew on
-irc.perl.org/#catalyst.
-
 Doc patches for a custom local::lib directory contributed by Torsten Raudssus
 <torsten@raudssus.de>.
 
@@ -811,6 +790,9 @@ Patch to add Win32 support contributed by Curtis Jewell <csjewell@cpan.org>.
 
 Warnings for missing PATH/PERL5LIB (as when not running interactively) silenced
 by a patch from Marco Emilio Poleggi.
+
+Mark Stosberg <mark@summersault.com> provided the code for the now deleted
+'--self-contained' option.
 
 =head1 COPYRIGHT
 

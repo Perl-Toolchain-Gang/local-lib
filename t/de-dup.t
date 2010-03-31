@@ -4,7 +4,7 @@ use Test::More;
 use File::Temp qw(tempdir);
 use Cwd;
 
-plan tests => 4;
+plan tests => 2;
 
 my $dir = tempdir('test_local_lib-XXXXX', DIR => Cwd::abs_path('t'), CLEANUP => 1);
 
@@ -19,14 +19,3 @@ local::lib->import($dir);
     ok ! grep({ $inc{$_} > 1 } keys %inc), '@INC entries not duplicated';
     ok ! grep({ $perl5lib{$_} > 1 } keys %perl5lib), 'ENV{PERL5LIB} entries not duplicated';
 }
-
-local::lib->import('--self-contained', $dir);
-
-{
-    my (%inc, %perl5lib);
-    map { $inc{$_}++ } @INC;
-    map { $perl5lib{$_} } split /:/, $ENV{PERL5LIB};
-    ok ! grep({ $inc{$_} > 1 } keys %inc), '@INC entries not duplicated (--self-contained)';
-    ok ! grep({ $perl5lib{$_} > 1 } keys %perl5lib), 'ENV{PERL5LIB} entries not duplicated (--self-contained)';
-}
-
