@@ -384,9 +384,6 @@ From the shell -
   # Install LWP and its missing dependencies to the '~/perl5' directory
   perl -MCPAN -Mlocal::lib -e 'CPAN::install(LWP)'
 
-  # Install LWP and *all non-core* dependencies to the 'my_lwp' directory 
-  perl -MCPAN -Mlocal::lib=--self-contained,my_lwp -e 'CPAN::install(LWP)'
-
   # Just print out useful shell commands
   $ perl -Mlocal::lib
   export MODULEBUILDRC=/home/username/perl/.modulebuildrc
@@ -553,23 +550,9 @@ These values are then available for reference by any code after import.
 
 =head1 CREATING A SELF-CONTAINED SET OF MODULES
 
-You can use local::lib to prepare a directory which contains a module and all
-of its non-core dependencies.  The C<--self-contained> option ignores any
-globally installed modules when resolving dependencies, only considering
-modules installed in a "local::lib" directory or provided by core Perl.
-
-A use-case for this feature would be to prepare to deploy a whole "stack" of
-module dependencies on a new machine, even if you have copies of the same
-dependencies installed globally already.
-
-The C<--self-contained> option should be used like this: 
-
-  # Install LWP and *all non-core* dependencies to the 'my_lwp' directory 
-  perl -MCPAN -Mlocal::lib=--self-contained,my_lwp -e 'CPAN::install(LWP)'
-
-Note that some dependencies may involve C-based "XS" code even if your target
-module doesn't. The issue of dealing with XS vs Pure Perl code is beyond the scope
-of what local::lib provides. 
+See L<lib::core::only|lib::core::only> for one way to do this - but note that
+there are a number of caveats, and the best approach is always to perform a
+build against a clean perl (i.e. site and vendor as close to empty as possible).
 
 =head1 METHODS
 

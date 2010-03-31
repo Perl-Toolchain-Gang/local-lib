@@ -17,15 +17,19 @@ lib::core::only - Remove all non-core paths from @INC to avoid site/vendor dirs
 
   use lib::core::only; # now @INC contains only the two core directories
 
-  # To get only the core directories plus the ones for the local::lib in
-  # scope
+To get only the core directories plus the ones for the local::lib in scope:
 
   $ perl -Mlib::core::only -Mlocal::lib=~/perl5 myscript.pl
+
+To attempt to do a self-contained build (but note this will not reliably
+propagate into subprocesses, see the CAVEATS below):
+
+  $ PERL5OPT='-Mlib::core::only -Mlocal::lib=~/perl5' cpan
 
 =head1 DESCRIPTION
 
 lib::core::only is simply a shortcut to say "please reduce my @INC to only
-the core lib and archlib directories of this perl".
+the core lib and archlib (architecture-specific lib) directories of this perl".
 
 You might want to do this to ensure a local::lib contains only the code you
 need, or to test an L<App::FatPacker|App::FatPacker> tree, or to avoid known
