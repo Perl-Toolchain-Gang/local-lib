@@ -1,5 +1,9 @@
 Revision history for local::lib
 
+        - Create lib::core::only that provides the "set @INC to core dirs
+          only" functionality that was the only part of --self-contained that
+          ever worked usefully.
+
 1.005001 2010-03-10
 
         - I am an idiot.
