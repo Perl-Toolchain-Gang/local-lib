@@ -332,8 +332,8 @@ sub build_environment_vars_for {
     MODULEBUILDRC => $class->modulebuildrc_path($path),
     PERL_MM_OPT => "INSTALL_BASE=${path}",
     PERL5LIB => join($Config{path_sep},
-                  $class->install_base_perl_path($path),
                   $class->install_base_arch_path($path),
+                  $class->install_base_perl_path($path),
                   (($ENV{PERL5LIB}||()) ?
                     ($interpolate == INTERPOLATE_ENV
                       ? ($ENV{PERL5LIB})
