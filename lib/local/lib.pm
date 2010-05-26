@@ -396,7 +396,9 @@ From the shell -
 A typical way to install local::lib is using what is known as the
 "bootstrapping" technique.  You would do this if your system administrator
 hasn't already installed local::lib.  In this case, you'll need to install
-local::lib in your home directory.
+local::lib in your home directory. If you do have administrative priveleges,
+you will still want to set up your environment variables, as discussed in
+step 4 (and for Windows users, see L</Differences when using this module under Win32>).
 
 1. Download and unpack the local::lib tarball from CPAN (search for "Download"
 on the CPAN page about local::lib).  Do this as an ordinary user, not as root
@@ -473,6 +475,9 @@ Put this before any BEGIN { ... } blocks that require the modules you installed.
 
 =head2 Differences when using this module under Win32
 
+To set up the proper environment variables for your current session of
+C<CMD.exe>, you can use this:
+
   C:\>perl -Mlocal::lib
   set MODULEBUILDRC=C:\DOCUME~1\ADMINI~1\perl5\.modulebuildrc
   set PERL_MM_OPT=INSTALL_BASE=C:\DOCUME~1\ADMINI~1\perl5
@@ -484,7 +489,7 @@ Put this before any BEGIN { ... } blocks that require the modules you installed.
   ### instead of $(perl -Mlocal::lib=./)
 
 If you want the environment entries to persist, you'll need to add then to the
-Control Panel's System applet yourself at the moment.
+Control Panel's System applet yourself or use L<App::local::lib::Win32Helper>.
 
 The "~" is translated to the user's profile directory (the directory named for
 the user under "Documents and Settings" (Windows XP or earlier) or "Users"
@@ -776,6 +781,9 @@ by a patch from Marco Emilio Poleggi.
 
 Mark Stosberg <mark@summersault.com> provided the code for the now deleted
 '--self-contained' option.
+
+Documentation patches to make win32 usage clearer by
+David Mertens <dcmertens.perl@gmail.com> (run4flat).
 
 =head1 COPYRIGHT
 
