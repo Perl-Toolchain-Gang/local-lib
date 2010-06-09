@@ -2,8 +2,8 @@ Revision history for local::lib
 
 1.006001 2010-06-09
 
-	- doc patch for win32 from run4flat
-	- reverse the perl/arch paths in PERL5LIB
+        - doc patch for win32 from run4flat
+        - reverse the perl/arch paths in PERL5LIB
 
 1.006000 2010-03-31
 
