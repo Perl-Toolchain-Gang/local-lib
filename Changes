@@ -1,5 +1,12 @@
 Revision history for local::lib
 
+1.006001 2010-06-09
+
+	- doc patch for win32 from run4flat
+	- reverse the perl/arch paths in PERL5LIB
+
+1.006000 2010-03-31
+
         - Create lib::core::only that provides the "set @INC to core dirs
           only" functionality that was the only part of --self-contained that
           ever worked usefully.
