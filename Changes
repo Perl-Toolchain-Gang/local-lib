@@ -1,10 +1,9 @@
 Revision history for local::lib
 
+1.006001 2010-06-10
+
         - Added german translation
         - Enhanced some parts of english documentation
-
-1.006001 2010-06-09
-
         - doc patch for win32 from run4flat
         - reverse the perl/arch paths in PERL5LIB
 
