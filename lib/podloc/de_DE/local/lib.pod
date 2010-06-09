@@ -4,6 +4,8 @@
 
 local::lib - Erschaffen und benutzen von Perl Modulen in einem lokalen lib/ Verzeichnis mit PERL5LIB
 
+L<Original English Translation|local::lib>
+
 =head1 SYNOPSIS
 
 Im Code -
@@ -12,9 +14,9 @@ Im Code -
 
   use local::lib '~/foo'; # das selbe, aber mit ~/foo
 
-  # Or...
+  # Oder...
   use FindBin;
-  use local::lib "$FindBin::Bin/../support";  # app-local support library
+  use local::lib "$FindBin::Bin/../support";  # Applikationsspezifische Sammlung von Modulen
 
 Von der Shell -
 
@@ -158,7 +160,7 @@ $ENV{HOME} nicht gesetzt ist. Das Verzeichnis wird hierbei zu dem korrekten
 Kurznamen umgewandelt, und muss daher definitiv existieren, und wird um die
 nötigen Unterverzeichnise erweitert.
 
-=head1 EXISTENZGRUNDLAGE
+=head1 GRUNDPRINZIP
 
 Die Version von den Perl Paketen die man benötigt für spezifische Aufgaben sind
 sehr häufig nicht die richtigen oder korrekten Versionen auf dem System

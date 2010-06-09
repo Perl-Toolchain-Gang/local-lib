@@ -369,7 +369,7 @@ ok(-f 't/var/splat/.modulebuildrc');
 
 local::lib - create and use a local lib/ for perl modules with PERL5LIB
 
-L<podloc::de_DE::local::lib|Deutsche Übersetzung>
+L<Deutsche Übersetzung|podloc::de_DE::local::lib>
 
 =head1 SYNOPSIS
 
