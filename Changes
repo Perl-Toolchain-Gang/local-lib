@@ -1,5 +1,8 @@
 Revision history for local::lib
 
+        - Added german translation
+        - Enhanced some parts of english documentation
+
 1.006001 2010-06-09
 
         - doc patch for win32 from run4flat

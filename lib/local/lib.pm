@@ -363,9 +363,13 @@ ok(-f 't/var/splat/.modulebuildrc');
 
 =end testing
 
+=encoding utf8
+
 =head1 NAME
 
 local::lib - create and use a local lib/ for perl modules with PERL5LIB
+
+L<podloc::de_DE::local::lib|Deutsche Übersetzung>
 
 =head1 SYNOPSIS
 
@@ -396,9 +400,14 @@ From the shell -
 A typical way to install local::lib is using what is known as the
 "bootstrapping" technique.  You would do this if your system administrator
 hasn't already installed local::lib.  In this case, you'll need to install
-local::lib in your home directory. If you do have administrative priveleges,
-you will still want to set up your environment variables, as discussed in
-step 4 (and for Windows users, see L</Differences when using this module under Win32>).
+local::lib in your home directory. 
+
+If you do have administrative privileges, you will still want to set up your 
+environment variables, as discussed in step 4. Without this, you would still
+install the modules into the system CPAN installation and also your Perl scripts
+will not use the lib/ path you bootstrapped with local::lib.
+
+Windows users must also see L</Differences when using this module under Win32>.
 
 1. Download and unpack the local::lib tarball from CPAN (search for "Download"
 on the CPAN page about local::lib).  Do this as an ordinary user, not as root
@@ -412,12 +421,19 @@ convenient location.
 If the system asks you whether it should automatically configure as much
 as possible, you would typically answer yes.
 
-3. Run this:
+In order to install local::lib into a directory other than default, you need 
+to give that directory on the call of bootstrap like this: 
+
+  perl Makefile.PL --bootstrap=~/foo
+
+3. Run this: (local::lib assumes you have make installed on your system)
 
   make test && make install
 
-4. Arrange for Perl to use your own packages instead of the system
-packages.  If you are using bash, you can do this as follows:
+4. Now we need to setup the appropriate environment variables, so that Perl 
+starts using our newly generated lib/ directory. If you are using bash or
+any other Bourne shells, you can add this to your shell startup script this
+way:
 
   echo 'eval $(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)' >>~/.bashrc
 
@@ -428,17 +444,14 @@ If you are using C shell, you can do this as follows:
   /bin/csh
   perl -I$HOME/perl5/lib/perl5 -Mlocal::lib >> ~/.cshrc
 
-You can also pass --bootstrap=~/foo to get a different location -
-
-  perl Makefile.PL --bootstrap=~/foo
-  make test && make install
+If you passed to bootstrap a directory other than default, you also need to give that as 
+import parameter to the call of the local::lib module like this way:
 
   echo 'eval $(perl -I$HOME/foo/lib/perl5 -Mlocal::lib=$HOME/foo)' >>~/.bashrc
 
 After writing your shell configuration file, be sure to re-read it to get the
-changed settings into your current shell's environment. Bourne shells use C<.
-~/.bashrc> for this, whereas C shells use C<source ~/.cshrc>. Replace .bashrc or
-.cshrc with the name of the file you wrote above with the echo command.
+changed settings into your current shell's environment. Bourne shells use 
+C<. ~/.bashrc> for this, whereas C shells use C<source ~/.cshrc>.
 
 If you're on a slower machine, or are operating under draconian disk space
 limitations, you can disable the automatic generation of manpages from POD when
@@ -446,13 +459,15 @@ installing modules by using the C<--no-manpages> argument when bootstrapping:
 
   perl Makefile.PL --bootstrap --no-manpages
 
-If you want to install multiple Perl module environments, say for application development, 
-install local::lib globally and then:
+To avoid doing several bootstrap for several Perl module environments on the 
+same account, for example if you use it for several different deployed 
+applications independently, you can use one bootstrapped local::lib 
+installation to install modules in different directories directly this way:
 
   cd ~/mydir1
   perl -Mlocal::lib=./
   eval $(perl -Mlocal::lib=./)  ### To set the environment for this shell alone
-  printenv  ### You will see that ~/mydir1 is in the PERL5LIB
+  printenv                      ### You will see that ~/mydir1 is in the PERL5LIB
   perl -MCPAN -e install ...    ### whatever modules you want
   cd ../mydir2
   ... REPEAT ...
@@ -484,7 +499,7 @@ C<CMD.exe>, you can use this:
   set PERL5LIB=C:\DOCUME~1\ADMINI~1\perl5\lib\perl5;C:\DOCUME~1\ADMINI~1\perl5\lib\perl5\MSWin32-x86-multi-thread
   set PATH=C:\DOCUME~1\ADMINI~1\perl5\bin;%PATH%
   
-    ### To set the environment for this shell alone
+  ### To set the environment for this shell alone
   C:\>perl -Mlocal::lib > %TEMP%\tmp.bat && %TEMP%\tmp.bat && del %TEMP%\temp.bat
   ### instead of $(perl -Mlocal::lib=./)
 
