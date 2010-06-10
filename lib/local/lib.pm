@@ -11,7 +11,7 @@ use File::Path ();
 use Carp ();
 use Config;
 
-our $VERSION = '1.006002'; # 1.6.2
+our $VERSION = '1.006003'; # 1.6.3
 
 our @KNOWN_FLAGS = qw(--self-contained);
 
@@ -368,8 +368,6 @@ ok(-f 't/var/splat/.modulebuildrc');
 =head1 NAME
 
 local::lib - create and use a local lib/ for perl modules with PERL5LIB
-
-L<Deutsche Übersetzung|podloc::de_DE::local::lib>
 
 =head1 SYNOPSIS
 

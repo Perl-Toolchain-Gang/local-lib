@@ -1,5 +1,9 @@
 Revision history for local::lib
 
+1.006003 2010-06-10
+
+        - Added german translation right
+
 1.006002 2010-06-10
 
         - Hotfix for a search.cpan.org "Bug"
