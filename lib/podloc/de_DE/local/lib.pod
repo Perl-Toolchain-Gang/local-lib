@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-local::lib - Erschaffen und benutzen von Perl Modulen in einem lokalen lib/ Verzeichnis mit PERL5LIB
+podloc::de_DE::local::lib - Erschaffen und benutzen von Perl Modulen in einem lokalen lib/ Verzeichnis mit PERL5LIB
 
 L<Original English Translation|local::lib>
 
