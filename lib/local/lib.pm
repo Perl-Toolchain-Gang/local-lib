@@ -11,7 +11,7 @@ use File::Path ();
 use Carp ();
 use Config;
 
-our $VERSION = '1.006001'; # 1.6.1
+our $VERSION = '1.006002'; # 1.6.2
 
 our @KNOWN_FLAGS = qw(--self-contained);
 
