@@ -510,6 +510,62 @@ the user under "Documents and Settings" (Windows XP or earlier) or "Users"
 directory is translated to a short name (which means the directory must exist)
 and the subdirectories are created.
 
+=head2 Some bash script magic
+
+Usually you set up separate local::lib destinations for different projects.
+So either you need to remember to run
+C<< `eval $(perl -Mlocal::lib=~/llib/project)` >>
+each time you start working on project foo, or you add this line to your
+scripts:
+
+  use local::lib '~/llib/project';
+
+Instead of doing this, you could load some magic bash script via C<< ~/.bashrc >>:
+
+  [[ -s $HOME/.local-lib.bash ]] && source $HOME/.local-lib.bash
+
+Content of C<< $HOME/.local-lib.bash >>:
+
+  #!/usr/bin/env bash
+  cd() {
+    builtin cd "$@"
+    local cwd ; cwd=$(pwd)
+    unset PERL5LIB
+    if [[ -f "$cwd/.llrc" ]] ; then
+      eval $(perl -Mlocal::lib=`cat $cwd/.llrc`)
+    else
+      if [[ -f "~/.llrc" ]] ; then
+        eval $(perl -Mlocal::lib=`cat ~/.llrc`)
+      else
+        eval $(perl -Mlocal::lib)
+      fi
+    fi
+  }
+
+So you just drop a C<< .llrc >> into all of your projects folders containing the
+destination of your local::lib directory for the project. You can also create
+the file C<< .llrc >> in your home directory and put a default local::lib
+destination in there.
+
+See it in action:
+
+  ~# cat .llrc
+  ~/perl5/locallib/default
+
+  ~# cat Development/OpenSource/perl-beetle/.llrc
+  ~/perl5/locallib/perl-beetle
+
+  ~# env | grep PERL5
+  PERL5LIB=/Users/plu/perl5/locallib/default/lib/perl5/darwin-2level:/Users/plu/perl5/locallib/default/lib/perl5
+
+  ~# cd Development/OpenSource/perl-beetle/
+  ~/Development/OpenSource/perl-beetle# env | grep PERL5
+  PERL5LIB=/Users/plu/perl5/locallib/perl-beetle/lib/perl5/darwin-2level:/Users/plu/perl5/locallib/perl-beetle/lib/perl5
+
+  ~/Development/OpenSource/perl-beetle# cd
+  ~# env | grep PERL5
+  PERL5LIB=/Users/plu/perl5/locallib/default/lib/perl5/darwin-2level:/Users/plu/perl5/locallib/default/lib/perl5
+
 =head1 RATIONALE
 
 The version of a Perl package on your machine is not always the version you
