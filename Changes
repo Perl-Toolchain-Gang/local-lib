@@ -1,5 +1,10 @@
 Revision history for local::lib
 
+1.006005 2010-07-13
+
+        - Added support informations (also for german)
+        - Fixed newline in german translation from DOS2UNIX
+
 1.006004 2010-06-10
 
         - I am stupid.

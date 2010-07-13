@@ -11,7 +11,7 @@ use File::Path ();
 use Carp ();
 use Config;
 
-our $VERSION = '1.006004'; # 1.6.4
+our $VERSION = '1.006005'; # 1.6.5
 
 our @KNOWN_FLAGS = qw(--self-contained);
 
@@ -764,6 +764,12 @@ On Win32 systems, C<COMSPEC> is also examined.
 
 =back
 
+=head1 SUPPORT
+
+IRC:
+
+    Join #local-lib on irc.perl.org.
+
 =head1 AUTHOR
 
 Matt S Trout <mst@shadowcat.co.uk> http://www.shadowcat.co.uk/
@@ -775,7 +781,8 @@ auto_install fixes kindly sponsored by http://www.takkle.com/
 Patches to correctly output commands for csh style shells, as well as some
 documentation additions, contributed by Christopher Nehren <apeiron@cpan.org>.
 
-Doc patches for a custom local::lib directory contributed by Torsten Raudssus
+Doc patches for a custom local::lib directory, more cleanups in the english
+documentation and a german documentation contributed by Torsten Raudssus
 <torsten@raudssus.de>.
 
 Hans Dieter Pearcey <hdp@cpan.org> sent in some additional tests for ensuring
@@ -800,7 +807,7 @@ David Mertens <dcmertens.perl@gmail.com> (run4flat).
 
 =head1 COPYRIGHT
 
-Copyright (c) 2007 - 2009 the local::lib L</AUTHOR> and L</CONTRIBUTORS> as
+Copyright (c) 2007 - 2010 the local::lib L</AUTHOR> and L</CONTRIBUTORS> as
 listed above.
 
 =head1 LICENSE

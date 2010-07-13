@@ -293,6 +293,12 @@ Auf Win32 Systemen, C<COMSPEC> wird auch analysiert.
 
 =back
 
+=head1 SUPPORT
+
+IRC:
+
+    Wir sind im Channel #local-lib auf dem Server irc.perl.org.
+
 =head1 AUTOR DER ÜBERSETZUNG
 
 Torsten Raudssus <torsten@raudssus.de> http://www.raudssus.de/
