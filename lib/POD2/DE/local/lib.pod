@@ -92,9 +92,6 @@ Parameter:
 
   perl Makefile.PL --bootstrap --no-manpages
 
-Wenn du mehrere lokale lib/ Installationen nutzen möchtest, z.B. für verschiedene
-Applikationen. Hierfür kannst du local::lib einfach einm
-
 Um zu vermeiden das man mehrere bootstraps macht um z.B. für verschiedene Applikationen
 eigene local::lib Installationen zu nutzen, kann man eine dieser Umgebungen benutzen
 um einfach in beliebigen anderen Verzeichnis Module zu installieren und somit weitere
