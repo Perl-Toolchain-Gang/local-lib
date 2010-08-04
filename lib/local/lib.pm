@@ -405,6 +405,8 @@ environment variables, as discussed in step 4. Without this, you would still
 install the modules into the system CPAN installation and also your Perl scripts
 will not use the lib/ path you bootstrapped with local::lib.
 
+By default local::lib installs itself and the CPAN modules into ~/perl5.
+
 Windows users must also see L</Differences when using this module under Win32>.
 
 1. Download and unpack the local::lib tarball from CPAN (search for "Download"
@@ -419,8 +421,8 @@ convenient location.
 If the system asks you whether it should automatically configure as much
 as possible, you would typically answer yes.
 
-In order to install local::lib into a directory other than default, you need 
-to give that directory on the call of bootstrap like this: 
+In order to install local::lib into a directory other than the default, you need
+to specify the name of the directory when you call bootstrap, as follows:
 
   perl Makefile.PL --bootstrap=~/foo
 
