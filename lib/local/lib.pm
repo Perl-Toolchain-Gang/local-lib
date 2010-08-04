@@ -718,6 +718,9 @@ install UNINST=1" and local::lib if you understand these possible consequences.
 
 =head1 LIMITATIONS
 
+The perl toolchain is unable to handle directory names with spaces in it,
+so you cant put your local::lib bootstrap into a directory with spaces.
+
 Rather basic shell detection. Right now anything with csh in its name is
 assumed to be a C shell or something compatible, and everything else is assumed
 to be Bourne, except on Win32 systems. If the C<SHELL> environment variable is
