@@ -428,7 +428,9 @@ IRC:
 
 =head1 AUTOR DA TRADUÇÃO
 
-Breno G. de Oliveira, C<< <garu at cpan.org> >>
+Breno G. de Oliveira, C<< <garu at cpan.org> >>, após ter perdido uma aposta
+para o L<Getty|http://search.cpan.org/~getty/> durante a Copa de 2010.
+
 
 =head1 COPYRIGHT
 
