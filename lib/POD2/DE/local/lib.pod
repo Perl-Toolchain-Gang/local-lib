@@ -152,7 +152,7 @@ L<App::local::lib::Win32Helper> benutzen.
 
 Die "~" wird übersetzt zu dem Benutzer Profil Verzeichnis (das Verzeichnis was
 beim User als "Dokumente und Einstellungen" bekannt ist unter Windows XP und
-vorher oder das "Benutzer" Verzeichnis bei Windows Vista und später, solange
+vorher oder das "Benutzer" Verzeichnis bei Windows Vista und später), solange
 $ENV{HOME} nicht gesetzt ist. Das Verzeichnis wird hierbei zu dem korrekten
 Kurznamen umgewandelt, und muss daher definitiv existieren, und wird um die
 nötigen Unterverzeichnise erweitert.

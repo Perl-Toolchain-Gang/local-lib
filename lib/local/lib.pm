@@ -508,7 +508,7 @@ Control Panel's System applet yourself or use L<App::local::lib::Win32Helper>.
 
 The "~" is translated to the user's profile directory (the directory named for
 the user under "Documents and Settings" (Windows XP or earlier) or "Users"
-(Windows Vista or later) unless $ENV{HOME} exists. After that, the home
+(Windows Vista or later)) unless $ENV{HOME} exists. After that, the home
 directory is translated to a short name (which means the directory must exist)
 and the subdirectories are created.
 
