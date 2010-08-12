@@ -1,10 +1,15 @@
 Revision history for local::lib
 
+1.006007 2010-08-12
+
+        - Fixing stuff so that search.cpan.org displays right
+        - Documented one method in all languages
+
 1.006006 2010-08-12
 
         - Added portuguese translation
         - Several minor fixes in the documentation
-		- Changed methods look in documentation
+        - Changed methods look in documentation
 
 1.006005 2010-07-13
 

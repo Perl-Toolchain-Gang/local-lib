@@ -106,7 +106,7 @@ eigenständige lib/ Umgebungen zu bekommen:
 
   printenv                      ### Hier kannst du sehen das ~/mydir1
                                 ### in der PERL5LIB Umgebungsvariable
-								### steht
+                                ### steht
 
   perl -MCPAN -e install ...    ### welche Module auch immer ...
   cd ../mydir2
@@ -260,6 +260,9 @@ als Basis Verzeichnis zu nutzen.
 =item Rückgabewert: \%umgebungs_variablen
 
 =back
+
+Gibt ein Hash zurück mit den Variablen die nötig sind in den Umgebungsvariablen
+um eine Installation in dem gegebenen Pfad zu benutzen.
 
 =head2 setup_env_hash_for
 
