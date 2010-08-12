@@ -813,6 +813,9 @@ Mark Stosberg <mark@summersault.com> provided the code for the now deleted
 Documentation patches to make win32 usage clearer by
 David Mertens <dcmertens.perl@gmail.com> (run4flat).
 
+Brazilian portuguese translation and minor doc patches contributed by Breno
+G. de Oliveira <garu@cpan.org>.
+
 =head1 COPYRIGHT
 
 Copyright (c) 2007 - 2010 the local::lib L</AUTHOR> and L</CONTRIBUTORS> as
