@@ -39,6 +39,8 @@ Schritt 4 in deinem Shell Startup Skript gesetzt werden. Ohne diesen Schritt wer
 Module von CPAN weiterhin im System installiert und auch Perl Skripte die du startest
 würden das von local::lib erstellte lib/ Verzeichnis nicht nutzen.
 
+Standardmäßig installiert sich local::lib in ~/perl5.
+
 Windows Benutzern müssen ausserdem dies hier lesen: 
 L</Unterschiede bei Benutzung dieses Module mit Win32>.
 
@@ -222,7 +224,7 @@ C<Übersetzung fehlt...>
 
 C<Übersetzung fehlt...>
 
-=head1 A WARNING ABOUT UNINST=1
+=head1 EINE WARNUNG VOR UNINST=1
 
 Wenn man local::lib in Kombination mit "make install UNINST=1" benutzt, muss
 man vorsichtig sein über die Tatsache das der Prozess über die Neuinstallation
@@ -235,6 +237,16 @@ benutzt wenn man sehr sicher darüber ist welche Konsequenzen einem
 entgegenkommen.
 
 =head1 EINSCHRÄNKUNGEN
+
+Die Werkzeuge von perl, die benutzt werden um die Pakete zu installieren
+(die sogenannte toolchain), sind leider nicht in der Lage sauber mit 
+Verzeichnissen umzugehen die Leerzeichen enthalten und können daher local::lib
+nicht direkt in ein solches Verzeichnis installieren. Was du machen kannst
+ist B<nach> der Installation von local::lib und der Module die du in deiner
+local::lib haben willst, das gesamte Verzeichnis dahin zu bewegen. local::lib
+kann mit dem Verzeichnis mit Leerzeichen umgehen. Bitte aufpassen das natürlich
+eine weitere Installation oder ein Erneuern von Paketen mit dem CPAN Programm
+nicht mehr möglich ist.
 
 Die Shell Erkennung ist sehr primitiv. Derzeit ist es so das alles was "csh"
 im Namen hat auch als C Shell eingeordnet wird, und alles andere wird als
