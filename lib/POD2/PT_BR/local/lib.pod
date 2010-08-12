@@ -220,9 +220,9 @@ o mais vazios possível).
 
 =over 4
 
-=item Argumentos: $path
+=item Argumentos: $caminho_do_diretorio
 
-=item Valor de Retorno: None
+=item Valor de Retorno: Nenhum
 
 =back
 
@@ -232,9 +232,9 @@ Tenta criar o caminho fornecido, e todos os diretórios superiores necessários.
 
 =over 4
 
-=item Argumentos: $path
+=item Argumentos: $caminho_do_diretorio
 
-=item Valor de Retorno: None
+=item Valor de Retorno: Nenhum
 
 =back
 
@@ -245,19 +245,22 @@ para utilizar o caminho fornecido como diretório base.
 
 =over 4
 
-=item Argumentos: $path, $interpolate
+=item Argumentos: $caminho_do_diretorio, $interpolar
 
-=item Valor de Retorno: \%environment_vars
+=item Valor de Retorno: %variaveis_de_ambiente
 
 =back
+
+Retorna hash contendo as variáveis de ambiente listadas acima, devidamente
+ajustadas para utilizar o caminho fornecido como diretório base.
 
 =head2 setup_env_hash_for
 
 =over 4
 
-=item Argumentos: $path
+=item Argumentos: $caminho_do_diretorio
 
-=item Valor de Retorno: None
+=item Valor de Retorno: Nenhum
 
 =back
 
@@ -268,9 +271,9 @@ C<build_environment_vars_for>.
 
 =over 4
 
-=item Argumentos: $path
+=item Argumentos: $caminho_do_diretorio
 
-=item Valor de Retorno: $install_base_perl_path
+=item Valor de Retorno: $caminho_base_de_instalacao
 
 =back
 
@@ -282,9 +285,9 @@ e C<perl5> ao final do caminho fornecido.
 
 =over 4
 
-=item Argumentos: $path
+=item Argumentos: $caminho_do_diretorio
 
-=item Valor de Retorno: $install_base_arch_path
+=item Valor de Retorno: $caminho_base_de_instalacao_arch
 
 =back
 
@@ -297,9 +300,9 @@ adicionando o valor de C<$Config{archname}>.
 
 =over 4
 
-=item Argumentos: $path
+=item Argumentos: $caminho_do_diretorio
 
-=item Valor de Retorno: $install_base_bin_path
+=item Valor de Retorno: $caminho_base_de_instalacao_bin
 
 =back
 
@@ -311,9 +314,9 @@ método L</install_base_perl_path>, adicionando o diretório C<bin>.
 
 =over 4
 
-=item Argumentos: $path
+=item Argumentos: $caminho_do_diretorio
 
-=item Valor de Retorno: $modulebuildrc_path
+=item Valor de Retorno: $caminho_para_modulebuildrc
 
 =back
 
@@ -324,9 +327,9 @@ C<.modulebuildrc>, baseado no caminho fornecido.
 
 =over 4
 
-=item Argumentos: $path
+=item Argumentos: $caminho_do_diretorio
 
-=item Valor de Retorno: $base_path
+=item Valor de Retorno: $caminho_base_de_instalacao
 
 =back
 
@@ -337,9 +340,9 @@ módulos deve ser feita. O padrão é C<~/perl5>.
 
 =over 4
 
-=item Argumentos: $path
+=item Argumentos: $caminho_do_diretorio
 
-=item Valor de Retorno: $home_path
+=item Valor de Retorno: $caminho_para_home
 
 =back
 
@@ -351,9 +354,9 @@ resultado definitivo.
 
 =over 4
 
-=item Argumentos: $path
+=item Argumentos: $caminho_do_diretorio
 
-=item Valor de Retorno: $absolute_path
+=item Valor de Retorno: $caminho_absoluto
 
 =back
 
@@ -363,9 +366,9 @@ Transforma o caminho fornecido em um caminho absoluto.
 
 =over 4
 
-=item Argumentos: $path
+=item Argumentos: $caminho_do_diretorio
 
-=item Valor de Retorno: $absolute_path
+=item Valor de Retorno: $caminho_absoluto
 
 =back
 
