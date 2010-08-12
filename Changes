@@ -1,5 +1,11 @@
 Revision history for local::lib
 
+1.006006 2010-08-12
+
+        - Added portugese translation
+        - Several minor fixes in the documentation
+		- Changed methods look in documentation
+
 1.006005 2010-07-13
 
         - Added support informations (also for german)

@@ -216,11 +216,13 @@ o mais vazios possível).
 
 =head1 MÉTODOS
 
-=head2 ensure_directory_structure_for
+=head2 ensure_dir_structure_for
 
 =over 4
 
-=item Argumentos: caminho de diretório
+=item Argumentos: $path
+
+=item Valor de Retorno: None
 
 =back
 
@@ -230,18 +232,32 @@ Tenta criar o caminho fornecido, e todos os diretórios superiores necessários.
 
 =over 4
 
-=item Argumentos: caminho de diretório
+=item Argumentos: $path
+
+=item Valor de Retorno: None
 
 =back
 
 Exibe na saída padrão as variáveis listadas acima, devidamente ajustadas
 para utilizar o caminho fornecido como diretório base.
 
+=head2 build_environment_vars_for
+
+=over 4
+
+=item Argumentos: $path, $interpolate
+
+=item Valor de Retorno: \%environment_vars
+
+=back
+
 =head2 setup_env_hash_for
 
 =over 4
 
-=item Argumentos: caminho de diretório
+=item Argumentos: $path
+
+=item Valor de Retorno: None
 
 =back
 
@@ -252,7 +268,9 @@ C<build_environment_vars_for>.
 
 =over 4
 
-=item Argumentos: caminho de diretório
+=item Argumentos: $path
+
+=item Valor de Retorno: $install_base_perl_path
 
 =back
 
@@ -264,7 +282,9 @@ e C<perl5> ao final do caminho fornecido.
 
 =over 4
 
-=item Argumentos: caminho de diretório
+=item Argumentos: $path
+
+=item Valor de Retorno: $install_base_arch_path
 
 =back
 
@@ -277,7 +297,9 @@ adicionando o valor de C<$Config{archname}>.
 
 =over 4
 
-=item Argumentos: caminho de diretório
+=item Argumentos: $path
+
+=item Valor de Retorno: $install_base_bin_path
 
 =back
 
@@ -289,7 +311,9 @@ método L</install_base_perl_path>, adicionando o diretório C<bin>.
 
 =over 4
 
-=item Argumentos: caminho de diretório
+=item Argumentos: $path
+
+=item Valor de Retorno: $modulebuildrc_path
 
 =back
 
@@ -300,7 +324,9 @@ C<.modulebuildrc>, baseado no caminho fornecido.
 
 =over 4
 
-=item Argumentos: caminho de diretório
+=item Argumentos: $path
+
+=item Valor de Retorno: $base_path
 
 =back
 
@@ -311,7 +337,9 @@ módulos deve ser feita. O padrão é C<~/perl5>.
 
 =over 4
 
-=item Argumentos: caminho de diretório
+=item Argumentos: $path
+
+=item Valor de Retorno: $home_path
 
 =back
 
@@ -323,7 +351,9 @@ resultado definitivo.
 
 =over 4
 
-=item Argumentos: caminho de diretório
+=item Argumentos: $path
+
+=item Valor de Retorno: $absolute_path
 
 =back
 
@@ -333,7 +363,9 @@ Transforma o caminho fornecido em um caminho absoluto.
 
 =over 4
 
-=item Argumentos: caminho de diretório
+=item Argumentos: $path
+
+=item Valor de Retorno: $absolute_path
 
 =back
 

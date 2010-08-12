@@ -216,13 +216,177 @@ Am PATH wird natürlich angehangen, und nicht ersetzt.
 
 Diese Werte sind dann verfügbar für jeden Code der danach importiert wurde.
 
-=head1 CREATING A SELF-CONTAINED SET OF MODULES
+=head1 ERSTELLEN EINES EIGENSTÄNDIGE SAMMLUNG VON MODULEN
 
-C<Übersetzung fehlt...>
+Mit L<lib::core::only> besteht eine Möglichkeit dieses zutun, aber beachte das
+hier eine Menge von Fallstricken und Problemen existieren, und man sollte
+immer darauf achten das man auf einem Perl aufbaut was sowenig wie möglich
+verändert wurde (d.h. site und vendor Verzeichnis so leer wie möglich).
 
-=head1 METHODS
+=head1 METHODEN
 
-C<Übersetzung fehlt...>
+=head2 ensure_dir_structure_for
+
+=over 4
+
+=item Parameter: $path
+
+=item Rückgabewert: Keiner
+
+=back
+
+Versucht den angegebenen Pfad anzulegen, mit allen nötigen drüberliegenden
+Verzeichnissen. Im Fehlerfall wird eine Exception geworfen.
+
+=head2 print_environment_vars_for
+
+=over 4
+
+=item Parameter: $pfad
+
+=item Rückgabewert: Keiner
+
+=back
+
+Gibt die Umgebungsvariablen aus, die benötigt werden um den angegebenen Pfad
+als Basis Verzeichnis zu nutzen.
+
+=head2 build_environment_vars_for
+
+=over 4
+
+=item Parameter: $pfad, $interpolate
+
+=item Rückgabewert: \%umgebungs_variablen
+
+=back
+
+=head2 setup_env_hash_for
+
+=over 4
+
+=item Parameter: $pfad
+
+=item Rückgabewert: Keiner
+
+=back
+
+Setzt die C<%ENV> Einträge basierend auf dem Aufruf von
+L</build_environment_vars_for>.
+
+=head2 install_base_perl_path
+
+=over 4
+
+=item Parameter: $pfad
+
+=item Rückgabewert: $module_installations_pfad
+
+=back
+
+Gibt den Pfad zurück der benutzt wird um Perl Module zu installieren bei
+dem gegebenen Pfad als Basis. Prinzipiell wird nur C<lib> und C<perl5> als
+Pfadelemente angehangen.
+
+=head2 install_base_arch_path
+
+=over 4
+
+=item Parameter: $pfad
+
+=item Rückgabewert: $architektur_module_installations_pfad
+
+=back
+
+Gibt den Pfad zurück der benutzt wird um die Architektur-abhängigen Perl
+Module zu installieren basirend auf dem angegebenen Pfad als Basis. Basierend
+auf dem was L</install_base_perl_path> zurückgibt, and appends the value of
+C<$Config{archname}>.asis.
+
+=head2 install_base_bin_path
+
+=over 4
+
+=item Parameter: $pfad
+
+=item Rückgabewert: $ausfuehrbare_programme_installations_pfad
+
+=back
+
+Gibt den Pfad zurück, wo ausführbare Programme installiert werden, basierend
+auf der Basis des angegebenen Pfad. Basierend auf L</install_base_perl_path>
+Rückgabewert, hängt diese Methode noch C<bin> an.
+
+=head2 modulebuildrc_path
+
+=over 4
+
+=item Parameter: $pfad
+
+=item Rückgabewert: $modulebuildrc_pfad
+
+=back
+
+Gibt den Pfad zurück wo die C<.modulebuildrc> Datei angelegt wird, basierend
+auf der Basis des angegebenen Pfad.
+
+=head2 resolve_empty_path
+
+=over 4
+
+=item Parameter: $pfad
+
+=item Rückgabewert: $basis_pfad
+
+=back
+
+Erstellt und gibt zurück den Pfad der benutzt wird als Basis zur Installation
+der Module. Standardmäßig dies ist C<~/perl5>.
+
+=head2 resolve_home_path( $path )
+
+=over 4
+
+=item Parameter: $pfad
+
+=item Rückgabewert: $home
+
+=back
+
+Versucht das Home Verzeichnis vom aktullen User zu finden. Wenn C<File::HomeDir>
+installiert ist, für dieses benutzt dafür. Es wird eine Exception geworfen, wenn
+kein Home Verzeichnis ermittelt werden konnte.
+
+=head2 resolve_relative_path
+
+=over 4
+
+=item Parameter: $pfad
+
+=item Rückgabewert: $absoluter_pfad
+
+=back
+
+Macht aus dem angegebenen Pfad einen absoluten Pfad.
+
+=head2 resolve_path
+
+=over 4
+
+=item Parameter: $pfad
+
+=item Rückgabewert: $absoluter_pfad
+
+=back
+
+Hierbei wird der Pfad durch die folgende Methoden gegeben, wobei der Rückgabewert
+der ersten an die nächste weitergeben wird, um die Umgebung zu konfigurieren
+für die lokale Bibliotheks Installation: L</resolve_empty_path>, 
+L</resolve_home_path>, L</resolve_relative_path>. 
+Der daraus resultierende Pfad wird zu L</resolve_empty_path> übergeben, dessen
+Resultat dann weitergegeben wird an L</resolve_home_path>, wessen Resultat dann
+weitergegeben wird an L</resolve_relative_path>. Dieses Resultat wird dann final 
+an L</resolve_path> übergeben, welches dann den Rückgabewert stellt.
 
 =head1 EINE WARNUNG VOR UNINST=1
 
