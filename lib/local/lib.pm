@@ -612,6 +612,9 @@ given path as the base directory.
 
 =back
 
+Returns a hash with the variables listed above, properly set to use the
+given path as the base directory.
+
 =head2 setup_env_hash_for
 
 =over 4
