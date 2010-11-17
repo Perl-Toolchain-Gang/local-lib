@@ -481,8 +481,8 @@ Torsten Raudssus <torsten@raudssus.de> http://www.raudssus.de/
 
 =head1 URHEBERRECHT
 
-Copyright (c) 2007 - 2010 von den local::lib L</AUTHOR> und L</CONTRIBUTORS>
-aufgelistet in L<local::lib|local::lib>.
+Copyright (c) 2007 - 2010 von den local::lib L<local::lib/"AUTHOR">
+und L<local::lib/"CONTRIBUTORS"> aufgelistet in L<local::lib|local::lib>.
 
 =head1 LIZENZ
 

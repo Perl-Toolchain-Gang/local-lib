@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-local::lib~[pt_br] - crie e use um lib/ local para módulos perl com PERL5LIB
+local::lib~[pt_br] - crie e use um diretório lib/ local para módulos perl com PERL5LIB
 
 =head1 SINOPSE
 
@@ -35,10 +35,10 @@ técnica de "bootstrapping". É uma boa abordagem caso seu administrador de
 sistemas não tenha instalado o local::lib. Nesse caso, você precisará
 instalar o local::lib em seu diretório de usuário.
 
-Caso você tenha privilégios de administrador, você ainda assim deverá
-configurar suas variáveis de ambiente, como discutido no passo 4. Sem elas,
-você ainda instalará módulos no CPAN do sistema e seus scripts Perl não
-utilizarão o caminho para o lib/ que você definiu com o local::lib.
+Caso você tenha privilégios de administrador, ainda assim deverá
+configurar suas variáveis de ambiente, como discutido no passo 4, abaixo.
+Sem elas, você ainda instalará módulos no CPAN do sistema e seus scripts
+Perl não utilizarão o caminho para o lib/ que você definiu com o local::lib.
 
 Por padrão, o local::lib instala os módulos do CPAN e a si próprio em ~/perl5.
 
@@ -85,9 +85,10 @@ precisará indicá-lo na chamada ao local::lib, dessa forma:
 
   echo 'eval $(perl -I$HOME/foo/lib/perl5 -Mlocal::lib=$HOME/foo)' >>~/.bashrc
 
-Após atualizar seu arquivo de configuração da shell, certifique-se de processá-lo
-novamente para obter as modificações em sua shell atual. Shells Bourne usam
-C<. ~/.bashrc> para isso, enquanto shells C usam C<source ~/.cshrc>.
+Após atualizar seu arquivo de configuração da shell, certifique-se de
+processá-lo novamente para obter as modificações em sua shell atual.
+Shells Bourne usam C<. ~/.bashrc> para isso, enquanto shells C
+usam C<source ~/.cshrc>.
 
 Se estiver em uma máquina lenta ou operando com grandes limitações de
 espaço em disco, você pode desativar a geração automática de manpages a
@@ -110,12 +111,13 @@ instalar módulos em diretórios diferentes da seguinte forma:
   cd ../meudir2
   ... REPITA ...
 
-Para múltiplos ambientes para múltiplos aplicativos você pode precisar incluir
-uma versão modificada das instruções de C<< use FindBin >> no exemplo
-"No código" acima. Caso tenha feito algo como o que foi descrito acima, terá
-um conjunto de módulos Perl em C<< ~/meudir1/lib >>. Caso tenha um script em
-C<< ~/meudir1/scripts/meuscript.pl >>, você precisará indicar a ele onde
-encontrar os módulos que instalou para ele em C<< ~/meudir1/lib >>.
+Para múltiplos ambientes destinados a múltiplos aplicativos, você pode
+precisar incluir uma versão modificada das instruções de C<< use FindBin >>
+no exemplo "No código" acima. Caso tenha feito algo como o que foi descrito
+acima, terá um conjunto de módulos Perl em C<< ~/meudir1/lib >>. Caso
+tenha um script em C<< ~/meudir1/scripts/meuscript.pl >>, você precisará
+indicar a ele onde encontrar os módulos que instalou para ele
+em C<< ~/meudir1/lib >>.
 
 Em C<< ~/meudir1/scripts/meuscript.pl >>:
 
@@ -159,7 +161,7 @@ Talvez você não tenha privilégios de administrador do sistema; ou talvez
 esteja usando um sistema de gerenciamento de pacotes como o do Debian,
 e ainda não exista um pacote disponível na versão desejada.
 
-local::lib resolve esse probleme possibilitando a criação de seu próprio
+local::lib resolve esse problema possibilitando a criação de seu próprio
 diretório de pacotes Perl obtidos do CPAN (em sistemas multi-usuário, isso
 normalmente fica dentro do diretório de seu usuário). A instalação do Perl
 no sistema permanece inalterada; você simplesmente chama o Perl com opções
@@ -469,8 +471,8 @@ para o L<Getty|http://search.cpan.org/~getty/> durante a Copa de 2010.
 
 =head1 COPYRIGHT
 
-Copyright (c) 2007 - 2010 L</AUTOR> e L</COLABORADORES> do local::lib como
-listados em L<local::lib>.
+Copyright (c) 2007 - 2010 L<local::lib/"AUTHOR">
+e L<local::lib/"CONTRIBUTORS"> do local::lib como listados em L<local::lib>.
 
 =head1 LICENÇA
 
