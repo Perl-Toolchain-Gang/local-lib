@@ -30,6 +30,4 @@ $c->ensure_dir_structure_for('t/var/splat');
 
 ok(-d 't/var/splat');
 
-ok(-f 't/var/splat/.modulebuildrc');
-
 }

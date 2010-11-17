@@ -199,11 +199,6 @@ sub setup_local_lib_for {
   }
 }
 
-sub modulebuildrc_path {
-  my ($class, $path) = @_;
-  File::Spec->catfile($path, '.modulebuildrc');
-}
-
 sub install_base_bin_path {
   my ($class, $path) = @_;
   File::Spec->catdir($path, 'bin');
@@ -228,20 +223,6 @@ sub ensure_dir_structure_for {
   # Need to have the path exist to make a short name for it, so
   # converting to a short name here.
   $path = Win32::GetShortPathName($path) if $^O eq 'MSWin32';
-  my $modulebuildrc_path = $class->modulebuildrc_path($path);
-  if (-e $modulebuildrc_path) {
-    unless (-f _) {
-      Carp::croak("${modulebuildrc_path} exists but is not a plain file");
-    }
-  } else {
-    warn "Attempting to create file ${modulebuildrc_path}\n";
-    open MODULEBUILDRC, '>', $modulebuildrc_path
-      || Carp::croak("Couldn't open ${modulebuildrc_path} for writing: $!");
-    print MODULEBUILDRC qq{install  --install_base  ${path}\n}
-      || Carp::croak("Couldn't write line to ${modulebuildrc_path}: $!");
-    close MODULEBUILDRC
-      || Carp::croak("Couldn't close file ${modulebuildrc_path}: $@");
-  }
 
   return $path;
 }
@@ -329,7 +310,7 @@ sub setup_env_hash_for {
 sub build_environment_vars_for {
   my ($class, $path, $interpolate) = @_;
   return (
-    MODULEBUILDRC => $class->modulebuildrc_path($path),
+    PERL_MB_OPT => "--install_base ${path}",
     PERL_MM_OPT => "INSTALL_BASE=${path}",
     PERL5LIB => join($Config{path_sep},
                   $class->install_base_arch_path($path),
@@ -359,8 +340,6 @@ $c->ensure_dir_structure_for('t/var/splat');
 
 ok(-d 't/var/splat');
 
-ok(-f 't/var/splat/.modulebuildrc');
-
 =end testing
 
 =encoding utf8
@@ -388,7 +367,7 @@ From the shell -
 
   # Just print out useful shell commands
   $ perl -Mlocal::lib
-  export MODULEBUILDRC=/home/username/perl/.modulebuildrc
+  export PERL_MB_OPT='--install_base /home/username/perl5'
   export PERL_MM_OPT='INSTALL_BASE=/home/username/perl'
   export PERL5LIB='/home/username/perl/lib/perl5:/home/username/perl/lib/perl5/i386-linux'
   export PATH="/home/username/perl/bin:$PATH"
@@ -494,7 +473,7 @@ To set up the proper environment variables for your current session of
 C<CMD.exe>, you can use this:
 
   C:\>perl -Mlocal::lib
-  set MODULEBUILDRC=C:\DOCUME~1\ADMINI~1\perl5\.modulebuildrc
+  set PERL_MB_OPT=--install_base C:\DOCUME~1\ADMINI~1\perl5
   set PERL_MM_OPT=INSTALL_BASE=C:\DOCUME~1\ADMINI~1\perl5
   set PERL5LIB=C:\DOCUME~1\ADMINI~1\perl5\lib\perl5;C:\DOCUME~1\ADMINI~1\perl5\lib\perl5\MSWin32-x86-multi-thread
   set PATH=C:\DOCUME~1\ADMINI~1\perl5\bin;%PATH%
@@ -554,7 +533,7 @@ values:
 
 =over 4
 
-=item MODULEBUILDRC
+=item PERL_MB_OPT
 
 =item PERL_MM_OPT
 
@@ -671,19 +650,6 @@ Returns a path describing where to install the executable programs for this
 local library installation. Based on the L</install_base_perl_path> method's
 return value, and appends the directory C<bin>.
 
-=head2 modulebuildrc_path
-
-=over 4
-
-=item Arguments: $path
-
-=item Return value: $modulebuildrc_path
-
-=back
-
-Returns a path describing where to install the C<.modulebuildrc> file, based on
-the given path.
-
 =head2 resolve_empty_path
 
 =over 4
@@ -767,7 +733,7 @@ not set, a Bourne-compatible shell is assumed.
 Bootstrap is a hack and will use CPAN.pm for ExtUtils::MakeMaker even if you
 have CPANPLUS installed.
 
-Kills any existing PERL5LIB, PERL_MM_OPT or MODULEBUILDRC.
+Kills any existing PERL5LIB, PERL_MM_OPT or PERL_MB_OPT.
 
 Should probably auto-fixup CPAN config if not already done.
 
