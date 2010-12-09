@@ -11,7 +11,7 @@ use File::Path ();
 use Carp ();
 use Config;
 
-our $VERSION = '1.006008'; # 1.6.8
+our $VERSION = '1.006009'; # 1.6.9
 
 our @KNOWN_FLAGS = qw(--self-contained);
 
@@ -230,16 +230,7 @@ sub ensure_dir_structure_for {
 sub INTERPOLATE_ENV () { 1 }
 sub LITERAL_ENV     () { 0 }
 
-sub print_environment_vars_for {
-  my ($class, $path) = @_;
-  my @envs = $class->build_environment_vars_for($path, LITERAL_ENV);
-  my $out = '';
-
-  # rather basic csh detection, goes on the assumption that something won't
-  # call itself csh unless it really is. also, default to bourne in the
-  # pathological situation where a user doesn't have $ENV{SHELL} defined.
-  # note also that shells with funny names, like zoid, are assumed to be
-  # bourne.
+sub guess_shelltype {
   my $shellbin = 'sh';
   if(defined $ENV{'SHELL'}) {
       my @shell_bin_path_parts = File::Spec->splitpath($ENV{'SHELL'});
@@ -271,6 +262,21 @@ sub print_environment_vars_for {
                  }
          };
   }
+  return $shelltype;
+}
+
+sub print_environment_vars_for {
+  my ($class, $path) = @_;
+  my @envs = $class->build_environment_vars_for($path, LITERAL_ENV);
+  my $out = '';
+
+  # rather basic csh detection, goes on the assumption that something won't
+  # call itself csh unless it really is. also, default to bourne in the
+  # pathological situation where a user doesn't have $ENV{SHELL} defined.
+  # note also that shells with funny names, like zoid, are assumed to be
+  # bourne.
+
+  my $shelltype = $class->guess_shelltype;
 
   while (@envs) {
     my ($name, $value) = (shift(@envs), shift(@envs));
@@ -368,9 +374,9 @@ From the shell -
   # Just print out useful shell commands
   $ perl -Mlocal::lib
   export PERL_MB_OPT='--install_base /home/username/perl5'
-  export PERL_MM_OPT='INSTALL_BASE=/home/username/perl'
-  export PERL5LIB='/home/username/perl/lib/perl5:/home/username/perl/lib/perl5/i386-linux'
-  export PATH="/home/username/perl/bin:$PATH"
+  export PERL_MM_OPT='INSTALL_BASE=/home/username/perl5'
+  export PERL5LIB='/home/username/perl5/lib/perl5/i386-linux:/home/username/perl5/lib/perl5'
+  export PATH="/home/username/perl5/bin:$PATH"
 
 =head2 The bootstrapping technique
 

@@ -23,10 +23,10 @@ Von der Shell -
 
   # Gibt die Shell Kommandos aus um die Umgebung vorzubereiten
   $ perl -Mlocal::lib
-  export MODULEBUILDRC=/home/username/perl/.modulebuildrc
-  export PERL_MM_OPT='INSTALL_BASE=/home/username/perl'
-  export PERL5LIB='/home/username/perl/lib/perl5:/home/username/perl/lib/perl5/i386-linux'
-  export PATH="/home/username/perl/bin:$PATH"
+  export PERL_MB_OPT='--install_base /home/username/perl5'
+  export PERL_MM_OPT='INSTALL_BASE=/home/username/perl5'
+  export PERL5LIB='/home/username/perl5/lib/perl5/i386-linux:/home/username/perl5/lib/perl5'
+  export PATH="/home/username/perl5/bin:$PATH"
 
 =head2 Die Bootstrapping Methode
 
@@ -137,7 +137,7 @@ Um die nötigen Umgebungsvariablen für diese Variablen in der derzeitigen
 Sitzung mit C<CMD.EXE> zu setzen, kann man folgendes kommando nutzen:
 
   C:\>perl -Mlocal::lib
-  set MODULEBUILDRC=C:\DOCUME~1\ADMINI~1\perl5\.modulebuildrc
+  set PERL_MB_OPT=--install_base C:\DOCUME~1\ADMINI~1\perl5
   set PERL_MM_OPT=INSTALL_BASE=C:\DOCUME~1\ADMINI~1\perl5
   set PERL5LIB=C:\DOCUME~1\ADMINI~1\perl5\lib\perl5;C:\DOCUME~1\ADMINI~1\perl5\lib\perl5\MSWin32-x86-multi-thread
   set PATH=C:\DOCUME~1\ADMINI~1\perl5\bin;%PATH%
@@ -202,7 +202,7 @@ nötigen Werten:
 
 =over 4
 
-=item MODULEBUILDRC
+=item PERL_MB_OPT
 
 =item PERL_MM_OPT
 
@@ -320,19 +320,6 @@ Gibt den Pfad zurück, wo ausführbare Programme installiert werden, basierend
 auf der Basis des angegebenen Pfad. Basierend auf L</install_base_perl_path>
 Rückgabewert, hängt diese Methode noch C<bin> an.
 
-=head2 modulebuildrc_path
-
-=over 4
-
-=item Parameter: $pfad
-
-=item Rückgabewert: $modulebuildrc_pfad
-
-=back
-
-Gibt den Pfad zurück wo die C<.modulebuildrc> Datei angelegt wird, basierend
-auf der Basis des angegebenen Pfad.
-
 =head2 resolve_empty_path
 
 =over 4
@@ -423,7 +410,7 @@ nicht gesetzt ist, eine Bourne Shell wird angenommen.
 Bootstrap ist leider ein Hack, und wird auf jedenfall CPAN.pm benutzen für
 ExtUtils::MakeMaker, auch wenn CPANPLUS installiert ist.
 
-Es setzt definitiv PERL5LIB, PERL_MM_OPT und MODULEBUILDRC neu und vernichtet
+Es setzt definitiv PERL5LIB, PERL_MM_OPT und PERL_MB_OPT neu und vernichtet
 jeden Wert der vorher gesetzt war.
 
 Es sollte vielleicht eine automatische Korrektur der CPAN Config machen, wenn

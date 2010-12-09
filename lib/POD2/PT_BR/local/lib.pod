@@ -23,10 +23,10 @@ Pela linha de comando (shell) -
 
   # Apenas exibe alguns comandos úteis para a shell
   $ perl -Mlocal::lib
-  export MODULEBUILDRC=/home/username/perl/.modulebuildrc
-  export PERL_MM_OPT='INSTALL_BASE=/home/username/perl'
-  export PERL5LIB='/home/username/perl/lib/perl5:/home/username/perl/lib/perl5/i386-linux'
-  export PATH="/home/username/perl/bin:$PATH"
+  export PERL_MB_OPT='--install_base /home/username/perl5'
+  export PERL_MM_OPT='INSTALL_BASE=/home/username/perl5'
+  export PERL5LIB='/home/username/perl5/lib/perl5/i386-linux:/home/username/perl5/lib/perl5'
+  export PATH="/home/username/perl5/bin:$PATH"
 
 =head2 A técnica de 'bootstrapping'
 
@@ -134,7 +134,7 @@ Para configurar as variáveis de ambiente apropriadas para sua sessão atual
 do C<CMD.exe>, você pode fazer assim:
 
   C:\>perl -Mlocal::lib
-  set MODULEBUILDRC=C:\DOCUME~1\ADMINI~1\perl5\.modulebuildrc
+  set PERL_MB_OPT=--install_base C:\DOCUME~1\ADMINI~1\perl5
   set PERL_MM_OPT=INSTALL_BASE=C:\DOCUME~1\ADMINI~1\perl5
   set PERL5LIB=C:\DOCUME~1\ADMINI~1\perl5\lib\perl5;C:\DOCUME~1\ADMINI~1\perl5\lib\perl5\MSWin32-x86-multi-thread
   set PATH=C:\DOCUME~1\ADMINI~1\perl5\bin;%PATH%
@@ -194,7 +194,7 @@ seguintes variáveis de ambiente:
 
 =over 4
 
-=item MODULEBUILDRC
+=item PERL_MB_OPT
 
 =item PERL_MM_OPT
 
@@ -312,19 +312,6 @@ Retorna um caminho de diretório indicando onde instalar programas executáveis
 para essa instalação local de bibliotecas. Baseia-se no valor de retorno do
 método L</install_base_perl_path>, adicionando o diretório C<bin>.
 
-=head2 modulebuildrc_path
-
-=over 4
-
-=item Argumentos: $caminho_do_diretorio
-
-=item Valor de Retorno: $caminho_para_modulebuildrc
-
-=back
-
-Retorna um caminho de diretório indicando onde instalar o arquivo
-C<.modulebuildrc>, baseado no caminho fornecido.
-
 =head2 resolve_empty_path
 
 =over 4
@@ -413,7 +400,7 @@ A técnica de bootstrap é um hack e usará o CPAN.pm para o ExtUtils::MakeMaker
 mesmo que você tenha o CPANPLUS instalado.
 
 Destrói qualquer valor pré-existente nas variáveis de ambiente PERL5LIB,
-PERL_MM_OPT e MODULEBUILDRC.
+PERL_MM_OPT e PERL_MB_OPT.
 
 Provavelmente deveria auto-configurar o CPAN caso isso ainda não tenha
 sido feito.
