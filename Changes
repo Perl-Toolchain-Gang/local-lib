@@ -1,8 +1,12 @@
 Revision history for local::lib
 
+1.007000 2010-12-09
+        - Chase the Module::Build version which supports PERL_MB_OPT. Thanks to
+        miyagawa for pointing this out.
+
 1.006009 2010-12-09
 
-        - Splitted up method guess_shelltype from parts of print_environment_vars_for
+        - Split up method guess_shelltype from parts of print_environment_vars_for
         - Updated documentation about change of use with .modulebuildrc
 
 1.006008 2010-11-17

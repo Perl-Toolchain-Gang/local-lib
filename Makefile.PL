@@ -174,7 +174,7 @@ requires 'ExtUtils::MakeMaker' => '6.31'; # version INSTALL_BASE was added
 requires 'ExtUtils::Install' => '1.43'; # ditto
 requires 'ExtUtils::CBuilder'; # this and ParseXS are needed for MB C_support
 requires 'ExtUtils::ParseXS';
-requires 'Module::Build' => '0.28'; # lib -> lib/perl5 change
+requires 'Module::Build' => '0.36'; # PERL_MB_OPT
 my $required_CPAN = '1.82';
 requires 'CPAN' => $required_CPAN; # sudo support + CPAN::HandleConfig
 
