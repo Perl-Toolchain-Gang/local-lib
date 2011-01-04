@@ -267,6 +267,11 @@ sub guess_shelltype {
 
 sub print_environment_vars_for {
   my ($class, $path) = @_;
+  print $class->environment_vars_string_for($path);
+}
+
+sub environment_vars_string_for {
+  my ($class, $path) = @_;
   my @envs = $class->build_environment_vars_for($path, LITERAL_ENV);
   my $out = '';
 
@@ -283,7 +288,7 @@ sub print_environment_vars_for {
     $value =~ s/(\\")/\\$1/g;
     $out .= $class->${\"build_${shelltype}_env_declaration"}($name, $value);
   }
-  print $out;
+  return $out;
 }
 
 # simple routines that take two arguments: an %ENV key and a value. return
