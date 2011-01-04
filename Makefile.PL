@@ -92,7 +92,8 @@ DEATH
     my $cpan = $? >> 8;
     my $cpan_command = '';
 
-    system($^X, '-MCPAN', '-e',
+    my $did_cpan_config = 0;
+    my $cpan_config_command =
       'my $done; require ExtUtils::MakeMaker;
        my $orig = ExtUtils::MakeMaker->can("prompt");
        *ExtUtils::MakeMaker::prompt = sub ($;$) {
@@ -121,8 +122,7 @@ DEATH
          delete @{$CPAN::Config}{keys %$CPAN::Config};
          $CPAN::Config->{urllist} = $save;
          CPAN::Config->init;
-       }'
-    );
+       }';
 
     $ENV{PERL_MM_USE_DEFAULT} = 1;
 
@@ -138,6 +138,8 @@ DEATH
       $cpan_command .= 'force("install","CPAN"); ';
     }
     if(length $cpan_command) {
+      system($^X, '-MCPAN', '-e', $cpan_config_command);
+      $did_cpan_config++;
       system($^X, '-MCPAN', '-e', $cpan_command);
     }
     if ($cpan) {
@@ -147,6 +149,8 @@ DEATH
       # if we call this code directly, the changes get written to
       # $BOOTSTRAP/lib/perl5/CPAN/Config.pm, not where the user expects them to
       # be in their ~/.cpan/CPAN/MyConfig.pm.
+      system($^X, '-MCPAN', '-e', $cpan_config_command)
+        unless $did_cpan_config;
       system($^X, '-MCPAN',
         '-e', 
         q[CPAN::HandleConfig->load;],
