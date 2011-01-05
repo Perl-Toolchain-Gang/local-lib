@@ -1,5 +1,13 @@
 Revision history for local::lib
 
+1.008000
+        - Remove redundant prereqs now that Module::Build 0.36 is required
+        - Makefile.PL avoids CPAN client configuration when not required
+        - print_environment_vars_for() refactored with separate function
+          environment_vars_string_for()
+        - PERL_LOCAL_LIB_ROOT environment is added to disambiguate when
+          PERL_MM_OPT, etc. was set by local::lib or other means
+
 1.007000 2010-12-09
         - Chase the Module::Build version which supports PERL_MB_OPT. Thanks to
         miyagawa for pointing this out.
