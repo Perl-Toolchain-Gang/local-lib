@@ -1,5 +1,7 @@
 Revision history for local::lib
 
+        - Bootstrap Module::Build just like ExtUtils::MakeMaker
+
 1.008000
         - Remove redundant prereqs now that Module::Build 0.36 is required
         - Makefile.PL avoids CPAN client configuration when not required

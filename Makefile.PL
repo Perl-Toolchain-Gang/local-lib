@@ -88,6 +88,9 @@ DEATH
     system($^X, '-MExtUtils::Install 1.43', '-e1');
     my $eui = $? >> 8;
 
+    system($^X, '-MModule::Build 0.36', '-e1');
+    my $mb = $? >> 8;
+
     system($^X, '-MCPAN 1.82', '-e1');
     my $cpan = $? >> 8;
     my $cpan_command = '';
@@ -133,6 +136,9 @@ DEATH
     }
     if ($eui) {
       $cpan_command .= 'install("ExtUtils::Install"); ';
+    }
+    if ($mb) {
+      $cpan_command .= 'install("Module::Build"); ';
     }
     if ($cpan) {
       $cpan_command .= 'force("install","CPAN"); ';
