@@ -1,4 +1,5 @@
 Revision history for local::lib
+1.008001
 
         - Bootstrap Module::Build just like ExtUtils::MakeMaker
 
