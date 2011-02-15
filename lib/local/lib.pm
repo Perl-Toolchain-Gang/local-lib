@@ -575,6 +575,22 @@ installation to install modules in different directories directly this way:
   cd ../mydir2
   ... REPEAT ...
 
+If you are working with several C<local::lib> environments, you may want to
+remove some of them from the current environment without disturbing the others.
+You can deactivate one environment like this (using bourne sh):
+
+  eval $(perl -Mlocal::lib=--deactivate,~/path)
+
+which will generate and run the commands needed to remove C<~/path> from your
+various search paths. Whichever environment was B<activated most recently> will
+remain the target for module installations. That is, if you activate
+C<~/path_A> and then you activate C<~/path_B>, new modules you install will go
+in C<~/path_B>. If you deactivate C<~/path_B> then modules will be installed
+into C<~/pathA> -- but if you deactivate C<~/path_A> then they will still be
+installed in C<~/pathB> because pathB was activated later.
+
+You can also ask C<local::lib> to clean itself completely out of the current
+shell's environment with the C<--deactivate-all> option.
 For multiple environments for multiple apps you may need to include a modified
 version of the C<< use FindBin >> instructions in the "In code" sample above.
 If you did something like the above, you have a set of Perl modules at C<<
@@ -676,6 +692,22 @@ These values are then available for reference by any code after import.
 See L<lib::core::only> for one way to do this - but note that
 there are a number of caveats, and the best approach is always to perform a
 build against a clean perl (i.e. site and vendor as close to empty as possible).
+
+=head1 OPTIONS
+
+Options are values that can be passed to the C<local::lib> import besides the
+directory to use. They are specified as C<use local::lib '--option'[, path];>
+or C<perl -Mlocal::lib=--option[,path]>.
+
+=head2 --deactivate
+
+Remove the chosen path (or the default path) from the module search paths if it
+was added by C<local::lib>, instead of adding it.
+
+=head2 --deactivate-all
+
+Remove all directories that were added to search paths by C<local::lib> from the
+search paths.
 
 =head1 METHODS
 
