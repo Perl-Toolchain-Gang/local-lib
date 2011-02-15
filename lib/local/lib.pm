@@ -321,7 +321,15 @@ sub setup_env_hash_for {
 sub build_environment_vars_for {
   my ($class, $path, $interpolate) = @_;
   return (
-    PERL_LOCAL_LIB_ROOT => $path,
+    PERL_LOCAL_LIB_ROOT => join($Config{path_sep},
+              (($ENV{PERL_LOCAL_LIB_ROOT}||()) ?
+                ($interpolate == INTERPOLATE_ENV
+                  ? ($ENV{PERL_LOCAL_LIB_ROOT}||())
+                  : (($^O ne 'MSWin32') ? '$PERL_LOCAL_LIB_ROOT' 
+                    : '%PERL_LOCAL_LIB_ROOT%' ))
+                : ()),
+                $path
+            ),
     PERL_MB_OPT => "--install_base ${path}",
     PERL_MM_OPT => "INSTALL_BASE=${path}",
     PERL5LIB => join($Config{path_sep},
