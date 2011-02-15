@@ -13,7 +13,10 @@ use Config;
 
 our $VERSION = '1.008001'; # 1.8.1
 
-our @KNOWN_FLAGS = qw(--self-contained --deactivate);
+our @KNOWN_FLAGS = qw(--self-contained --deactivate --deactivate-all);
+
+sub DEACTIVATE_ONE () { 1 }
+sub DEACTIVATE_ALL () { 2 }
 
 sub import {
   my ($class, @args) = @_;
@@ -51,8 +54,16 @@ DEATH
     die "FATAL: The local::lib --self-contained flag has never worked reliably and the original author, Mark Stosberg, was unable or unwilling to maintain it. As such, this flag has been removed from the local::lib codebase in order to prevent misunderstandings and potentially broken builds. The local::lib authors recommend that you look at the lib::core::only module shipped with this distribution in order to create a more robust environment that is equivalent to what --self-contained provided (although quite possibly not what you originally thought it provided due to the poor quality of the documentation, for which we apologise).\n";
   }
 
+  my $deactivating = 0;
+  if ($arg_store{deactivate}) {
+    $deactivating = DEACTIVATE_ONE;
+  }
+  if ($arg_store{'deactivate-all'}) {
+    $deactivating = DEACTIVATE_ALL;
+  }
+
   $arg_store{path} = $class->resolve_path($arg_store{path});
-  $class->setup_local_lib_for($arg_store{path}, $arg_store{deactivate} || 0);
+  $class->setup_local_lib_for($arg_store{path}, $deactivating);
 
   for (@INC) { # Untaint @INC
     next if ref; # Skip entry if it is an ARRAY, CODE, blessed, etc.
@@ -321,8 +332,10 @@ sub setup_env_hash_for {
 sub build_environment_vars_for {
   my ($class, $path, $deactivating, $interpolate) = @_;
 
-  if ($deactivating) {
+  if ($deactivating == DEACTIVATE_ONE) {
     return $class->build_deactivate_environment_vars_for($path, $interpolate);
+  } elsif ($deactivating == DEACTIVATE_ALL) {
+    return $class->build_deact_all_environment_vars_for($path, $interpolate);
   } else {
     return $class->build_activate_environment_vars_for($path, $interpolate);
   }
@@ -405,6 +418,38 @@ sub build_deactivate_environment_vars_for {
       );
     }
   }
+
+  return %env;
+}
+
+sub build_deact_all_environment_vars_for {
+  my ($class, $path, $interpolate) = @_;
+
+  my @active_lls = split /\Q$Config{path_sep}/, $ENV{PERL_LOCAL_LIB_ROOT} || '';
+
+  my @new_perl5lib = split /\Q$Config{path_sep}/, $ENV{PERL5LIB};
+  my @new_path = split /\Q$Config{path_sep}/, $ENV{PATH};
+
+  for my $path (@active_lls) {
+    @new_perl5lib = grep {
+      $_ ne $class->install_base_arch_path($path) &&
+      $_ ne $class->install_base_perl_path($path)
+    } @new_perl5lib;
+
+    @new_path = grep {
+      $_ ne $class->install_base_bin_path($path)
+    } @new_path;
+  }
+
+  my %env = (
+    PERL_LOCAL_LIB_ROOT => undef,
+    PERL_MM_OPT => undef,
+    PERL_MB_OPT => undef,
+    PERL5LIB => (@new_perl5lib ?
+      join($Config{path_sep}, @new_perl5lib) : undef
+    ),
+    PATH => join($Config{path_sep}, @new_path),
+  );
 
   return %env;
 }
