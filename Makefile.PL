@@ -251,4 +251,9 @@ END
   auto_install;
 }
 chdir($cwd);
+resources(
+  repository => 'git://git.shadowcat.co.uk/p5sagit/local-lib.git',
+  homepage => 'http://git.shadowcat.co.uk/gitweb/gitweb.cgi?p=p5sagit/local-lib.git',
+  bugtracker => 'http://rt.cpan.org/Public/Dist/Display.html?Name=local-lib',
+);
 WriteAll;
