@@ -18,6 +18,9 @@ our @KNOWN_FLAGS = qw(--self-contained --deactivate --deactivate-all);
 sub DEACTIVATE_ONE () { 1 }
 sub DEACTIVATE_ALL () { 2 }
 
+sub INTERPOLATE_ENV () { 1 }
+sub LITERAL_ENV     () { 0 }
+
 sub import {
   my ($class, @args) = @_;
 
@@ -200,9 +203,28 @@ is($c->resolve_relative_path('bar'),'FOObar');
 
 sub setup_local_lib_for {
   my ($class, $path, $deactivating) = @_;
-  $path = $class->ensure_dir_structure_for($path) unless $deactivating;
+
+  my $interpolate = LITERAL_ENV;
+  my @active_lls = $class->active_paths;
+
+  if (! $deactivating) {
+    if (@active_lls && $active_lls[-1] eq $path) {
+      exit 0 if $0 eq '-';
+      return; # Asked to add what's already at the top of the stack
+    } elsif (grep { $_ eq $path} @active_lls) {
+      # Asked to add a dir that's lower in the stack -- so we remove it from
+      # where it is, and then add it back at the top.
+      $class->setup_env_hash_for($path, DEACTIVATE_ONE);
+      # Which means we can no longer output "PERL5LIB=...:$PERL5LIB" stuff
+      # anymore because we're taking something *out*.
+      $interpolate = INTERPOLATE_ENV;
+    }
+  }
+
+  $path = $class->ensure_dir_structure_for($path);
+
   if ($0 eq '-') {
-    $class->print_environment_vars_for($path, $deactivating);
+    $class->print_environment_vars_for($path, $deactivating, $interpolate);
     exit 0;
   } else {
     $class->setup_env_hash_for($path, $deactivating);
@@ -237,9 +259,6 @@ sub ensure_dir_structure_for {
 
   return $path;
 }
-
-sub INTERPOLATE_ENV () { 1 }
-sub LITERAL_ENV     () { 0 }
 
 sub guess_shelltype {
   my $shellbin = 'sh';
@@ -277,13 +296,13 @@ sub guess_shelltype {
 }
 
 sub print_environment_vars_for {
-  my ($class, $path, $deactivating) = @_;
-  print $class->environment_vars_string_for($path, $deactivating);
+  my ($class, $path, $deactivating, $interpolate) = @_;
+  print $class->environment_vars_string_for($path, $deactivating, $interpolate);
 }
 
 sub environment_vars_string_for {
-  my ($class, $path, $deactivating) = @_;
-  my @envs = $class->build_environment_vars_for($path, $deactivating, LITERAL_ENV);
+  my ($class, $path, $deactivating, $interpolate) = @_;
+  my @envs = $class->build_environment_vars_for($path, $deactivating, $interpolate);
   my $out = '';
 
   # rather basic csh detection, goes on the assumption that something won't
