@@ -373,10 +373,17 @@ sub build_activate_environment_vars_for {
   )
 }
 
+sub active_paths {
+  my ($class) = @_;
+
+  return () unless defined $ENV{PERL_LOCAL_LIB_ROOT};
+  return split /\Q$Config{path_sep}/, $ENV{PERL_LOCAL_LIB_ROOT};
+}
+
 sub build_deactivate_environment_vars_for {
   my ($class, $path, $interpolate) = @_;
 
-  my @active_lls = split /\Q$Config{path_sep}/, $ENV{PERL_LOCAL_LIB_ROOT} || '';
+  my @active_lls = $class->active_paths;
 
   if (!grep { $_ eq $path } @active_lls) {
     warn "Tried to deactivate inactive local::lib '$path'\n";
@@ -425,7 +432,7 @@ sub build_deactivate_environment_vars_for {
 sub build_deact_all_environment_vars_for {
   my ($class, $path, $interpolate) = @_;
 
-  my @active_lls = split /\Q$Config{path_sep}/, $ENV{PERL_LOCAL_LIB_ROOT} || '';
+  my @active_lls = $class->active_paths;
 
   my @new_perl5lib = split /\Q$Config{path_sep}/, $ENV{PERL5LIB};
   my @new_path = split /\Q$Config{path_sep}/, $ENV{PATH};
