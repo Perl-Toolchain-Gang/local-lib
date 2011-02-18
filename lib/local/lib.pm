@@ -973,6 +973,9 @@ David Mertens <dcmertens.perl@gmail.com> (run4flat).
 Brazilian L<portuguese translation|POD2::PT_BR::local::lib> and minor doc patches contributed by Breno
 G. de Oliveira <garu@cpan.org>.
 
+Improvements to stacking multiple local::lib dirs and removing them from the
+environment later on contributed by Andrew Rodland <arodland@cpan.org>.
+
 =head1 COPYRIGHT
 
 Copyright (c) 2007 - 2010 the local::lib L</AUTHOR> and L</CONTRIBUTORS> as
