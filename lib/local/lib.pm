@@ -789,6 +789,19 @@ given path as the base directory.
 Constructs the C<%ENV> keys for the given path, by calling
 L</build_environment_vars_for>.
 
+=head2 active_paths
+
+=over 4
+
+=item Arguments: None
+
+=item Return value: @paths
+
+=back
+
+Returns a list of active C<local::lib> paths, according to the
+C<PERL_LOCAL_LIB_ROOT> environment variable.
+
 =head2 install_base_perl_path
 
 =over 4
