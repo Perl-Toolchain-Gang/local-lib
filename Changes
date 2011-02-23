@@ -1,9 +1,15 @@
 Revision history for local::lib
-1.008001
+1.008002 2011-02-23
+
+        - Add local::lib stacking support.
+        - Add activation/deactivation support.
+
+1.008001 2011-01-09
 
         - Bootstrap Module::Build just like ExtUtils::MakeMaker
 
-1.008000
+1.008000 2011-01-05
+
         - Remove redundant prereqs now that Module::Build 0.36 is required
         - Makefile.PL avoids CPAN client configuration when not required
         - print_environment_vars_for() refactored with separate function
