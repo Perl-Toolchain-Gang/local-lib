@@ -1,4 +1,8 @@
 Revision history for local::lib
+1.008003 2011-02-23
+
+        - Fix tests with stacking l::ls.
+
 1.008002 2011-02-23
 
         - Add local::lib stacking support.
