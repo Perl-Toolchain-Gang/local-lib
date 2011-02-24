@@ -1,4 +1,8 @@
 Revision history for local::lib
+1.008004 2011-02-24
+
+        - Fix stackable tests on win32 by canonicalizing the path ahead of time
+
 1.008003 2011-02-23
 
         - Fix tests with stacking l::ls.
