@@ -6,10 +6,13 @@ use Cwd;
 
 plan tests => 19;
 
-my $dir1 = tempdir('test_local_lib-XXXXX', DIR => Cwd::abs_path('t'), CLEANUP => 1);
-my $dir2 = tempdir('test_local_lib-XXXXX', DIR => Cwd::abs_path('t'), CLEANUP => 1);
-
 use local::lib ();
+
+my $dir1 = tempdir('test_local_lib-XXXXX', DIR => Cwd::abs_path('t'), CLEANUP => 1);
+$dir1 = local::lib->ensure_dir_structure_for($dir1);
+
+my $dir2 = tempdir('test_local_lib-XXXXX', DIR => Cwd::abs_path('t'), CLEANUP => 1);
+$dir2 = local::lib->ensure_dir_structure_for($dir2);
 
 my $prev_active = () = local::lib->active_paths;
 
