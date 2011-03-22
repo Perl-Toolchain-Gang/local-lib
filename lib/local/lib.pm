@@ -645,7 +645,7 @@ C<CMD.exe>, you can use this:
   set PATH=C:\DOCUME~1\ADMINI~1\perl5\bin;%PATH%
   
   ### To set the environment for this shell alone
-  C:\>perl -Mlocal::lib > %TEMP%\tmp.bat && %TEMP%\tmp.bat && del %TEMP%\temp.bat
+  C:\>perl -Mlocal::lib > %TEMP%\tmp.bat && %TEMP%\tmp.bat && del %TEMP%\tmp.bat
   ### instead of $(perl -Mlocal::lib=./)
 
 If you want the environment entries to persist, you'll need to add then to the
