@@ -478,18 +478,9 @@ sub build_deactivate_environment_vars_for {
   # If removing ourselves from the "top of the stack", set install paths to
   # correspond with the new top of stack.
   if ($active_lls[-1] eq $path) {
-    if (@active_lls > 1) {
-      my $new_top = $active_lls[-2];
-      %env = (%env,
-        PERL_MB_OPT => "--install_base ${new_top}",
-        PERL_MM_OPT => "INSTALL_BASE=${new_top}",
-      );
-    } else {
-      %env = (%env,
-        PERL_MB_OPT => undef,
-        PERL_MM_OPT => undef,
-      );
-    }
+    my $new_top = $active_lls[-2];
+    $env{PERL_MB_OPT} = defined($new_top) ? "--install_base ${new_top}" : undef;
+    $env{PERL_MM_OPT} = defined($new_top) ? "INSTALL_BASE=${new_top}" : undef;
   }
 
   return %env;
