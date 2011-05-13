@@ -369,7 +369,7 @@ sub build_environment_vars_for {
 # - exists: paths are included only if they exist (default: interpolate == INTERPOLATE_ENV)
 # - filter: function to apply to each path do decide if it must be included
 # - empty: the value to return in the case of empty value
-my %_env_list_value_defaults = (
+my %ENV_LIST_VALUE_DEFAULTS = (
     interpolate => INTERPOLATE_ENV,
     exists => undef,
     filter => sub { 1 },
@@ -378,8 +378,8 @@ my %_env_list_value_defaults = (
 sub _env_list_value(%@) {
   my $options = shift;
   die(sprintf "unknown option '$_' at %s line %u\n", (caller)[1..2])
-    for grep { !exists $_env_list_value_defaults{$_} } keys %$options;
-  my %options = (%_env_list_value_defaults, %{ $options });
+    for grep { !exists $ENV_LIST_VALUE_DEFAULTS{$_} } keys %$options;
+  my %options = (%ENV_LIST_VALUE_DEFAULTS, %{ $options });
   $options{exists} = $options{interpolate} == INTERPOLATE_ENV
     unless defined $options{exists};
 
