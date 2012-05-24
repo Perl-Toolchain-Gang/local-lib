@@ -8,7 +8,6 @@ use 5.008001; # probably works with earlier versions but I'm not supporting them
 
 use File::Spec ();
 use File::Path ();
-use Carp ();
 use Config;
 
 our $VERSION = '1.008004'; # 1.8.4
@@ -175,6 +174,7 @@ sub resolve_home_path {
     }
   };
   unless (defined $homedir) {
+    require Carp;
     Carp::croak(
       "Couldn't resolve homedir for "
       .(defined $user ? $user : 'current user')
@@ -1014,6 +1014,8 @@ G. de Oliveira <garu@cpan.org>.
 
 Improvements to stacking multiple local::lib dirs and removing them from the
 environment later on contributed by Andrew Rodland <arodland@cpan.org>.
+
+Patch for Carp version mismatch contributed by Hakim Cassimally <osfameron@cpan.org>.
 
 =head1 COPYRIGHT
 
