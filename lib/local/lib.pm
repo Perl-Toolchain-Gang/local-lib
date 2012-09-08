@@ -601,6 +601,12 @@ to specify the name of the directory when you call bootstrap, as follows:
 
   perl Makefile.PL --bootstrap=~/foo
 
+If you're using multiple versions of perl via something like
+L<perlbrew>, it might be useful to bootstrap to a specific directory
+for the current version of perl you're running:
+
+  perl Makefile.PL --bootstrap=$HOME/perl5/$(perl -e 'print $]')
+
 3. Run this: (local::lib assumes you have make installed on your system)
 
   make test && make install
@@ -623,6 +629,12 @@ If you passed to bootstrap a directory other than default, you also need to give
 import parameter to the call of the local::lib module like this way:
 
   echo 'eval $(perl -I$HOME/foo/lib/perl5 -Mlocal::lib=$HOME/foo)' >>~/.bashrc
+
+If you used the perl-version-specific bootstrap before, you'll need:
+
+  echo "eval $(perl -Mlocal::lib=$HOME/perl5/$(perl -e 'print $]'))" >>~/.bashrc
+
+Make sure you re-eval C<.bashrc> every time you switch perls.
 
 After writing your shell configuration file, be sure to re-read it to get the
 changed settings into your current shell's environment. Bourne shells use 
