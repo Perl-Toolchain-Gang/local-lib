@@ -375,7 +375,7 @@ my %ENV_LIST_VALUE_DEFAULTS = (
     filter => sub { 1 },
     empty => undef,
 );
-sub _env_list_value(%@) {
+sub _env_list_value {
   my $options = shift;
   die(sprintf "unknown option '$_' at %s line %u\n", (caller)[1..2])
     for grep { !exists $ENV_LIST_VALUE_DEFAULTS{$_} } keys %$options;
