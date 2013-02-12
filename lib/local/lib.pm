@@ -10,7 +10,7 @@ use File::Spec ();
 use File::Path ();
 use Config;
 
-our $VERSION = '1.008004'; # 1.8.4
+our $VERSION = '1.008006'; # 1.8.6
 
 our @KNOWN_FLAGS = qw(--self-contained --deactivate --deactivate-all);
 
@@ -375,7 +375,7 @@ my %ENV_LIST_VALUE_DEFAULTS = (
     filter => sub { 1 },
     empty => undef,
 );
-sub _env_list_value(%@) {
+sub _env_list_value {
   my $options = shift;
   die(sprintf "unknown option '$_' at %s line %u\n", (caller)[1..2])
     for grep { !exists $ENV_LIST_VALUE_DEFAULTS{$_} } keys %$options;
