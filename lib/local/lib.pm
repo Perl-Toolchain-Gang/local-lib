@@ -423,6 +423,7 @@ sub build_activate_environment_vars_for {
             ),
     PATH => _env_list_value(
               { interpolate => $interpolate, exists => 0, empty => '' },
+	      $class->install_base_bin_path($path),
               \'PATH',
             ),
   )
