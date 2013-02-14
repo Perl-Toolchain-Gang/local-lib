@@ -433,7 +433,7 @@ sub active_paths {
   my ($class) = @_;
 
   return () unless defined $ENV{PERL_LOCAL_LIB_ROOT};
-  return split /\Q$Config{path_sep}/, $ENV{PERL_LOCAL_LIB_ROOT};
+  return grep { $_ ne '' } split /\Q$Config{path_sep}/, $ENV{PERL_LOCAL_LIB_ROOT};
 }
 
 sub build_deactivate_environment_vars_for {
