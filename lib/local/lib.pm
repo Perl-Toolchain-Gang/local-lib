@@ -234,7 +234,15 @@ sub setup_local_lib_for {
     exit 0;
   } else {
     $class->setup_env_hash_for($path, $deactivating);
-    @INC = _uniq(split($Config{path_sep}, $ENV{PERL5LIB}), @INC);
+    my $arch_dir = $Config{archname};
+    @INC = _uniq(
+	(
+	    # Inject $path/$archname for each path in PERL5LIB
+	    map { ( File::Spec->catdir($_, $arch_dir), $_ ) }
+	    split($Config{path_sep}, $ENV{PERL5LIB})
+	),
+	@INC
+    );
   }
 }
 
@@ -419,7 +427,6 @@ sub build_activate_environment_vars_for {
     PERL5LIB =>
             _env_list_value(
               { interpolate => $interpolate, exists => 0, empty => '' },
-              $class->install_base_arch_path($path),
               $class->install_base_perl_path($path),
               \'PERL5LIB',
             ),
