@@ -207,7 +207,13 @@ sub setup_local_lib_for {
   my $interpolate = LITERAL_ENV;
   my @active_lls = $class->active_paths;
 
-  $path = $class->ensure_dir_structure_for($path);
+  $class->ensure_dir_structure_for($path);
+
+  # On Win32 directories often contain spaces. But some parts of the CPAN
+  # toolchain don't like that. To avoid this, GetShortPathName() gives us
+  # an alternate representation that has none.
+  # This only works if the directory already exists.
+  $path = Win32::GetShortPathName($path) if $^O eq 'MSWin32';
 
   if (! $deactivating) {
     if (@active_lls && $active_lls[-1] eq $path) {
@@ -253,11 +259,7 @@ sub ensure_dir_structure_for {
     warn "Attempting to create directory ${path}\n";
   }
   File::Path::mkpath($path);
-  # Need to have the path exist to make a short name for it, so
-  # converting to a short name here.
-  $path = Win32::GetShortPathName($path) if $^O eq 'MSWin32';
-
-  return $path;
+  return
 }
 
 sub guess_shelltype {
