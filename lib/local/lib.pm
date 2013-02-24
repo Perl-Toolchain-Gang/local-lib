@@ -10,7 +10,7 @@ use File::Spec ();
 use File::Path ();
 use Config;
 
-our $VERSION = '1.008007'; # 1.8.4
+our $VERSION = '1.008008'; # 1.8.8
 
 our @KNOWN_FLAGS = qw(--self-contained --deactivate --deactivate-all);
 
@@ -236,12 +236,12 @@ sub setup_local_lib_for {
     $class->setup_env_hash_for($path, $deactivating);
     my $arch_dir = $Config{archname};
     @INC = _uniq(
-	(
-	    # Inject $path/$archname for each path in PERL5LIB
-	    map { ( File::Spec->catdir($_, $arch_dir), $_ ) }
-	    split($Config{path_sep}, $ENV{PERL5LIB})
-	),
-	@INC
+  (
+      # Inject $path/$archname for each path in PERL5LIB
+      map { ( File::Spec->catdir($_, $arch_dir), $_ ) }
+      split($Config{path_sep}, $ENV{PERL5LIB})
+  ),
+  @INC
     );
   }
 }
@@ -432,7 +432,7 @@ sub build_activate_environment_vars_for {
             ),
     PATH => _env_list_value(
               { interpolate => $interpolate, exists => 0, empty => '' },
-	      $class->install_base_bin_path($path),
+        $class->install_base_bin_path($path),
               \'PATH',
             ),
   )

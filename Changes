@@ -1,4 +1,11 @@
 Revision history for local::lib
+1.008008 2013-02-24
+
+        - Fix putting arch path in PERL5LIB
+        - Refactor Win32 path handling out of ensure_dir_structure_for()
+        - Fix activate_paths when PERL_LOCAL_LIB_ROOT starts with :
+        - Fix ~/perl5/bin missing in $PATH
+
 1.008007 2013-02-17
         - Back to 1.008004 with Carp fix since subsequent releases were botched
         - Avoid issue where PERL5LIB Carp is older than local::lib one
