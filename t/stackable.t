@@ -5,7 +5,6 @@ use File::Temp qw(tempdir);
 use File::Spec;
 use Cwd;
 use Config;
-use Carp::Always;
 
 plan tests => 24;
 
