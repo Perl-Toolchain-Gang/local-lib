@@ -1,4 +1,8 @@
 Revision history for local::lib
+1.008009 2013-02-24
+
+        - Remove Carp::Always dep
+
 1.008008 2013-02-24
 
         - Fix putting arch path in PERL5LIB
