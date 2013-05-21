@@ -405,7 +405,7 @@ sub _env_list_value {
                  && (!$options{exists} || -e $_))
     } map {
       if (ref $_ eq 'SCALAR' && $options{interpolate} == INTERPOLATE_ENV) {
-        exists $ENV{${$_}} ? (split /\Q$Config{path_sep}/, $ENV{${$_}}) : ()
+        defined $ENV{${$_}} ? (split /\Q$Config{path_sep}/, $ENV{${$_}}) : ()
       } else {
         $_
       }
