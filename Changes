@@ -1,10 +1,10 @@
 Revision history for local::lib
 
+1.008010 2013-05-26
         - Fix a split on undefined value warning (David Golden -- see
           https://github.com/gugod/App-perlbrew/issues/305)
 
 1.008009 2013-02-24
-
         - Remove Carp::Always dep
 
 1.008008 2013-02-24
