@@ -1024,6 +1024,14 @@ On Win32 systems, C<COMSPEC> is also examined.
 
 =back
 
+=head1 SEE ALSO
+
+=over 4
+
+=item * L<Perl Advent article, 2011|http://perladvent.org/2011/2011-12-01.html>
+
+=back
+
 =head1 SUPPORT
 
 IRC:
