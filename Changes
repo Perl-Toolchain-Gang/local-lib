@@ -1,5 +1,7 @@
 Revision history for local::lib
 
+        - skip CPAN workaround if running via cpanminus  (miyagawa, RT#85731)
+
 1.008010 2013-05-26
         - Fix a split on undefined value warning (David Golden -- see
           https://github.com/gugod/App-perlbrew/issues/305)
