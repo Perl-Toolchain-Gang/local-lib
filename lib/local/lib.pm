@@ -972,10 +972,10 @@ install UNINST=1" and local::lib if you understand these possible consequences.
 =head1 LIMITATIONS
 
 The perl toolchain is unable to handle directory names with spaces in it,
-so you cant put your local::lib bootstrap into a directory with spaces. What
+so you can't put your local::lib bootstrap into a directory with spaces. What
 you can do is moving your local::lib to a directory with spaces B<after> you
 installed all modules inside your local::lib bootstrap. But be aware that you
-cant update or install CPAN modules after the move.
+can't update or install CPAN modules after the move.
 
 Rather basic shell detection. Right now anything with csh in its name is
 assumed to be a C shell or something compatible, and everything else is assumed
