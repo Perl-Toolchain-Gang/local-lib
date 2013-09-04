@@ -45,7 +45,8 @@ BEGIN {
   # dashes, it's better to die loudly telling the user exactly what happened
   # so they don't make the same mistake again rather than being the only
   # program in the universe that works with them.
-  if(grep { /−/ } @ARGV) {
+  # the fancy dash is U+2212 or \xE2\x88\x92
+  if(grep { /\xE2\x88\x92/ } @ARGV or grep { /−/ } @ARGV) {
       die <<'DEATH';
 WHOA THERE! It looks like you've got some fancy dashes in your commandline!
 These are *not* the traditional -- dashes that software recognizes. You
