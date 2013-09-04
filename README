@@ -1,0 +1,13 @@
+
+
+This archive contains the local-lib distribution:
+
+  create and use a local lib/ for perl modules with PERL5LIB
+
+This software is copyright (c) 2007 by Matt S Trout,
+<mst@shadowcat.co.uk> http://www.shadowcat.co.uk/
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+
