@@ -20,7 +20,7 @@ my $orig_dir = cwd;
 SKIP: for my $dist_type (qw(EUMM MB)) {
   chdir File::Spec->catdir($orig_dir, qw(t dist), $dist_type);
   if ($dist_type eq 'EUMM') {
-    my ($stdout, $stderr) = capture { eval { 
+    my ($stdout, $stderr) = capture { eval {
       system($^X, 'Makefile.PL') && die "Makefile.PL failed";
       system($Config{make}, 'install') && die "$Config{make} install failed";
     } };

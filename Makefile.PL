@@ -6,7 +6,7 @@ use vars qw($bootstrapping $bootstrapping_args $no_manpages);
 use Config;
 
 # Solaris (and possibly other Unices) have a tar in /usr/bin that, among
-# other things, does not understand @LongLink. This can cause 
+# other things, does not understand @LongLink. This can cause
 # extraction to look like it succeeded, but it actually failed (because
 # the error message for the @LongLink failure scrolled offscreen).
 # Therefore, given the fact that GNU tar is the most widespread tar available,
@@ -107,7 +107,7 @@ DEATH
          }
          return $orig->(@_);
        };
-       # not yet -- apeiron, 2010-03-10 
+       # not yet -- apeiron, 2010-03-10
        #$CPAN::Config->{urllist} = ["http://cpan.shadowcatprojects.net"];
        # <mst> all bootstrapped fine on one DH account
        # <mst> on another, it tries to install man stuff into /usr/local
@@ -159,10 +159,10 @@ DEATH
       system($^X, '-MCPAN', '-e', $cpan_config_command)
         unless $did_cpan_config;
       system($^X, '-MCPAN',
-        '-e', 
+        '-e',
         q[CPAN::HandleConfig->load;],
-        '-e', 
-        q[$CPAN::Config->{makepl_arg}  = ] . 
+        '-e',
+        q[$CPAN::Config->{makepl_arg}  = ] .
           q['INSTALLMAN1DIR=none INSTALLMAN3DIR=none';],
         '-e',
         q[$CPAN::Config->{buildpl_arg} = ] .

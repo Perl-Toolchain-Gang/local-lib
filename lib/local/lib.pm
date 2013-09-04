@@ -100,7 +100,7 @@ sub pipeline {
 package local::lib;
 
 { package Foo; sub foo { -$_[1] } sub bar { $_[1]+2 } sub baz { $_[1]+3 } }
-my $foo = bless({}, 'Foo');                                                 
+my $foo = bless({}, 'Foo');
 Test::More::ok($foo->${pipeline qw(foo bar baz)}(10) == -15);
 
 =end testing
@@ -584,9 +584,9 @@ From the shell -
 A typical way to install local::lib is using what is known as the
 "bootstrapping" technique.  You would do this if your system administrator
 hasn't already installed local::lib.  In this case, you'll need to install
-local::lib in your home directory. 
+local::lib in your home directory.
 
-If you do have administrative privileges, you will still want to set up your 
+If you do have administrative privileges, you will still want to set up your
 environment variables, as discussed in step 4. Without this, you would still
 install the modules into the system CPAN installation and also your Perl scripts
 will not use the lib/ path you bootstrapped with local::lib.
@@ -616,7 +616,7 @@ to specify the name of the directory when you call bootstrap, as follows:
 
   make test && make install
 
-4. Now we need to setup the appropriate environment variables, so that Perl 
+4. Now we need to setup the appropriate environment variables, so that Perl
 starts using our newly generated lib/ directory. If you are using bash or
 any other Bourne shells, you can add this to your shell startup script this
 way:
@@ -630,13 +630,13 @@ If you are using C shell, you can do this as follows:
   /bin/csh
   perl -I$HOME/perl5/lib/perl5 -Mlocal::lib >> ~/.cshrc
 
-If you passed to bootstrap a directory other than default, you also need to give that as 
+If you passed to bootstrap a directory other than default, you also need to give that as
 import parameter to the call of the local::lib module like this way:
 
   echo 'eval $(perl -I$HOME/foo/lib/perl5 -Mlocal::lib=$HOME/foo)' >>~/.bashrc
 
 After writing your shell configuration file, be sure to re-read it to get the
-changed settings into your current shell's environment. Bourne shells use 
+changed settings into your current shell's environment. Bourne shells use
 C<. ~/.bashrc> for this, whereas C shells use C<source ~/.cshrc>.
 
 If you're on a slower machine, or are operating under draconian disk space
@@ -645,9 +645,9 @@ installing modules by using the C<--no-manpages> argument when bootstrapping:
 
   perl Makefile.PL --bootstrap --no-manpages
 
-To avoid doing several bootstrap for several Perl module environments on the 
-same account, for example if you use it for several different deployed 
-applications independently, you can use one bootstrapped local::lib 
+To avoid doing several bootstrap for several Perl module environments on the
+same account, for example if you use it for several different deployed
+applications independently, you can use one bootstrapped local::lib
 installation to install modules in different directories directly this way:
 
   cd ~/mydir1
@@ -700,7 +700,7 @@ C<CMD.exe>, you can use this:
   set PERL_MM_OPT=INSTALL_BASE=C:\DOCUME~1\ADMINI~1\perl5
   set PERL5LIB=C:\DOCUME~1\ADMINI~1\perl5\lib\perl5;C:\DOCUME~1\ADMINI~1\perl5\lib\perl5\MSWin32-x86-multi-thread
   set PATH=C:\DOCUME~1\ADMINI~1\perl5\bin;%PATH%
-  
+
   ### To set the environment for this shell alone
   C:\>perl -Mlocal::lib > %TEMP%\tmp.bat && %TEMP%\tmp.bat && del %TEMP%\tmp.bat
   ### instead of $(perl -Mlocal::lib=./)
@@ -734,7 +734,7 @@ packages takes precedence over the system installation.
 If you are using a package management system (such as Debian), you don't need to
 worry about Debian and CPAN stepping on each other's toes.  Your local version
 of the packages will be written to an entirely separate directory from those
-installed by Debian.  
+installed by Debian.
 
 =head1 DESCRIPTION
 
