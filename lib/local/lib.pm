@@ -971,28 +971,36 @@ install UNINST=1" and local::lib if you understand these possible consequences.
 
 =head1 LIMITATIONS
 
-The perl toolchain is unable to handle directory names with spaces in it,
+=over 4
+
+=item * The perl toolchain is unable to handle directory names with spaces in it,
 so you can't put your local::lib bootstrap into a directory with spaces. What
 you can do is moving your local::lib to a directory with spaces B<after> you
 installed all modules inside your local::lib bootstrap. But be aware that you
 can't update or install CPAN modules after the move.
 
-Rather basic shell detection. Right now anything with csh in its name is
+=item * Rather basic shell detection. Right now anything with csh in its name is
 assumed to be a C shell or something compatible, and everything else is assumed
 to be Bourne, except on Win32 systems. If the C<SHELL> environment variable is
 not set, a Bourne-compatible shell is assumed.
 
-Bootstrap is a hack and will use CPAN.pm for ExtUtils::MakeMaker even if you
+=item * Bootstrap is a hack and will use CPAN.pm for ExtUtils::MakeMaker even if you
 have CPANPLUS installed.
 
-Kills any existing PERL5LIB, PERL_MM_OPT or PERL_MB_OPT.
+=item * Kills any existing PERL5LIB, PERL_MM_OPT or PERL_MB_OPT.
 
-Should probably auto-fixup CPAN config if not already done.
+=item * Should probably auto-fixup CPAN config if not already done.
+
+=back
 
 Patches very much welcome for any of the above.
 
-On Win32 systems, does not have a way to write the created environment variables
+=over 4
+
+=item * On Win32 systems, does not have a way to write the created environment variables
 to the registry, so that they can persist through a reboot.
+
+=back
 
 =head1 TROUBLESHOOTING
 
