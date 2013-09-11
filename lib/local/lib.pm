@@ -593,7 +593,7 @@ A typical way to install local::lib is using what is known as the
 hasn't already installed local::lib.  In this case, you'll need to install
 local::lib in your home directory.
 
-If you do have administrative privileges, you will still want to set up your
+Even if you do have administrative privileges, you will still want to set up your
 environment variables, as discussed in step 4. Without this, you would still
 install the modules into the system CPAN installation and also your Perl scripts
 will not use the lib/ path you bootstrapped with local::lib.
