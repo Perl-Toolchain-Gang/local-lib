@@ -1,5 +1,6 @@
 Revision history for local::lib
 
+1.008012   2013-09-11
         - now handling using -Mlocal::lib in a taintperl environment, by
           ensuring that all libs in PERL_LOCAL_LIB_ROOT are properly added to
           @INC (RT#76661, Karen Etheridge)
