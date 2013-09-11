@@ -443,7 +443,14 @@ sub active_paths {
   my ($class) = @_;
 
   return () unless defined $ENV{PERL_LOCAL_LIB_ROOT};
-  return grep { $_ ne '' } split /\Q$Config{path_sep}/, $ENV{PERL_LOCAL_LIB_ROOT};
+
+  return grep {
+    # screen out entries that aren't actually reflected in @INC
+    my $active_ll = $class->install_base_perl_path($_);
+    grep { $_ eq $active_ll } @INC
+  }
+  grep { $_ ne '' }
+  split /\Q$Config{path_sep}\E/, $ENV{PERL_LOCAL_LIB_ROOT};
 }
 
 sub build_deactivate_environment_vars_for {
@@ -857,7 +864,8 @@ L</build_environment_vars_for>.
 =back
 
 Returns a list of active C<local::lib> paths, according to the
-C<PERL_LOCAL_LIB_ROOT> environment variable.
+C<PERL_LOCAL_LIB_ROOT> environment variable and verified against
+what is really in C<@INC>.
 
 =head2 install_base_perl_path
 

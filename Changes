@@ -1,5 +1,9 @@
 Revision history for local::lib
 
+        - now handling using -Mlocal::lib in a taintperl environment, by
+          ensuring that all libs in PERL_LOCAL_LIB_ROOT are properly added to
+          @INC (RT#76661, Karen Etheridge)
+
 1.008011   2013-07-26
         - skip CPAN workaround if running via cpanminus  (miyagawa, RT#85731)
 
