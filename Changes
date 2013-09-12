@@ -1,5 +1,6 @@
 Revision history for local::lib
 
+1.008013   2013-09-11
         - fix undef value errors when not installing into a local::lib
 
 1.008012   2013-09-11
