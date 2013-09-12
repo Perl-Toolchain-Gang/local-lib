@@ -1,5 +1,8 @@
 Revision history for local::lib
 
+        - fix new test to use alternate path representations on windows, to
+          handle potential space issues (regression since 1.008012)
+
 1.008013   2013-09-11
         - fix undef value errors when not installing into a local::lib
 
