@@ -1,5 +1,8 @@
 Revision history for local::lib
 
+1.008015   2013-09-12
+        - re-release 1.008014 to fix broken MANIFEST
+
 1.008014   2013-09-12
         - fix new test to use alternate path representations on windows, to
           handle potential space issues (regression since 1.008012)
