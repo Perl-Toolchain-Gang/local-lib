@@ -6,14 +6,14 @@ use local::lib ();
 
 # remember the original value of this, in case we are already running inside a
 # local::lib
-my $orig_llr = $ENV{PERL_LOCAL_LIB_ROOT};
+my $orig_llr = $ENV{PERL_LOCAL_LIB_ROOT} || '';
 
 my $dir1 = tempdir('test_local_lib-XXXXX', DIR => Cwd::abs_path('t'), CLEANUP => 1);
 my $dir2 = tempdir('test_local_lib-XXXXX', DIR => Cwd::abs_path('t'), CLEANUP => 1);
 my $dir3 = tempdir('test_local_lib-XXXXX', DIR => Cwd::abs_path('t'), CLEANUP => 1);
 
 ok(!(grep { $dir1 eq $_ } @INC), 'new dir is not already in @INC');
-ok(!(grep { $dir1 eq $_ } split /:/, $ENV{PERL5LIB}), 'new dir is not already in PERL5LIB');
+ok(!(grep { $dir1 eq $_ } split /:/, ($ENV{PERL5LIB}||'')), 'new dir is not already in PERL5LIB');
 
 local::lib->import($dir1);
 local::lib->import($dir2);
@@ -25,7 +25,7 @@ local::lib->import($dir1);
 
 is(
     $ENV{PERL_LOCAL_LIB_ROOT},
-    join(':', $orig_llr, $dir2, $dir1),
+    join(':', (grep { $_ } $orig_llr, $dir2, $dir1)),
     'dir1 should have been removed and added back in at the top',
 );
 
