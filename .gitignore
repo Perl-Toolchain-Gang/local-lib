@@ -28,3 +28,4 @@
 /t/dist/MB/Build
 /t/dist/MB/_build/
 /t/dist/MB/blib/
+/t/test_local_lib-*

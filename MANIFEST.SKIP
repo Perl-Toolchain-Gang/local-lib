@@ -3,3 +3,4 @@
 ^\.
 ^MANIFEST.SKIP$
 MYMETA\.
+^t/test_local_lib-
