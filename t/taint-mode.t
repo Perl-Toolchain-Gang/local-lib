@@ -27,7 +27,7 @@ print $fh <<EOM;
 use strict; use warnings;
 use local::lib '$dir1';
 my \$dir1 = "$dir1";
-if (grep { \$_ =~ m{^\$dir1/} } \@INC) {
+if (grep { m{^\\Q\$dir1\\E/} } \@INC) {
   exit 0;
 }
 exit 1

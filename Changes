@@ -1,5 +1,7 @@
 Revision history for local::lib
 
+        - avoid "Unrecognized escape \s passed through" errors on win32
+
 1.008015   2013-09-12
         - re-release 1.008014 to fix broken MANIFEST
 
