@@ -6,14 +6,13 @@
 
 use strict;
 use warnings;
-use Test::More;
-use File::Temp qw(tempdir tempfile);
+use Test::More tests => 1;
+use File::Temp 'tempfile';
 use Cwd;
 
-plan tests => 1;
+use lib 't/lib'; use TempDir;
 
-# Setup temp dir to serve as local lib
-my $dir1 = tempdir('test_local_lib-XXXXX', DIR => Cwd::abs_path('t'), CLEANUP => 1);
+my $dir1 = mk_temp_dir('test_local_lib-XXXXX');
 
 # Set up local::lib environment using our temp dir
 require local::lib;
