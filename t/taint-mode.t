@@ -26,7 +26,7 @@ print $fh <<EOM;
 #!/usr/bin/perl -T
 use strict; use warnings;
 use local::lib '$dir1';
-my \$dir1 = "$dir1";
+my \$dir1 = '$dir1';
 if (grep { m{^\\Q\$dir1\\E/} } \@INC) {
   exit 0;
 }
