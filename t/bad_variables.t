@@ -10,6 +10,7 @@ use lib 't/lib'; use TempDir;
 # remember the original value of this, in case we are already running inside a
 # local::lib
 my $orig_llr = $ENV{PERL_LOCAL_LIB_ROOT} || '';
+$orig_llr = '' if $orig_llr eq $Config{path_sep};
 
 my $dir1 = mk_temp_dir('test_local_lib-XXXXX');
 my $dir2 = mk_temp_dir('test_local_lib-XXXXX');
