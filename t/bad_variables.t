@@ -29,8 +29,8 @@ local::lib->import($dir1);
 
 is(
     $ENV{PERL_LOCAL_LIB_ROOT},
-    join($Config{path_sep}, (grep { $_ } $orig_llr, $dir2, $dir1)),
-    'dir1 should have been removed and added back in at the top',
+    join($Config{path_sep}, (grep { defined $_ and $_ ne '' } $orig_llr, $dir2, $dir1)),
+    'dir1 should have been removed and added back in at the top (PERL_LOCAL_LIB_ROOT was ' . $orig_llr . ')',
 );
 
 ok((grep { /\Q$dir1\E/ } @INC), 'new dir has been added to @INC');
