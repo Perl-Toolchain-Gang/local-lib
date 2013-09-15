@@ -1,5 +1,6 @@
 Revision history for local::lib
 
+1.008018   2013-09-15
         - print out actual paths in more test cases, for helping to diagnose
           mysterious failures
 

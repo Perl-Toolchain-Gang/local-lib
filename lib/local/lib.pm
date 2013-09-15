@@ -10,7 +10,7 @@ use File::Spec ();
 use File::Path ();
 use Config;
 
-our $VERSION = '1.008017'; # 1.8.17
+our $VERSION = '1.008018'; # 1.8.18
 
 our @KNOWN_FLAGS = qw(--self-contained --deactivate --deactivate-all);
 
