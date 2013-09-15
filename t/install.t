@@ -32,10 +32,9 @@ SKIP: for my $dist_type (qw(EUMM MB)) {
     } };
     diag $stdout, $stderr if $@;
   }
+  my $file = File::Spec->catfile($dir, qw(lib perl5), "$dist_type.pm");
   ok(
-    -e File::Spec->catfile(
-      $dir, qw(lib perl5), "$dist_type.pm",
-    ),
-    "$dist_type.pm installed into the correct location",
+    -e $file,
+    "$dist_type.pm installed as $file",
   );
 }
