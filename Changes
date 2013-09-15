@@ -1,5 +1,8 @@
 Revision history for local::lib
 
+        - print out actual paths in more test cases, for helping to diagnose
+          mysterious failures
+
 1.008017   2013-09-14
         - avoid "Unrecognized escape \s passed through" errors on win32
           (again)
