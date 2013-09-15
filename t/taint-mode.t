@@ -22,12 +22,16 @@ local::lib->import($dir1);
 # local lib to the same temp dir.
 my ($fh, $filename) = tempfile('test_local_lib-XXXXX', DIR => Cwd::abs_path('t'), UNLINK => 1);
 
+# escape backlslashes for embedding into generated script
+$dir1 =~ s/\\/\\\\/g;
+
 print $fh <<EOM;
 #!/usr/bin/perl -T
 use strict; use warnings;
 use local::lib '$dir1';
-my \$dir1 = '$dir1';
-if (grep { m{^\\Q\$dir1\\E/} } \@INC) {
+warn 'using lib dir $dir1', "\n";
+my \$dir = '$dir1';
+if (grep { m{^\\Q\$dir\\E/} } \@INC) {
   exit 0;
 }
 exit 1
