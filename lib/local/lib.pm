@@ -486,7 +486,6 @@ sub build_deactivate_environment_vars_for {
   }
 
   my $perl_path = $class->install_base_perl_path($path);
-  my $arch_path = $class->install_base_arch_path($path);
   my $bin_path = $class->install_base_bin_path($path);
 
 
@@ -501,7 +500,7 @@ sub build_deactivate_environment_vars_for {
       {
         exists => 0,
         filter => sub {
-          $_ ne $perl_path && $_ ne $arch_path
+          $_ ne $perl_path
         },
       },
       \'PERL5LIB',
@@ -533,7 +532,6 @@ sub build_deact_all_environment_vars_for {
 
   my %perl_paths = map { (
       $class->install_base_perl_path($_) => 1,
-      $class->install_base_arch_path($_) => 1
     ) } @active_lls;
   my %bin_paths = map { (
       $class->install_base_bin_path($_) => 1,
