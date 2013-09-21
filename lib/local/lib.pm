@@ -430,8 +430,7 @@ sub build_activate_environment_vars_for {
               $path,
               \'PERL_LOCAL_LIB_ROOT',
             ),
-    PERL_MB_OPT => "--install_base " . _mb_escape_path($path),
-    PERL_MM_OPT => "INSTALL_BASE=" . _mm_escape_path($path),
+    $class->installer_options_for($path),
     PERL5LIB =>
             _env_list_value(
               { interpolate => $interpolate, exists => 0, empty => '' },
@@ -518,11 +517,19 @@ sub build_deactivate_environment_vars_for {
   # correspond with the new top of stack.
   if ($active_lls[0] eq $path) {
     my $new_top = $active_lls[1];
-    $env{PERL_MB_OPT} = defined($new_top) ? "--install_base "._mb_escape_path($new_top) : undef;
-    $env{PERL_MM_OPT} = defined($new_top) ? "INSTALL_BASE="._mm_escape_path($new_top) : undef;
+    my %opts = $class->installer_options_for($new_top);
+    $env{keys %opts} = values %opts;
   }
 
   return %env;
+}
+
+sub installer_options_for {
+  my ($class, $path) = @_;
+  return (
+    PERL_MM_OPT => defined $path ? "INSTALL_BASE="._mm_escape_path($path) : undef,
+    PERL_MB_OPT => defined $path ? "--install_base "._mb_escape_path($path) : undef,
+  )
 }
 
 sub build_deact_all_environment_vars_for {
