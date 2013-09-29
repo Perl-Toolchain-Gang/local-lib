@@ -1,5 +1,8 @@
 Revision history for local::lib
 
+        - another attempt to overcome win32 testing issues (paths with spaces,
+          backslashes)
+
 1.008018   2013-09-15
         - print out actual paths in more test cases, for helping to diagnose
           mysterious failures
