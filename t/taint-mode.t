@@ -30,8 +30,7 @@ print $fh <<EOM;
 use strict; use warnings;
 use local::lib '$dir1';
 warn 'using lib dir $dir1', "\n";
-my \$dir = '$dir1';
-if (grep { m{^\\Q\$dir\\E/} } \@INC) {
+if (grep { m{^\\Q$dir1\\E/} } \@INC) {
   exit 0;
 }
 exit 1
