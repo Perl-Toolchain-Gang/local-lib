@@ -260,4 +260,10 @@ resources(
   homepage => 'http://git.shadowcat.co.uk/gitweb/gitweb.cgi?p=p5sagit/local-lib.git',
   bugtracker => 'http://rt.cpan.org/Public/Dist/Display.html?Name=local-lib',
 );
+
+makemaker_args(
+    clean => { FILES => 't/dist/*/MYMETA* t/dist/*/blib t/dist/EUMM/Makefile t/dist/EUMM/pm_to_blib t/dist/MB/Build t/dist/MB/_build' },
+    realclean => { FILES => 'MANIFEST MANIFEST.SKIP.bak' },
+);
+
 WriteAll;
