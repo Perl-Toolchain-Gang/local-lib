@@ -6,37 +6,50 @@
 
 use strict;
 use warnings;
-use Test::More tests => 1;
+use Test::More tests => 3;
 use File::Temp 'tempfile';
 use Cwd;
+use File::Spec;
+use IPC::Open3;
 
 use lib 't/lib'; use TempDir;
 
-my $dir1 = mk_temp_dir('test_local_lib-XXXXX');
+my @INC_CLEAN = @INC;
+
+my $dir1 = mk_temp_dir('used_in_taint-XXXXX');
+my $dir2 = mk_temp_dir('not_used_in_taint-XXXXX');
 
 # Set up local::lib environment using our temp dir
 require local::lib;
 local::lib->import($dir1);
+local::lib->import($dir2);
 
 # Create a script that has taint mode turned on, and tries to use a
 # local lib to the same temp dir.
 my ($fh, $filename) = tempfile('test_local_lib-XXXXX', DIR => Cwd::abs_path('t'), UNLINK => 1);
 
-print $fh <<EOM;
+print $fh <<"EOM";
 #!/usr/bin/perl -T
 use strict; use warnings;
-use local::lib ();
-my \$dir = "\Q$dir1\E";
-local::lib->import(\$dir);
-warn "using lib dir \$dir\\n";
-if (grep { m{^\\Q\$dir} } \@INC) {
-  exit 0;
-}
-warn '\@INC is: ', join("\\n", \@INC), "\\n";
-exit 1
+use local::lib "\Q$dir1\E";
+print "\$_\\n" for \@INC;
 EOM
 close $fh;
 
-my $exit_val = system($^X, '-Ilib', '-T', $filename);
+open my $in, '<', File::Spec->devnull;
+my $pid = open3($in, my $out, undef, $^X, map("-I$_", @INC_CLEAN), '-T', $filename);
+my @libs = <$out>;
+s/[\r\n]*\z// for @libs;
+close $out;
+waitpid $pid, 0;
+is $?, 0, 'test script ran without error';
 
-is($exit_val >> 8, 0, 'test script exited with 0, local::lib dir found in @INC');
+my $dir1_lib = local::lib->install_base_perl_path($dir1);
+ok grep($_ eq $dir1_lib, @libs),
+  'local::lib used in taint script added to @INC'
+  or diag "searched for '$dir1_lib' in: ", explain \@libs;
+
+my $dir2_lib = local::lib->install_base_perl_path($dir2);
+ok !grep($_ eq $dir2_lib, @libs),
+  'local::lib not used used in taint script not added to @INC'
+  or diag "searched for '$dir2_lib' in: ", explain \@libs;
