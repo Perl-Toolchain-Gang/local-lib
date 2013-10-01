@@ -2,7 +2,7 @@ package TempDir;
 use strict;
 use warnings;
 
-use Exporter 'import';
+use base 'Exporter';
 our @EXPORT = qw(mk_temp_dir);
 
 use local::lib ();
