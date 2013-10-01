@@ -66,11 +66,6 @@ DEATH
 
   $arg_store{path} = $class->resolve_path($arg_store{path});
   $class->setup_local_lib_for($arg_store{path}, $deactivating);
-
-  for (@INC) { # Untaint @INC
-    next if ref; # Skip entry if it is an ARRAY, CODE, blessed, etc.
-    m/(.*)/ and $_ = $1;
-  }
 }
 
 sub pipeline;
