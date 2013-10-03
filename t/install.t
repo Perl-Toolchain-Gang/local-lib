@@ -18,7 +18,7 @@ use local::lib ();
 local::lib->import($dir);
 
 my $orig_dir = cwd;
-SKIP: for my $dist_type (qw(EUMM MB)) {
+SKIP: for my $dist_type (qw(MB EUMM)) {
   chdir File::Spec->catdir($orig_dir, qw(t dist), $dist_type);
   if ($dist_type eq 'EUMM') {
     my ($stdout, $stderr) = capture { eval {
@@ -37,5 +37,9 @@ SKIP: for my $dist_type (qw(EUMM MB)) {
   ok(
     -e $file,
     "$dist_type - $dist_type.pm installed as $file",
-  );
+  )
+  or do {
+        my $dest_dir = File::Spec->catdir($dir, qw(lib perl5));
+        diag 'Files in ' . $dest_dir . ":\n", join("\n", glob(File::Spec->catfile($dest_dir, '*')));
+  };
 }
