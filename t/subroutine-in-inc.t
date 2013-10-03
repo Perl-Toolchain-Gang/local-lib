@@ -1,8 +1,6 @@
 #!/usr/bin/perl -w
 
-use Test::More;
-
-plan qw/no_plan/;
+use Test::More tests => 1;
 
 use File::Spec;
 use Cwd;
