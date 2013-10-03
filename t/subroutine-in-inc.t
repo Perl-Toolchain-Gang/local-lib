@@ -1,4 +1,5 @@
-#!/usr/bin/perl -w
+use strict;
+use warnings FATAL => 'all';
 
 use Test::More tests => 1;
 
