@@ -1106,8 +1106,8 @@ listed above.
 
 =head1 LICENSE
 
-This library is free software and may be distributed under the same terms
-as perl itself.
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut
 
