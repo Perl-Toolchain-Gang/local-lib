@@ -20,13 +20,13 @@ local::lib->import($dir1);
 local::lib->import($dir2);
 
 # we have junk in here now
-$ENV{PERL_LOCAL_LIB_ROOT} .= $Config{path_sep} . $dir3;
+$ENV{PERL_LOCAL_LIB_ROOT} = $dir3 . $Config{path_sep} . $ENV{PERL_LOCAL_LIB_ROOT};
 
 local::lib->import($dir1);
 
 is(
     $ENV{PERL_LOCAL_LIB_ROOT},
-    join($Config{path_sep}, (grep { defined $_ and $_ ne '' } $dir2, $dir1)),
+    join($Config{path_sep}, (grep { defined $_ and $_ ne '' } $dir1, $dir2)),
     'dir1 should have been removed and added back in at the top'
 );
 

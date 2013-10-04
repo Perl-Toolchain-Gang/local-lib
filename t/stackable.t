@@ -46,7 +46,7 @@ like $ENV{PERL_MM_OPT}, qr/\Q$dir2_escape/, 'second path is installation target'
 local::lib->import($dir1);
 my @active = local::lib->active_paths;
 is @active, $prev_active + 2, 'still two active dirs after re-adding first';
-is $active[-1], $dir1, 'first dir was re-added on top';
+is $active[0], $dir1, 'first dir was re-added on top';
 like $ENV{PERL_MM_OPT}, qr/\Q$dir1_escape/, 'first path is installation target again';
 
 local::lib->import('--deactivate', $dir2);
