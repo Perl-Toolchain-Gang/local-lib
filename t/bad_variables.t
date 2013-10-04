@@ -26,7 +26,7 @@ local::lib->import($dir1);
 
 is(
     $ENV{PERL_LOCAL_LIB_ROOT},
-    join($Config{path_sep}, (grep { defined $_ and $_ ne '' } $dir1, $dir2)),
+    join($Config{path_sep}, (grep { defined $_ and $_ ne '' } $dir1, $dir3, $dir2)),
     'dir1 should have been removed and added back in at the top'
 );
 
