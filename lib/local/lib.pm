@@ -241,9 +241,11 @@ sub activate {
 }
 
 sub _legacy {
-  my ($self, $path, $deactivating) = @_;
+  my ($self, $path) = @_;
   $self = $self->new unless ref $self;
-  $self = $self->${\($deactivating ? 'deactivate' : 'activate')}($path) if defined $path;
+  if (defined $path) {
+    $self = $self->activate($path);
+  }
   $self;
 }
 
