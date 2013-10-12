@@ -332,8 +332,18 @@ sub build_cmd_env_declaration {
   my $value = $class->_interpolate($args, '%', '%');
   $value =~ s/"/\\"/g
     if defined $value;
-  return defined($value) ? qq{set ${name} "${value}"\n} : qq{set ${name}=\n};
+  return qq{set $name=} . (defined($value) ? qq{"$value"} : '') . "\n";
 }
+sub build_powershell_env_declaration {
+  my ($class, $name, $args) = @_;
+  my $value = $class->_interpolate($args, '$env:');
+  if (defined $value) {
+    $value =~ s/"/\\"/g;
+    return qq{\$env:$name = "$value"\n};
+  }
+  return "Remove-Item Env:\\$name\n";
+}
+
 
 sub _interpolate {
   my ($class, $args, $start, $end) = @_;
