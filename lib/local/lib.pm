@@ -15,6 +15,7 @@ sub import {
   my ($class, @args) = @_;
 
   my @steps;
+  my %opts;
 
   while (@args) {
     my $arg = shift @args;
@@ -40,6 +41,10 @@ DEATH
     elsif ( $arg eq '--deactivate-all' ) {
       push @steps, ['deactivate_all'];
     }
+    elsif ( $arg =~ /^--shelltype(?:=(.*))?$/ ) {
+      my $shell = defined $1 ? $1 : shift @args;
+      $opts{shelltype} = $shell;
+    }
     elsif ( $arg =~ /^--/ ) {
       die "Unknown import argument: $arg";
     }
@@ -51,7 +56,7 @@ DEATH
     push @steps, ['activate', undef];
   }
 
-  my $self = $class->new;
+  my $self = $class->new(%opts);
 
   for (@steps) {
     my ($method, @args) = @$_;
