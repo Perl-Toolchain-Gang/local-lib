@@ -33,8 +33,8 @@ DEATH
     elsif ($arg eq '--self-contained') {
       die "FATAL: The local::lib --self-contained flag has never worked reliably and the original author, Mark Stosberg, was unable or unwilling to maintain it. As such, this flag has been removed from the local::lib codebase in order to prevent misunderstandings and potentially broken builds. The local::lib authors recommend that you look at the lib::core::only module shipped with this distribution in order to create a more robust environment that is equivalent to what --self-contained provided (although quite possibly not what you originally thought it provided due to the poor quality of the documentation, for which we apologise).\n";
     }
-    elsif( $arg eq '--deactivate' ) {
-      my $path = shift @args;
+    elsif( $arg =~ /^--deactivate(?:=(.*))?$/ ) {
+      my $path = defined $1 ? $1 : shift @args;
       push @steps, ['deactivate', $path];
     }
     elsif ( $arg eq '--deactivate-all' ) {
