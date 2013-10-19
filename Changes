@@ -1,5 +1,8 @@
 Revision history for local::lib
 
+1.008023   2013-10-19
+        - stable release of 1.008022 (no code changes since 1.008012)
+
 1.008022   2013-10-07 (development release, unindexed)
         - see 1.008019 through 1.008021
 
