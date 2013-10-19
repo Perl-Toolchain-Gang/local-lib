@@ -31,7 +31,6 @@ use strict; use warnings;
 use local::lib '$dir1';
 warn "using lib dir $dir1\\n";
 my \$quoted_dir = quotemeta('$dir1');
-warn "dir is $dir1, quoted is \$quoted_dir\\n";
 if (grep { m{^\$quoted_dir} } \@INC) {
   exit 0;
 }
