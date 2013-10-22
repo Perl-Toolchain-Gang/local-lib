@@ -424,8 +424,8 @@ sub build_activate_environment_vars_for {
               \'PERL_LOCAL_LIB_ROOT',
               $path,
             ),
-    PERL_MB_OPT => "--install_base ${path}",
-    PERL_MM_OPT => "INSTALL_BASE=${path}",
+    PERL_MB_OPT => "--install_base " . _mb_escape_path($path),
+    PERL_MM_OPT => "INSTALL_BASE=" . _mm_escape_path($path),
     PERL5LIB =>
             _env_list_value(
               { interpolate => $interpolate, exists => 0, empty => '' },
@@ -438,6 +438,21 @@ sub build_activate_environment_vars_for {
               \'PATH',
             ),
   )
+}
+
+sub _mm_escape_path {
+  my $path = shift;
+  $path =~ s/\\/\\\\\\\\/g;
+  if ($path =~ s/ /\\ /g) {
+    $path = qq{"\\"$path\\""};
+  }
+  return $path;
+}
+
+sub _mb_escape_path {
+  my $path = shift;
+  $path =~ s/\\/\\\\/g;
+  return qq{"$path"};
 }
 
 sub active_paths {
@@ -498,8 +513,8 @@ sub build_deactivate_environment_vars_for {
   # correspond with the new top of stack.
   if ($active_lls[-1] eq $path) {
     my $new_top = $active_lls[-2];
-    $env{PERL_MB_OPT} = defined($new_top) ? "--install_base ${new_top}" : undef;
-    $env{PERL_MM_OPT} = defined($new_top) ? "INSTALL_BASE=${new_top}" : undef;
+    $env{PERL_MB_OPT} = defined($new_top) ? "--install_base "._mb_escape_path($new_top) : undef;
+    $env{PERL_MM_OPT} = defined($new_top) ? "INSTALL_BASE="._mm_escape_path($new_top) : undef;
   }
 
   return %env;
