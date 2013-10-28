@@ -1,5 +1,11 @@
 Revision history for local::lib
 
+1.008024   2013-10-28  (development release, unindexed)
+        - fix installation into directories with spaces or backslashes, as
+          well as Win32 test failures when Capture::Tiny is installed
+        - fix test breaking in some cases when an external local::lib is set
+        - fix test compatibility with old versions of Exporter
+
 1.008023   2013-10-19
         - stable release of 1.008022 (no code changes since 1.008012)
 
