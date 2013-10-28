@@ -83,7 +83,7 @@ DEATH
     # <mst> we must set PERL_AUTOINSTALL_PREFER_CPAN too
     $ENV{PERL_AUTOINSTALL_PREFER_CPAN} = 1;
 
-    system($^X, '-MExtUtils::MakeMaker 6.31', '-e1');
+    system($^X, '-MExtUtils::MakeMaker 6.74', '-e1');
     my $eumm = $? >> 8;
 
     system($^X, '-MExtUtils::Install 1.43', '-e1');
@@ -181,8 +181,8 @@ use inc::Module::Install;
 name 'local-lib';
 all_from 'lib/local/lib.pm';
 
-requires 'ExtUtils::MakeMaker' => '6.31'; # version INSTALL_BASE was added
-requires 'ExtUtils::Install' => '1.43'; # ditto
+requires 'ExtUtils::MakeMaker' => '6.74'; # version PERL_MM_OPT is shell parsed
+requires 'ExtUtils::Install' => '1.43'; # version INSTALL_BASE was added
 requires 'Module::Build' => '0.36'; # PERL_MB_OPT
 
 # don't bother fixing CPAN.pm if bootstrapped from cpanminus
