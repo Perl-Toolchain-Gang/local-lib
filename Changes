@@ -63,8 +63,13 @@ Revision history for local::lib
 1.008008   2013-02-24
         - Fix putting arch path in PERL5LIB
         - Refactor Win32 path handling out of ensure_dir_structure_for()
-        - Fix activate_paths when PERL_LOCAL_LIB_ROOT starts with :
+        - Fix active_paths when PERL_LOCAL_LIB_ROOT starts with :
         - Fix ~/perl5/bin missing in $PATH
+        - The environment variables definition for the shell is now output in
+          a way that allows to put the generated content directly in the
+          .profile without requiring to launch perl
+          (the only difference is how PERL_LOCAL_LIB_ROOT is generated)
+          (Olivier Mengué).
 
 1.008007   2013-02-17
         - Back to 1.008004 with Carp fix since subsequent releases were botched
