@@ -22,10 +22,23 @@ my @dirs = (
 
 my %dist_types = (
   EUMM => sub {
+    open my $fh, '>', 'Makefile.PL' or die "can't create Makefile.PL: $!";
+    print $fh 'use ExtUtils::MakeMaker; WriteMakefile( NAME => "EUMM" );';
+    close $fh;
     system($^X, 'Makefile.PL') && die "Makefile.PL failed";
     system($Config{make}, 'install') && die "$Config{make} install failed";
   },
   MB => sub {
+    open my $fh, '>', 'Build.PL' or die "can't create Build.PL: $!";
+    print $fh <<END_BUILD;
+use Module::Build;
+Module::Build->new(
+  module_name       => "MB",
+  dist_version      => 1,
+  license           => "perl",
+)->create_build_script;
+END_BUILD
+    close $fh;
     system($^X, 'Build.PL') && die "Build.PL failed";
     system($^X, 'Build', 'install') && die "Build install failed";
   },
@@ -37,12 +50,20 @@ my $orig_dir = cwd;
 for my $dir_base (@dirs) {
   for my $dist_type (sort keys %dist_types) {
     chdir $orig_dir;
-    my $temp = mk_temp_dir('test_local_lib-XXXXX');
+    my $temp = mk_temp_dir("install-$dist_type-XXXXX");
     my $ll_dir = "$dist_type-$dir_base";
-    mkpath(my $ll = "$temp/$ll_dir");
+    my $ll = "$temp/$ll_dir";
+    mkpath(File::Spec->canonpath($ll));
+
     local::lib->import($ll);
 
-    chdir File::Spec->catdir($orig_dir, qw(t dist), $dist_type);
+    my $dist_dir = mk_temp_dir("source-$dist_type-XXXXX");
+    chdir $dist_dir;
+    mkdir 'lib';
+    open my $fh, '>', "lib/$dist_type.pm";
+    print $fh '1;';
+    close $fh;
+
     my $output = capture_merged { eval {
       $dist_types{$dist_type}->();
     } };
