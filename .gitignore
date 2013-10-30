@@ -29,4 +29,4 @@
 /t/dist/MB/Build.bat
 /t/dist/MB/_build/
 /t/dist/MB/blib/
-/t/test_local_lib-*
+/t/temp/
