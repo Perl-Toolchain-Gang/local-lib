@@ -305,6 +305,10 @@ sub environment_vars_string_for {
         && ${$value->[0]} eq $name) {
       next;
     }
+    if (!ref $value
+        && $value eq $ENV{$name}) {
+      next;
+    }
     $out .= $self->$build_method($name, $value);
   }
   return $out;
