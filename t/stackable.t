@@ -10,13 +10,14 @@ use local::lib ();
 
 use lib 't/lib'; use TempDir;
 
+delete $ENV{PERL_LOCAL_LIB_ROOT};
+
 my $dir1 = mk_temp_dir('test_local_lib-XXXXX');
 my $dir2 = mk_temp_dir('test_local_lib-XXXXX');
 
 my ($dir1_arch, $dir2_arch) = map { File::Spec->catfile($_, qw'lib perl5', $Config{archname}) } $dir1, $dir2;
 note $dir1_arch;
 note $dir2_arch;
-
 
 my $prev_active = () = local::lib->active_paths;
 
