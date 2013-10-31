@@ -214,20 +214,17 @@ unless ($ENV{PERL5_CPANM_IS_RUNNING}) {
     if (!$@ ) {
         CPAN::HandleConfig->require_myconfig_or_config;
         if ( $CPAN::Config ) {
-            for my $eumm_setting ( qw/makepl_arg make_install_arg/ ) {
-                if ($CPAN::Config->{$eumm_setting} =~ /(?:PREFIX|INSTALL_BASE)/) {
+            for my $setting (qw(
+              makepl_arg make_install_arg
+              mbuild_arg mbuild_install_arg mbuildpl_arg
+            )) {
+                my $value = $CPAN::Config->{$setting} or next;
+                if ($setting =~ /^make/
+                  ? $value =~ /(?:PREFIX|INSTALL_BASE)/
+                  : /(?:--prefix|--install_base)/
+                ) {
                     die <<"DEATH";
-WHOA THERE! It looks like you've got $CPAN::Config->{$eumm_setting} set in
-your CPAN config. This is known to cause problems with local::lib. Please
-either remove this setting or clear out your .cpan directory.
-DEATH
-                }
-            }
-
-            for my $mb_setting (qw/mbuild_arg mbuild_install_arg mbuildpl_arg/) {
-                if ($CPAN::Config->{$mb_setting} =~ /(?:--prefix|--install_base)/) {
-                    die <<"DEATH";
-WHOA THERE! It looks like you've got $CPAN::Config->{$mb_setting} set in
+WHOA THERE! It looks like you've got $CPAN::Config->{$setting} set in
 your CPAN config. This is known to cause problems with local::lib. Please
 either remove this setting or clear out your .cpan directory.
 DEATH
