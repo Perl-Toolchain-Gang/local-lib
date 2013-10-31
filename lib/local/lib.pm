@@ -345,7 +345,7 @@ sub build_bourne_env_declaration {
 sub build_csh_env_declaration {
   my $class = shift;
   my($name, $value) = @_;
-  return defined($value) ? qq{setenv ${name} "${value}"\n} : qq{unsetenv ${name}\n};
+  return defined($value) ? qq{setenv ${name} "${value}";\n} : qq{unsetenv ${name};\n};
 }
 
 sub build_win32_env_declaration {
