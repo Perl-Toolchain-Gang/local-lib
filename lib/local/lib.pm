@@ -796,6 +796,12 @@ was added by C<local::lib>, instead of adding it.
 Remove all directories that were added to search paths by C<local::lib> from the
 search paths.
 
+=head2 --shelltype
+
+Specify the shell type to use for output.  By default, the shell will be
+detected based on the environment.  Should be one of: C<bourne>, C<csh>,
+C<cmd>, or C<powershell>.
+
 =head1 METHODS
 
 =head2 ensure_dir_structure_for
