@@ -4,6 +4,7 @@
 /Makefile.old
 /MANIFEST
 /MANIFEST.bak
+/MANIFEST.SKIP
 /MANIFEST.SKIP.bak
 /blib/
 /pm_to_blib
@@ -22,3 +23,4 @@
 /todo/
 /inc/
 /t/temp/
+/Distar

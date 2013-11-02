@@ -1,6 +1,0 @@
-#!include_default
-^local-lib-
-^\.
-^MANIFEST.SKIP$
-MYMETA\.
-^t/test_local_lib-
