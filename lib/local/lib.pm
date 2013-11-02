@@ -844,7 +844,7 @@ given path as the base directory.
 
 =over 4
 
-=item Arguments: $path, $interpolate
+=item Arguments: $path
 
 =item Return value: %environment_vars
 
