@@ -16,9 +16,9 @@ my $dir;
 
 BEGIN {
     $base = CODE_in_INC;
-    unshift @INC, sub { };
-    splice @INC, 3, 1, sub { };
-    push @INC, sub { };
+    unshift @INC, sub { () };
+    splice @INC, 3, 1, sub { () };
+    push @INC, sub { () };
 
     $dir = tempdir( DIR => Cwd::abs_path('t'), CLEANUP => 1 );
 }

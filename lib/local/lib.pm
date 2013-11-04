@@ -3,8 +3,7 @@ use warnings;
 
 package local::lib;
 
-use 5.008001; # probably works with earlier versions but I'm not supporting them
-              # (patches would, of course, be welcome)
+use 5.006;
 
 use File::Spec ();
 use File::Path ();
