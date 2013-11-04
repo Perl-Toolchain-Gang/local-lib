@@ -1,199 +1,32 @@
 use strict;
-use warnings;
-use File::Spec;
-use Cwd;
-use vars qw($bootstrapping $bootstrapping_args $no_manpages);
-use Config;
+use warnings FATAL => 'all';
 
-# Solaris (and possibly other Unices) have a tar in /usr/bin that, among
-# other things, does not understand @LongLink. This can cause
-# extraction to look like it succeeded, but it actually failed (because
-# the error message for the @LongLink failure scrolled offscreen).
-# Therefore, given the fact that GNU tar is the most widespread tar available,
-# and it actually supports the feature we want (I'd bet it originated in GNU
-# tar, but I digress), we'll look for GNU tar. If we don't find it, and the
-# user hasn't pointed us to a suitable tar, we'll bomb and tell them what to
-# do.
-
-my $have_gtar = 0;
-if($^O eq 'solaris') {
-  $have_gtar = 0;
-  for my $env_path (split /:/, $ENV{PATH}) {
-    $have_gtar = 1 if -x File::Spec->catfile($env_path, 'gtar');
-  }
-} else {
-  $have_gtar = 1;
-}
-if(exists $ENV{PERL_LL_TAR}) {
-  $have_gtar ||= -x $ENV{PERL_LL_TAR};
-}
-
-die <<'DEATH' unless $have_gtar;
-You are using Solaris (or another traditional Unix) that does not provide a sane
-tar, capable of dealing with the output of GNU tar. Please either set the
-PERL_LL_TAR environment variable to the location of a version of tar that
-understands the @LongLink convention or put a binary named gtar somewhere on
-your PATH.
-DEATH
-
-my $cwd;
-BEGIN {
-  $cwd = Cwd::cwd();
-  # watch out for fancy dashes. these can wind up in our @ARGV if the user is
-  # copypasting the bootstrap command from the POD displayed e.g. by perldoc
-  # on a Mac OS X terminal. since no software recognizes and handles these
-  # dashes, it's better to die loudly telling the user exactly what happened
-  # so they don't make the same mistake again rather than being the only
-  # program in the universe that works with them.
-  # the fancy dash is U+2212 or \xE2\x88\x92
-  if(grep { /\xE2\x88\x92/ } @ARGV or grep { /−/ } @ARGV) {
-      die <<'DEATH';
-WHOA THERE! It looks like you've got some fancy dashes in your commandline!
-These are *not* the traditional -- dashes that software recognizes. You
-probably got these by copy-pasting from the perldoc for this module as
-rendered by a UTF8-capable formatter. This most typically happens on an OS X
-terminal, but can happen elsewhere too. Please try again after replacing the
-dashes with normal minus signs.
-DEATH
-  }
-  if (my ($x) = grep { /^--bootstrap(?:=.*)?$/ } @ARGV) {
-    @ARGV = grep { !/^--bootstrap(?:=.*)?$/ } @ARGV;
-    $bootstrapping = 1;
-    if(my ($x) = grep { /^--no-manpages/ } @ARGV) {
-      $no_manpages = 1;
-      @ARGV = grep { !/^--no-manpages/ } @ARGV;
-    }
-    my ($path) = $x =~ /^--bootstrap(?:=(.*))?$/;
-    my @args = $path ? $path : ();
-
-    {
-      local @INC = @INC;
-      unshift(@INC, 'lib');
-      require local::lib;
-    }
-
-    local::lib->import(@args);
-
-    my @libs = map { "-I$_" } split $Config{path_sep}, $ENV{PERL5LIB};
-    $bootstrapping_args = "@libs";
-    push(@ARGV,$ENV{PERL_MM_OPT});
-    push(@ARGV, @libs);
-
-    # <mst> GODDAMN makepl_arg INSTALLDIRS=site
-    # <mst> we must set PERL_AUTOINSTALL_PREFER_CPAN too
-    $ENV{PERL_AUTOINSTALL_PREFER_CPAN} = 1;
-
-    system($^X, '-MExtUtils::MakeMaker 6.74', '-e1');
-    my $eumm = $? >> 8;
-
-    system($^X, '-MExtUtils::Install 1.43', '-e1');
-    my $eui = $? >> 8;
-
-    system($^X, '-MModule::Build 0.36', '-e1');
-    my $mb = $? >> 8;
-
-    system($^X, '-MCPAN 1.82', '-e1');
-    my $cpan = $? >> 8;
-    my $cpan_command = '';
-
-    my $did_cpan_config = 0;
-    my $cpan_config_command =
-      'my $done; require ExtUtils::MakeMaker;
-       my $orig = ExtUtils::MakeMaker->can("prompt");
-       *ExtUtils::MakeMaker::prompt = sub ($;$) {
-         if (!$done && $_[0] =~ /manual configuration/) {
-           $done++;
-           return "no";
-         }
-         return $orig->(@_);
-       };
-       # not yet -- apeiron, 2010-03-10
-       #$CPAN::Config->{urllist} = ["http://cpan.shadowcatprojects.net"];
-       # <mst> all bootstrapped fine on one DH account
-       # <mst> on another, it tries to install man stuff into /usr/local
-       # <mst> cannot for the life of me figure out why
-       # <mst> (same fucking server as well)
-       # <mst> GOT THE BASTARD
-       # <mst> ExtUtils::ParseXS uses Module::Build
-       # <mst> but Module::Build depends on it
-       # <mst> so you need to set prefer_installer MM
-       # <mst> so cpan uses EU::ParseXS Makefile.PL
-       # <mst> since we already got EUMM, *that* works
-       $CPAN::Config->{prefer_installer} = "EUMM";
-       CPAN::Config->load;
-       unless ($done || -w $CPAN::Config->{keep_source_where}) {
-         my $save = $CPAN::Config->{urllist};
-         delete @{$CPAN::Config}{keys %$CPAN::Config};
-         $CPAN::Config->{urllist} = $save;
-         CPAN::Config->init;
-       }';
-
-    $ENV{PERL_MM_USE_DEFAULT} = 1;
-
-    # XXX - remove the force on EUMM once its test suite survive PERL_MM_OPT
-
-    if ($eumm) { # non-zero exit
-      $cpan_command .= 'force("install","ExtUtils::MakeMaker"); ';
-    }
-    if ($eui) {
-      $cpan_command .= 'install("ExtUtils::Install"); ';
-    }
-    if ($mb) {
-      $cpan_command .= 'install("Module::Build"); ';
-    }
-    if ($cpan) {
-      $cpan_command .= 'force("install","CPAN"); ';
-    }
-    if(length $cpan_command) {
-      system($^X, '-MCPAN', '-e', $cpan_config_command);
-      $did_cpan_config++;
-      system($^X, '-MCPAN', '-e', $cpan_command);
-    }
-    if ($cpan) {
-      system($^X, '-MCPAN', '-e', 'CPAN::Config->load; CPAN::Config->commit;');
-    }
-    if($no_manpages) {
-      # if we call this code directly, the changes get written to
-      # $BOOTSTRAP/lib/perl5/CPAN/Config.pm, not where the user expects them to
-      # be in their ~/.cpan/CPAN/MyConfig.pm.
-      system($^X, '-MCPAN', '-e', $cpan_config_command)
-        unless $did_cpan_config;
-      system($^X, '-MCPAN',
-        '-e',
-        q[CPAN::HandleConfig->load;],
-        '-e',
-        q[$CPAN::Config->{makepl_arg}  = ] .
-          q['INSTALLMAN1DIR=none INSTALLMAN3DIR=none';],
-        '-e',
-        q[$CPAN::Config->{buildpl_arg} = ] .
-          q['--install_path libdoc="" --install_path bindoc=""';],
-        '-e',
-        q[CPAN::Config->commit;],
-      );
-    }
-
-    chdir($cwd);
-  }
-}
-
-require ExtUtils::MakeMaker;
-ExtUtils::MakeMaker->import;
-(do 'maint/Makefile.PL.include' or die $@) unless -f 'META.yml';
-
-my %CONFIGURE_DEPS = ();
-my %BUILD_DEPS = ();
-my %TEST_DEPS = (
-  'Test::More'  => 0,
-);
-my %RUN_DEPS = (
-  'ExtUtils::MakeMaker' => '6.74', # version PERL_MM_OPT is shell parsed
-  'ExtUtils::Install'   => '1.43', # version INSTALL_BASE was added
-  'Module::Build'       => '0.36', # PERL_MB_OPT
-  'CPAN'                => '1.82', # sudo support + CPAN::HandleConfig
-);
-
-my %extra_info = (
-  'meta-spec' => { version => 2 },
+my %META = (
+  name => 'local-lib',
+  license => 'perl_5',
+  prereqs => {
+    configure => { requires => {
+    } },
+    build => { requires => {
+    } },
+    test => { requires => {
+      'Test::More'  => 0,
+    } },
+    runtime => { requires => {
+      'perl'                => 5.006,
+      'ExtUtils::MakeMaker' => '6.74', # version PERL_MM_OPT is shell parsed
+      'ExtUtils::Install'   => '1.43', # version INSTALL_BASE was added
+      'Module::Build'       => '0.36', # PERL_MB_OPT
+      'CPAN'                => '1.82', # sudo support + CPAN::HandleConfig
+    } },
+    develop   => { requires => {
+      $] >= 5.010 ? ('Test::CPAN::Changes' => 0) : (),
+      'Test::EOL'     => 0,
+      'Test::NoTabs'  => 0,
+      'Test::Pod'     => 0,
+      'Capture::Tiny' => 0,
+    } },
+  },
   resources => {
     repository => {
       url => 'git://github.com/Perl-Toolchain-Gang/local-lib',
@@ -207,122 +40,179 @@ my %extra_info = (
     },
     license => [ 'http://dev.perl.org/licenses/' ],
   },
-  prereqs => {
-    runtime   => { requires => { perl => '5.6.0' } },
-    develop   => { requires => {
-      $] >= 5.010 ? ('Test::CPAN::Changes' => 0) : (),
-      'Test::EOL'     => 0,
-      'Test::NoTabs'  => 0,
-      'Test::Pod'     => 0,
-      'Capture::Tiny' => 0,
-    } },
-  },
 );
 
+my %MM_ARGS = ();
+
+##############################################################################
+
+# Solaris (and possibly other Unices) have a tar in /usr/bin that, among
+# other things, does not understand @LongLink. This can cause
+# extraction to look like it succeeded, but it actually failed (because
+# the error message for the @LongLink failure scrolled offscreen).
+# Therefore, given the fact that GNU tar is the most widespread tar available,
+# and it actually supports the feature we want (I'd bet it originated in GNU
+# tar, but I digress), we'll look for GNU tar. If we don't find it, and the
+# user hasn't pointed us to a suitable tar, we'll bomb and tell them what to
+# do.
+#
+require File::Spec;
+unless (exists $ENV{PERL_LL_TAR} ? -x $ENV{PERL_LL_TAR}
+  : $^O eq 'solaris'
+    ? (grep -x,
+      map File::Spec->catfile($_, 'gtar'),
+      File::Spec->paths)
+  : 1) {
+  die <<'DEATH';
+You are using Solaris (or another traditional Unix) that does not provide a sane
+tar, capable of dealing with the output of GNU tar. Please either set the
+PERL_LL_TAR environment variable to the location of a version of tar that
+understands the @LongLink convention or put a binary named gtar somewhere on
+your PATH.
+DEATH
+}
+
+# watch out for fancy dashes. these can wind up in our @ARGV if the user is
+# copypasting the bootstrap command from the POD displayed e.g. by perldoc
+# on a Mac OS X terminal. since no software recognizes and handles these
+# dashes, it's better to die loudly telling the user exactly what happened
+# so they don't make the same mistake again rather than being the only
+# program in the universe that works with them.
+# the fancy dash is U+2212 or \xE2\x88\x92
+if(grep { /\xE2\x88\x92/ || /\x{2212}/ } @ARGV) {
+  die <<'DEATH';
+WHOA THERE! It looks like you've got some fancy dashes in your commandline!
+These are *not* the traditional -- dashes that software recognizes. You
+probably got these by copy-pasting from the perldoc for this module as
+rendered by a UTF8-capable formatter. This most typically happens on an OS X
+terminal, but can happen elsewhere too. Please try again after replacing the
+dashes with normal minus signs.
+DEATH
+}
+
+my $bootstrapping;
+my $disable_manpages;
+if (my ($x) = grep { /^--bootstrap(?:=.*)?$/ } @ARGV) {
+  (my $path = $x) =~ s/^.*?=//;
+  @ARGV = grep { !/^--bootstrap(?:=.*)?$/ } @ARGV;
+  if(my ($x) = grep { /^--no-manpages$/ } @ARGV) {
+    $disable_manpages = 1;
+    @ARGV = grep { !/^--no-manpages/ } @ARGV;
+  }
+
+  {
+    local @INC = @INC;
+    unshift(@INC, 'lib');
+    require local::lib;
+  }
+
+  local::lib->import($path || ());
+  $bootstrapping = 1;
+}
+
+my $requires = $META{prereqs}{runtime}{requires};
+$requires = { %$requires } unless -f 'META.yml';
+if ($ENV{PERL5_CPANM_IS_RUNNING}) {
+  delete $requires->{CPAN};
+}
+for my $module (grep { $_ ne 'perl' } keys %$requires) {
+  open my $olderr, '>&', \*STDERR or die "Can't dup STDERR: $!";
+  open STDERR, '>', File::Spec->devnull or die "Can't open /dev/null: $!";
+  if (system $^X, "-m$module", '-e1') {
+    delete $requires->{$module};
+  }
+  elsif (! system $^X, "-M$module $requires->{$module}", '-e1') {
+    delete $requires->{$module};
+  }
+  open STDERR, '>&', $olderr or die "Can't dup to STDERR: $!";
+}
+
 if ($bootstrapping) {
+  my @modules = grep $requires->{$_},
+    qw(ExtUtils::MakeMaker ExtUtils::Install Module::Build CPAN);
+
   no warnings 'once';
-*MY::postamble = sub {
-  <<"END";
-PERL     += $bootstrapping_args
-FULLPERL += $bootstrapping_args
+  *MY::postamble = sub {
+    <<"END";
+PERL     += -I\$(INSTALLPRIVLIB)
+FULLPERL += -I\$(INSTALLPRIVLIB)
 END
+  };
+
+  local $ENV{PERL_AUTOINSTALL_PREFER_CPAN} = 1;
+  local $ENV{PERL_MM_USE_DEFAULT} = 1;
+
+  my $cpan_command = join '', map qq{force(q[install],q[$_]);}, @modules;
+
+  if ($cpan_command || $disable_manpages) {
+    system($^X, '-Minc::ConfigCPAN', '-', 'configure');
+  }
+  if ($cpan_command) {
+    system($^X, '-MCPAN', '-e', $cpan_command);
+  }
+  if (grep { $_ eq 'CPAN' } @modules ) {
+    system($^X, '-MCPAN', '-e', 'CPAN::Config->load;CPAN::Config->commit;');
+  }
+  if ($disable_manpages) {
+    system($^X, '-Minc::ConfigCPAN', '-', 'disable_manpages');
   }
 }
 
-# don't bother fixing CPAN.pm if bootstrapped from cpanminus
-if ($ENV{PERL5_CPANM_IS_RUNNING}) {
-    delete $RUN_DEPS{CPAN};
+if (!$ENV{PERL5_CPANM_IS_RUNNING}) {
+  my $status = system $^X, '-Minc::ConfigCPAN', '-', 'check',
+    $META{prereqs}{runtime}{requires}{CPAN};
+  exit $status
+    if $status;
 }
-else {
-    # No, really. See
-    # https://rt.cpan.org/Public/Bug/Display.html?id=23735
-    # for why CPAN now sets the CPANPLUS env var.
-    # trouble is this means we can't auto_install(_now) CPAN itself
-    # without this beautiful hack
 
-    my $no_cpanplus_env = !exists $ENV{PERL5_CPANPLUS_IS_RUNNING};
-    my $no_cpan_env = !exists $ENV{PERL5_CPAN_IS_RUNNING};
-    require CPAN;
-    delete $ENV{PERL5_CPANPLUS_IS_RUNNING} if $no_cpanplus_env;
-    delete $ENV{PERL5_CPAN_IS_RUNNING} if $no_cpan_env;
+##############################################################################
+require ExtUtils::MakeMaker;
+ExtUtils::MakeMaker->import;
 
-    # and make sure that the user doesn't have any existing CPAN config that'll
-    # cause us problems for the next few steps.
-    local $@;
-    eval { require CPAN::HandleConfig; };
-    # Need newish CPAN.pm for this, ergo skip it if that version of CPAN isn't
-    # installed yet.
-    # It will already be installed by the time we reach here if bootstrapping,
-    # otherwise, if we're running from CPAN then it will be installed soon
-    # enough, and we'll come back here..
-    if (!$@ ) {
-        CPAN::HandleConfig->require_myconfig_or_config;
-        if ( $CPAN::Config ) {
-            for my $setting (qw(
-              makepl_arg make_install_arg
-              mbuild_arg mbuild_install_arg mbuildpl_arg
-            )) {
-                my $value = $CPAN::Config->{$setting} or next;
-                if ($setting =~ /^make/
-                  ? $value =~ /(?:PREFIX|INSTALL_BASE)/
-                  : $value =~ /(?:--prefix|--install_base)/
-                ) {
-                    die <<"DEATH";
-WHOA THERE! It looks like you've got $CPAN::Config->{$setting} set in
-your CPAN config. This is known to cause problems with local::lib. Please
-either remove this setting or clear out your .cpan directory.
-DEATH
-                }
-            }
-        }
-    }
-    else {
-        my $error = $@;
-        require CPAN;
-        # Explode if it looks like requiring CPAN::HandleConfig should
-        # have worked, but didn't.
-        die($error) if $CPAN::VERSION >= $RUN_DEPS{CPAN};
-    }
-}
-chdir($cwd);
-
-@{$extra_info{prereqs}{runtime}{requires}}{keys %RUN_DEPS} = values %RUN_DEPS;
+(do 'maint/Makefile.PL.include' or die $@) unless -f 'META.yml';
 
 # have to do this since old EUMM dev releases miss the eval $VERSION line
 my $eumm_version = eval $ExtUtils::MakeMaker::VERSION;
-my $mymeta_works = $eumm_version >= 6.57_07;
-my $mymeta = $eumm_version >= 6.57_02;
-
+my $mymeta_works      = $eumm_version >= 6.57_07;
+my $mymeta            = $eumm_version >= 6.57_02;
 my $has_test_requires = $eumm_version >= 6.63_03;
 
-my $has_meta_v2 = $eumm_version >= 6.57_10;
-if (! $has_meta_v2) {
-  %extra_info = ();
-}
+my %configure_deps = %{$META{prereqs}{configure}{requires}};
+my %build_deps     = %{$META{prereqs}{build}{requires}};
+my %test_deps      = %{$META{prereqs}{test}{requires}};
+my %run_deps       = %{$META{prereqs}{runtime}{requires}};
+
+my $min_perl_version = delete $run_deps{perl};
+
 if (not $has_test_requires) {
-  %BUILD_DEPS = (%BUILD_DEPS, %TEST_DEPS);
-  %TEST_DEPS = ();
+  %build_deps = (%build_deps, %test_deps);
+  %test_deps = ();
 }
 if (not $mymeta_works) {
-  %RUN_DEPS = (%RUN_DEPS, %BUILD_DEPS);
-  %BUILD_DEPS = ();
+  %run_deps = (%run_deps, %build_deps);
+  %build_deps = ();
 }
 
+(my $module_name = $META{name}) =~ s/-/::/g;
+(my $module_file = "lib/$module_name.pm") =~ s{::}{/}g;
+
 WriteMakefile(
-  NAME => 'local::lib',
-  VERSION_FROM => 'lib/local/lib.pm',
-  CONFIGURE_REQUIRES => \%CONFIGURE_DEPS,
-  PREREQ_PM => {
-    %RUN_DEPS,
-  },
-  BUILD_REQUIRES => \%BUILD_DEPS,
-  TEST_REQUIRES => \%TEST_DEPS,
-  META_ADD => \%extra_info,
-  META_MERGE => {
-    no_index => {
-      directory => [ 'xt' ]
-    },
-  },
+  NAME => $module_name,
+  VERSION_FROM => $module_file,
+  LICENSE => $META{license},
+
+  $eumm_version >= 6.47_01 && $min_perl_version
+    ? ( MIN_PERL_VERSION    => $min_perl_version ) : (),
+  $eumm_version >= 6.51_03
+    ? ( CONFIGURE_REQUIRES  => \%configure_deps ) : (),
+  $eumm_version >= 6.55_01
+    ? ( BUILD_REQUIRES      => \%build_deps ) : (),
+  $eumm_version >= 6.63_03
+    ? ( TEST_REQUIRES       => \%test_deps ) : (),
+  PREREQ_PM => \%run_deps,
+
   ($mymeta && !$mymeta_works ? (NO_MYMETA => 1) : ()),
-  LICENSE => 'perl',
+  -f 'META.yml' ? () : (META_ADD => { 'meta-spec' => { version => 2 }, %META }),
+
+  %MM_ARGS,
 );

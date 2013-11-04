@@ -10,4 +10,6 @@ manifest_include eg => 'scripted_install.pl';
 
 manifest_include lib => '.pod';
 
+manifest_include '' => 'cpan-configure.pl';
+
 1;
