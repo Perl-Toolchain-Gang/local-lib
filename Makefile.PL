@@ -189,6 +189,7 @@ my %RUN_DEPS = (
   'ExtUtils::MakeMaker' => '6.74', # version PERL_MM_OPT is shell parsed
   'ExtUtils::Install'   => '1.43', # version INSTALL_BASE was added
   'Module::Build'       => '0.36', # PERL_MB_OPT
+  'CPAN'                => '1.82', # sudo support + CPAN::HandleConfig
 );
 
 my %extra_info = (
@@ -208,7 +209,7 @@ my %extra_info = (
     license => [ 'http://dev.perl.org/licenses/' ],
   },
   prereqs => {
-    runtime   => { requires => { %RUN_DEPS, perl => '5.8.1' } },
+    runtime   => { requires => { perl => '5.8.1' } },
   },
 );
 
@@ -223,10 +224,10 @@ END
 }
 
 # don't bother fixing CPAN.pm if bootstrapped from cpanminus
-unless ($ENV{PERL5_CPANM_IS_RUNNING}) {
-    my $required_CPAN = '1.82';
-    $RUN_DEPS{'CPAN'} = $required_CPAN; # sudo support + CPAN::HandleConfig
-
+if ($ENV{PERL5_CPANM_IS_RUNNING}) {
+    delete $RUN_DEPS{CPAN};
+}
+else {
     # No, really. See
     # https://rt.cpan.org/Public/Bug/Display.html?id=23735
     # for why CPAN now sets the CPANPLUS env var.
@@ -274,10 +275,12 @@ DEATH
         require CPAN;
         # Explode if it looks like requiring CPAN::HandleConfig should
         # have worked, but didn't.
-        die($error) if $CPAN::VERSION >= $required_CPAN;
+        die($error) if $CPAN::VERSION >= $RUN_DEPS{CPAN};
     }
 }
 chdir($cwd);
+
+@{$extra_info{prereqs}{runtime}{requires}}{keys %RUN_DEPS} = values %RUN_DEPS;
 
 # have to do this since old EUMM dev releases miss the eval $VERSION line
 my $mymeta_works = do { no warnings; $ExtUtils::MakeMaker::VERSION >= 6.57_07 };
