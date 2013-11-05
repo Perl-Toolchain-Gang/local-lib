@@ -1,5 +1,8 @@
 Revision history for local::lib
 
+1.008026   2013-11-05
+        - drop perl prerequisite to 5.6, since everything works there.
+
 1.008025   2013-11-01  (development release, unindexed)
         - fix install test on cygwin
         - fix stackable test on win32 and when external local::lib is set
