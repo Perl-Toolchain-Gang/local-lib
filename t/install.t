@@ -13,6 +13,13 @@ use lib 't/lib'; use TempDir;
 
 use local::lib ();
 
+delete @ENV{
+  'PERL_MM_OPT',
+  'PERL_MB_OPT',
+  'PERL_LOCAL_LIB_ROOT',
+  grep /^MAKE/, keys %ENV
+};
+
 my @dirs = (
   'plain',
   'with space',
