@@ -184,7 +184,7 @@ sub deactivate {
 
   if (!grep { $_ eq $path } @active_lls) {
     warn "Tried to deactivate inactive local::lib '$path'\n";
-    return;
+    return $self;
   }
 
   my %args = (
