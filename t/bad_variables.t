@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 5;
+use Test::More tests => 6;
 use File::Temp 'tempdir';
 use Config;
 use local::lib ();
@@ -29,6 +29,8 @@ is(
     join($Config{path_sep}, (grep { defined $_ and $_ ne '' } $dir1, $dir3, $dir2)),
     'dir1 should have been removed and added back in at the top'
 );
+
+ok((!grep { $_ eq $dir3 } local::lib->active_paths), 'junk dir added not included in active_paths');
 
 ok((grep { /\Q$dir1\E/ } @INC), 'new dir has been added to @INC');
 ok((grep { /\Q$dir1\E/ } split /\Q$Config{path_sep}\E/, $ENV{PERL5LIB}), 'new dir has been added to PERL5LIB');
