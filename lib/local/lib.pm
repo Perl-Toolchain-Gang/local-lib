@@ -847,7 +847,7 @@ given path as the base directory.
 
 =item Arguments: $path, $interpolate
 
-=item Return value: \%environment_vars
+=item Return value: %environment_vars
 
 =back
 
@@ -921,8 +921,7 @@ C<$Config{archname}>.
 =back
 
 Returns a path describing where to install the executable programs for this
-local library installation. Based on the L</install_base_perl_path> method's
-return value, and appends the directory C<bin>.
+local library installation. Appends the directory C<bin> to the given path.
 
 =head2 resolve_empty_path
 
