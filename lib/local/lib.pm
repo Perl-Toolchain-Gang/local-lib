@@ -520,38 +520,26 @@ ok(-d 't/var/splat');
 =cut
 
 sub guess_shelltype {
-  my $shellbin = 'sh';
-  if(defined $ENV{'SHELL'}) {
-      my @shell_bin_path_parts = File::Spec->splitpath($ENV{'SHELL'});
-      $shellbin = $shell_bin_path_parts[-1];
-  }
-  my $shelltype = do {
-      local $_ = $shellbin;
-      if(/csh/) {
-          'csh'
-      } else {
-          'bourne'
-      }
-  };
+  my $shellbin
+    = defined $ENV{SHELL}
+      ? (File::Spec->splitpath($ENV{SHELL}))[-1]
+    : ( $^O eq 'MSWin32' && exists $ENV{'!EXITCODE'} )
+      ? 'bash'
+    : ( $^O eq 'MSWin32' && $ENV{PROMPT} && $ENV{COMSPEC} )
+      ? (File::Spec->splitpath($ENV{COMSPEC}))[-1]
+    : ( $^O eq 'MSWin32' && !$ENV{PROMPT} )
+      ? 'powershell.exe'
+    : 'sh';
 
-  # Both Win32 and Cygwin have $ENV{COMSPEC} set.
-  if (defined $ENV{'COMSPEC'} && $^O ne 'cygwin') {
-      my @shell_bin_path_parts = File::Spec->splitpath($ENV{'COMSPEC'});
-      $shellbin = $shell_bin_path_parts[-1];
-         $shelltype = do {
-                 local $_ = $shellbin;
-                 if(/command\.com/) {
-                         'cmd'
-                 } elsif(/cmd\.exe/) {
-                         'cmd'
-                 } elsif(/4nt\.exe/) {
-                         'cmd'
-                 } else {
-                         $shelltype
-                 }
-         };
+  for ($shellbin) {
+    return
+        /csh/             ? 'csh'
+      : /command\.com/    ? 'cmd'
+      : /cmd\.exe/        ? 'cmd'
+      : /4nt\.exe/        ? 'cmd'
+      : /powershell\.exe/ ? 'powershell'
+                          : 'bourne';
   }
-  return $shelltype;
 }
 
 1;
