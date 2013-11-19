@@ -227,6 +227,9 @@ sub activate {
   $self->ensure_dir_structure_for($path)
     unless $self->no_create;
 
+  $path = ( Win32::GetShortPathName($path) || $path )
+    if $^O eq 'MSWin32';
+
   my @active_lls = $self->active_paths;
 
   if (grep { $_ eq $path } @active_lls) {
@@ -415,9 +418,6 @@ sub resolve_path {
     resolve_home_path
     resolve_empty_path
   )}($path);
-
-  $path = Win32::GetShortPathName($path)
-    if $^O eq 'MSWin32';
 
   $path;
 }
