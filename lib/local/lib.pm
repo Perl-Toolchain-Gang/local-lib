@@ -895,21 +895,6 @@ Returns a path describing where to install the Perl modules for this local
 library installation. Appends the directories C<lib> and C<perl5> to the given
 path.
 
-=head2 install_base_arch_path
-
-=over 4
-
-=item Arguments: $path
-
-=item Return value: $install_base_arch_path
-
-=back
-
-Returns a path describing where to install the architecture-specific Perl
-modules for this local library installation. Based on the
-L</install_base_perl_path> method's return value, and appends the value of
-C<$Config{archname}>.
-
 =head2 install_base_bin_path
 
 =over 4
