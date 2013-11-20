@@ -326,42 +326,36 @@ sub environment_vars_string_for {
 sub build_bourne_env_declaration {
   my ($class, $name, $args) = @_;
   my $value = $class->_interpolate($args);
-  $value =~ s/"/\\"/g
-    if defined $value;
-  return defined($value) ? qq{export ${name}="${value}"\n} : qq{unset ${name}\n};
+  defined $value
+    ? qq{export ${name}="${value}";\n}
+    : qq{unset ${name};\n};
 }
 sub build_csh_env_declaration {
   my ($class, $name, $args) = @_;
-  my ($value, @vars) = $class->_interpolate($args);
-  @vars = grep { $_ ne $name || defined $value } @vars;
-  $value =~ s/"/"\\""/g
-    if defined $value;
-  join '',
-    (map qq{if ! \$?$_ setenv $_ "";\n}, @vars),
-    (defined($value)
+  my ($value, @vars) = $class->_interpolate($args, undef, undef, '"', qq{"\\"});
+  (join '', map qq{if ! \$?$_ setenv $_ "";\n}, @vars)
+    . defined $value
       ? qq{setenv $name "$value";\n}
-      : qq{unsetenv $name;\n});
+      : qq{unsetenv $name;\n};
 }
 sub build_cmd_env_declaration {
   my ($class, $name, $args) = @_;
-  my $value = $class->_interpolate($args, '%', '%');
-  $value =~ s/"/\\"/g
-    if defined $value;
-  return qq{set $name=} . (defined($value) ? qq{"$value"} : '') . "\n";
+  my $value = $class->_interpolate($args, '%', '%', qr([()!^"<>&|]), '^');
+  defined $value
+    ? qq{set $name=$value\n}
+    : qq{set $name=\n};
 }
 sub build_powershell_env_declaration {
   my ($class, $name, $args) = @_;
-  my $value = $class->_interpolate($args, '$env:');
-  if (defined $value) {
-    $value =~ s/"/\\"/g;
-    return qq{\$env:$name = "$value"\n};
-  }
-  return "Remove-Item Env:\\$name\n";
+  my $value = $class->_interpolate($args, '$env:', '', '"', '`');
+  defined $value
+    ? qq{\$env:$name = "$value"\n}
+    : "Remove-Item Env:\\$name\n";
 }
 
 
 sub _interpolate {
-  my ($class, $args, $start, $end) = @_;
+  my ($class, $args, $start, $end, $escape, $escape_char) = @_;
   return
     unless defined $args;
   return $args
@@ -370,10 +364,19 @@ sub _interpolate {
     unless @$args;
   $start = '$' unless defined $start;
   $end = '' unless defined $end;
+  $escape = '"' unless defined $escape;
+  $escape_char = "\\" unless defined $escape_char;
   my @vars;
   my $string = join($Config{path_sep}, map {
-    (ref $_ && ref $_ eq 'SCALAR') ? do { push @vars, $$_; $start.$$_.$end }
-      : $_
+    if (ref $_ && ref $_ eq 'SCALAR') {
+      push @vars, $$_;
+      $start.$$_.$end;
+    }
+    else {
+      my $str = $_;
+      $str =~ s/($escape)/$escape_char$1/g;
+      $str;
+    }
   } @$args);
   return wantarray ? ($string, @vars) : $string;
 }
