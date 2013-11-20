@@ -109,6 +109,8 @@ sub _as_list {
 }
 sub _remove_from {
   my ($list, @remove) = @_;
+  return @$list
+    if !@remove;
   my %remove = map { $_ => 1 } @remove;
   grep !$remove{$_}, _as_list($list);
 }
@@ -205,15 +207,18 @@ sub deactivate_all {
 
   my @active_lls = $self->active_paths;
 
-  my %args = (
-    bins => [ _remove_from($self->bins,
-      map $self->install_base_bin_path($_), @active_lls) ],
-    libs => [ _remove_from($self->libs,
-      map $self->install_base_perl_path($_), @active_lls) ],
-    inc => [ _remove_from($self->inc,
-      map $self->lib_paths_for($_), @active_lls) ],
-    roots => [ _remove_from($self->roots, @active_lls) ],
-  );
+  my %args;
+  if (@active_lls) {
+    %args = (
+      bins => [ _remove_from($self->bins,
+        map $self->install_base_bin_path($_), @active_lls) ],
+      libs => [ _remove_from($self->libs,
+        map $self->install_base_perl_path($_), @active_lls) ],
+      inc => [ _remove_from($self->inc,
+        map $self->lib_paths_for($_), @active_lls) ],
+      roots => [ _remove_from($self->roots, @active_lls) ],
+    );
+  }
 
   $args{extra} = $self->installer_options_for(undef);
 
