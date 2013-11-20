@@ -321,8 +321,11 @@ sub environment_vars_string_for {
         && ${$value->[0]} eq $name) {
       next;
     }
-    if (!ref $value
-        && defined $value ? $value eq $ENV{$name} : !defined $ENV{$name}
+    if (
+        !ref $value
+        and defined $value
+          ? (defined $ENV{$name} && $value eq $ENV{$name})
+          : !defined $ENV{$name}
     ) {
       next;
     }
