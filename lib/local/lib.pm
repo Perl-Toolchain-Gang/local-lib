@@ -331,6 +331,10 @@ sub environment_vars_string_for {
     }
     $out .= $self->$build_method($name, $value);
   }
+  my $wrap_method = 'wrap_' . $self->shelltype . '_output';
+  if ($self->can($wrap_method)) {
+    return $self->$wrap_method($out);
+  }
   return $out;
 }
 
@@ -360,8 +364,12 @@ sub build_powershell_env_declaration {
   my ($class, $name, $args) = @_;
   my $value = $class->_interpolate($args, '$env:', '', '"', '`');
   defined $value
-    ? qq{\$env:$name = "$value"\n}
-    : "Remove-Item Env:\\$name\n";
+    ? qq{\$env:$name = "$value";\n}
+    : "Remove-Item Env:\\$name;\n";
+}
+sub wrap_powershell_output {
+  my ($class, $out) = @_;
+  return $out || " \n";
 }
 
 
