@@ -237,16 +237,19 @@ sub activate {
 
   my @active_lls = $self->active_paths;
 
-  if (grep { $_ eq $path } @active_lls) {
+  if (grep { $_ eq $path } @active_lls[1 .. $#active_lls]) {
     $self = $self->deactivate($path);
   }
 
-  my %args = (
-    bins  => [ $self->install_base_bin_path($path), @{$self->bins} ],
-    libs  => [ $self->install_base_perl_path($path), @{$self->libs} ],
-    inc   => [ $self->lib_paths_for($path), @{$self->inc} ],
-    roots => [ $path, @{$self->roots} ],
-  );
+  my %args;
+  if (!@active_lls || $active_lls[0] ne $path) {
+    %args = (
+      bins  => [ $self->install_base_bin_path($path), @{$self->bins} ],
+      libs  => [ $self->install_base_perl_path($path), @{$self->libs} ],
+      inc   => [ $self->lib_paths_for($path), @{$self->inc} ],
+      roots => [ $path, @{$self->roots} ],
+    );
+  }
 
   $args{extra} = $self->installer_options_for($path);
 
