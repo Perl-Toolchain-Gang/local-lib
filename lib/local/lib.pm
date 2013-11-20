@@ -349,9 +349,9 @@ sub build_csh_env_declaration {
   my ($class, $name, $args) = @_;
   my ($value, @vars) = $class->_interpolate($args, undef, undef, '"', qq{"\\"});
   (join '', map qq{if ! \$?$_ setenv $_ "";\n}, @vars)
-    . defined $value
+    . (defined $value
       ? qq{setenv $name "$value";\n}
-      : qq{unsetenv $name;\n};
+      : qq{unsetenv $name;\n});
 }
 sub build_cmd_env_declaration {
   my ($class, $name, $args) = @_;
