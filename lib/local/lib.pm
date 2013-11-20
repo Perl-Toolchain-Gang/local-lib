@@ -357,8 +357,8 @@ sub build_cmd_env_declaration {
   my ($class, $name, $args) = @_;
   my $value = $class->_interpolate($args, '%', '%', qr([()!^"<>&|]), '^');
   defined $value
-    ? qq{set $name=$value\n}
-    : qq{set $name=\n};
+    ? qq{\@set $name=$value\n}
+    : qq{\@set $name=\n};
 }
 sub build_powershell_env_declaration {
   my ($class, $name, $args) = @_;
