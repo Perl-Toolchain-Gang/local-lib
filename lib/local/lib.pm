@@ -208,7 +208,8 @@ sub setup_local_lib_for {
   my $interpolate = LITERAL_ENV;
   my @active_lls = $class->active_paths;
 
-  $class->ensure_dir_structure_for($path);
+  $class->ensure_dir_structure_for($path)
+    unless $deactivating;
 
   # On Win32 directories often contain spaces. But some parts of the CPAN
   # toolchain don't like that. To avoid this, GetShortPathName() gives us
