@@ -314,7 +314,8 @@ sub environment_vars_string_for {
       next;
     }
     if (!ref $value
-        && $value eq $ENV{$name}) {
+        && defined $value ? $value eq $ENV{$name} : !defined $ENV{$name}
+    ) {
       next;
     }
     $out .= $self->$build_method($name, $value);
