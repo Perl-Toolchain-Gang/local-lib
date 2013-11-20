@@ -647,7 +647,7 @@ If you are using C shell, you can do this as follows:
   /bin/csh
   echo $SHELL
   /bin/csh
-  perl -I$HOME/perl5/lib/perl5 -Mlocal::lib >> ~/.cshrc
+  echo 'eval `perl -I$HOME/perl5/lib/perl5 -Mlocal::lib`' >> ~/.cshrc
 
 If you passed to bootstrap a directory other than default, you also need to
 give that as import parameter to the call of the local::lib module like this
@@ -725,7 +725,7 @@ C<CMD.exe>, you can use this:
   C:\>perl -Mlocal::lib > %TEMP%\tmp.bat && %TEMP%\tmp.bat && del %TEMP%\tmp.bat
   ### instead of $(perl -Mlocal::lib=./)
 
-If you want the environment entries to persist, you'll need to add then to the
+If you want the environment entries to persist, you'll need to add them to the
 Control Panel's System applet yourself or use L<App::local::lib::Win32Helper>.
 
 The "~" is translated to the user's profile directory (the directory named for
@@ -733,6 +733,13 @@ the user under "Documents and Settings" (Windows XP or earlier) or "Users"
 (Windows Vista or later)) unless $ENV{HOME} exists. After that, the home
 directory is translated to a short name (which means the directory must exist)
 and the subdirectories are created.
+
+=head3 PowerShell
+
+local::lib also supports PowerShell, and an be used with the
+C<Invoke-Expression> cmdlet.
+
+  Invoke-Expression "$(perl -Mlocal::lib)"
 
 =head1 RATIONALE
 
