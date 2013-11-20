@@ -442,6 +442,16 @@ sub wrap_powershell_output {
   return $out || " \n";
 }
 
+sub build_fish_env_declaration {
+  my ($class, $name, $args) = @_;
+  my $value = $class->_interpolate($args, '"%s"', '"', '\\%s');
+  if (!defined $value) {
+    return qq{set -e $name;\n};
+  }
+  $value =~ s/$_path_sep/ /;
+  qq{set -x $name $value;\n};
+}
+
 sub _interpolate {
   my ($class, $args, $var_pat, $escape, $escape_pat) = @_;
   return
