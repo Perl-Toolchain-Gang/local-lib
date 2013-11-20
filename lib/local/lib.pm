@@ -377,7 +377,7 @@ sub _interpolate {
   my ($class, $args, $start, $end, $escape, $escape_char) = @_;
   return
     unless defined $args;
-  return $args
+  $args = [ $args ]
     unless ref $args;
   return
     unless @$args;
