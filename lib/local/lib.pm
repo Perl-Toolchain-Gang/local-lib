@@ -577,12 +577,12 @@ sub guess_shelltype {
 
   for ($shellbin) {
     return
-        /csh/             ? 'csh'
-      : /command\.com/    ? 'cmd'
-      : /cmd\.exe/        ? 'cmd'
-      : /4nt\.exe/        ? 'cmd'
-      : /powershell\.exe/ ? 'powershell'
-                          : 'bourne';
+        /csh/              ? 'csh'
+      : /command\.com/i    ? 'cmd'
+      : /cmd\.exe/i        ? 'cmd'
+      : /4nt\.exe/i        ? 'cmd'
+      : /powershell\.exe/i ? 'powershell'
+                           : 'bourne';
   }
 }
 
