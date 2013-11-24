@@ -181,6 +181,7 @@ sub deactivate {
   my ($self, $path) = @_;
   $self = $self->new unless ref $self;
   $path = $self->resolve_path($path);
+  $path = $self->normalize_path($path);
 
   my @active_lls = $self->active_paths;
 
@@ -232,8 +233,7 @@ sub activate {
   $self->ensure_dir_structure_for($path)
     unless $self->no_create;
 
-  $path = ( Win32::GetShortPathName($path) || $path )
-    if $^O eq 'MSWin32';
+  $path = $self->normalize_path($path);
 
   my @active_lls = $self->active_paths;
 
@@ -254,6 +254,13 @@ sub activate {
   $args{extra} = $self->installer_options_for($path);
 
   $self->clone(%args);
+}
+
+sub normalize_path {
+  my ($self, $path) = @_;
+  $path = ( Win32::GetShortPathName($path) || $path )
+    if $^O eq 'MSWin32';
+  return $path;
 }
 
 sub _legacy {
