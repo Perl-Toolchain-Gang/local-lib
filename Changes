@@ -1,5 +1,7 @@
 Revision history for local::lib
 
+        - use Distar instead of Module::Install for packaging
+
 1.008026   2013-11-05
         - drop perl prerequisite to 5.6, since everything works there.
 
