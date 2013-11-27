@@ -14,6 +14,11 @@ BEGIN {
 }
 
 use Test::More;
+BEGIN {
+  if (!eval {require Capture::Tiny}) {
+    plan skip_all => 'Capture::Tiny required to test bootstrapping';
+  }
+}
 use File::Temp;
 use File::Spec;
 use local::lib ();
@@ -45,15 +50,20 @@ plan tests => 1+@modules;
 for my $module (@modules) {
   my $version = check_version($module->[0]);
   if ($version && $version >= $module->[1]) {
-    warn "Can't test bootstrap of $module->[0], version $version already meets requirement of $module->[1]\n";
+    diag "Can't test bootstrap of $module->[0], version $version already meets requirement of $module->[1]";
   }
 }
 
 $ENV{HOME} = my $home = File::Temp::tempdir( CLEANUP => 1 );
-local::lib->import;
+mkdir my $ll = File::Spec->catdir($home, 'perl5');
+local::lib->import($ll);
 
-system($^X, 'Makefile.PL', '--bootstrap');
-is $?, 0, 'Makefile.PL ran successfully';
+my $result;
+my $out = Capture::Tiny::capture_merged {
+  $result = system($^X, 'Makefile.PL', '--bootstrap');
+};
+is $result, 0, 'Makefile.PL ran successfully'
+  or diag $out;
 
 for my $module (@modules) {
   my $version = check_version($module->[0]);
