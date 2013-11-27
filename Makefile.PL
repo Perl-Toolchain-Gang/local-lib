@@ -283,12 +283,13 @@ chdir($cwd);
 @{$extra_info{prereqs}{runtime}{requires}}{keys %RUN_DEPS} = values %RUN_DEPS;
 
 # have to do this since old EUMM dev releases miss the eval $VERSION line
-my $mymeta_works = do { no warnings; $ExtUtils::MakeMaker::VERSION >= 6.57_07 };
-my $mymeta = do { no warnings; $ExtUtils::MakeMaker::VERSION >= 6.57_02 };
+my $eumm_version = eval $ExtUtils::MakeMaker::VERSION;
+my $mymeta_works = $eumm_version >= 6.57_07;
+my $mymeta = $eumm_version >= 6.57_02;
 
-my $has_test_requires = do { no warnings; $ExtUtils::MakeMaker::VERSION >= 6.63_03 };
+my $has_test_requires = $eumm_version >= 6.63_03;
 
-my $has_meta_v2 = do { no warnings; $ExtUtils::MakeMaker::VERSION >= 6.57_10 };
+my $has_meta_v2 = $eumm_version >= 6.57_10;
 if (! $has_meta_v2) {
   %extra_info = ();
 }
