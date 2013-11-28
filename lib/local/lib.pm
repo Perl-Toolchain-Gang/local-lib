@@ -363,9 +363,9 @@ sub setup_env_hash_for {
 sub build_environment_vars_for {
   my ($class, $path, $deactivating, $interpolate) = @_;
 
-  if ($deactivating == DEACTIVATE_ONE) {
+  if ($deactivating && $deactivating == DEACTIVATE_ONE) {
     return $class->build_deactivate_environment_vars_for($path, $interpolate);
-  } elsif ($deactivating == DEACTIVATE_ALL) {
+  } elsif ($deactivating && $deactivating == DEACTIVATE_ALL) {
     return $class->build_deact_all_environment_vars_for($path, $interpolate);
   } else {
     return $class->build_activate_environment_vars_for($path, $interpolate);
