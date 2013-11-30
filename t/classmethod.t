@@ -1,6 +1,7 @@
 use strict;
 use warnings;
 use Test::More tests => 4;;
+use File::Temp;
 
 use local::lib ();
 
@@ -18,7 +19,7 @@ my $c = 'local::lib';
 }
 
 {
-    File::Path::rmtree('t/var/splat');
-    $c->ensure_dir_structure_for('t/var/splat');
-    ok(-d 't/var/splat');
+    my $dir = File::Temp::tempdir();
+    $c->ensure_dir_structure_for("$dir/splat");
+    ok(-d "$dir/splat");
 }
