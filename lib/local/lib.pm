@@ -6,7 +6,6 @@ package local::lib;
 use 5.006;
 
 use File::Spec ();
-use File::Path ();
 use Config;
 
 our $VERSION = '1.008026'; # 1.8.26
@@ -153,25 +152,13 @@ sub resolve_home_path {
   my ($class, $path) = @_;
   return $path unless ($path =~ /^~/);
   my ($user) = ($path =~ /^~([^\/]+)/); # can assume ^~ so undef for 'us'
-  my $tried_file_homedir;
   my $homedir = do {
-    if (eval { require File::HomeDir } && $File::HomeDir::VERSION >= 0.65) {
-      $tried_file_homedir = 1;
-      if (defined $user) {
-        File::HomeDir->users_home($user);
-      } else {
-        File::HomeDir->my_home;
-      }
-    } else {
-      if (defined $user) {
-        (getpwnam $user)[7];
-      } else {
-        if (defined $ENV{HOME}) {
-          $ENV{HOME};
-        } else {
-          (getpwuid $<)[7];
-        }
-      }
+    if (!defined $user && defined $ENV{HOME}) {
+      $ENV{HOME}
+    }
+    else {
+      require File::Glob;
+      File::Glob::bsd_glob("~$user", File::Glob::GLOB_TILDE());
     }
   };
   unless (defined $homedir) {
@@ -179,7 +166,6 @@ sub resolve_home_path {
     Carp::croak(
       "Couldn't resolve homedir for "
       .(defined $user ? $user : 'current user')
-      .($tried_file_homedir ? '' : ' - consider installing File::HomeDir')
     );
   }
   $path =~ s/^~[^\/]*/$homedir/;
@@ -268,8 +254,14 @@ sub ensure_dir_structure_for {
   unless (-d $path) {
     warn "Attempting to create directory ${path}\n";
   }
-  File::Path::mkpath($path);
-  return
+  require File::Basename;
+  my @dirs;
+  while(!-d $path) {
+    push @dirs, $path;
+    $path = File::Basename::dirname($path);
+  }
+  mkdir $_ for reverse @dirs;
+  return;
 }
 
 sub guess_shelltype {
