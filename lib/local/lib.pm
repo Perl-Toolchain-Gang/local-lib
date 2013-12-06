@@ -67,11 +67,11 @@ DEATH
   }
 
   if ($0 eq '-') {
-    $self->print_environment_vars_for;
+    $self->print_environment_vars;
     exit 0;
   }
   else {
-    $self->setup_local_lib_for;
+    $self->setup_local_lib;
   }
 }
 
@@ -263,17 +263,12 @@ sub normalize_path {
   return $path;
 }
 
-sub _legacy {
-  my ($self, $path) = @_;
-  $self = $self->new unless ref $self;
-  if (defined $path) {
-    $self = $self->activate($path);
-  }
-  $self;
-}
-
 sub build_environment_vars_for {
-  my ($self) = _legacy(@_);
+  my $self = $_[0]->new->activate($_[1]);
+  $self->build_environment_vars;
+}
+sub build_environment_vars {
+  my $self = shift;
   (
     PATH                => join($_path_sep, _as_list($self->bins)),
     PERL5LIB            => join($_path_sep, _as_list($self->libs)),
@@ -283,14 +278,23 @@ sub build_environment_vars_for {
 }
 
 sub setup_local_lib_for {
-  my ($self) = _legacy(@_);
-  $self->setup_env_hash_for;
+  my $self = $_[0]->new->activate($_[1]);
+  $self->setup_local_lib;
+}
+
+sub setup_local_lib {
+  my $self = shift;
+  $self->setup_env_hash;
   @INC = @{$self->inc};
 }
 
 sub setup_env_hash_for {
+  my $self = $_[0]->new->activate($_[1]);
+  $self->setup_env_hash;
+}
+sub setup_env_hash {
   my $self = shift;
-  my %env = $self->build_environment_vars_for(@_);
+  my %env = $self->build_environment_vars;
   for my $key (keys %env) {
     if (defined $env{$key}) {
       $ENV{$key} = $env{$key};
@@ -302,12 +306,20 @@ sub setup_env_hash_for {
 }
 
 sub print_environment_vars_for {
+  my $self = $_[0]->new->activate($_[1]);
+  $self->print_environment_vars;
+}
+sub print_environment_vars {
   my $self = shift;
-  print $self->environment_vars_string_for(@_);
+  print $self->environment_vars_string;
 }
 
 sub environment_vars_string_for {
-  my $self = _legacy(@_);
+  my $self = $_[0]->new->activate($_[1]);
+  $self->environment_vars_string;
+}
+sub environment_vars_string {
+  my $self = shift;
 
   my $build_method = 'build_' . $self->shelltype . '_env_declaration';
 
