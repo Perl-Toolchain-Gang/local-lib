@@ -321,12 +321,7 @@ sub setup_env_hash {
 }
 
 sub print_environment_vars_for {
-  my $self = $_[0]->new->activate($_[1]);
-  $self->print_environment_vars;
-}
-sub print_environment_vars {
-  my $self = shift;
-  print $self->environment_vars_string;
+  print $_[0]->environment_vars_string_for(@_[1..$#_]);
 }
 
 sub environment_vars_string_for {
