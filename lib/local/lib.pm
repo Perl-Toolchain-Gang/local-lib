@@ -847,6 +847,8 @@ values:
 
 =item PATH
 
+=item PERL_LOCAL_LIB_ROOT
+
 =back
 
 When possible, these will be appended to instead of overwritten entirely.
@@ -859,7 +861,7 @@ See L<lib::core::only> for one way to do this - but note that
 there are a number of caveats, and the best approach is always to perform a
 build against a clean perl (i.e. site and vendor as close to empty as possible).
 
-=head1 OPTIONS
+=head1 IMPORT OPTIONS
 
 Options are values that can be passed to the C<local::lib> import besides the
 directory to use. They are specified as C<use local::lib '--option'[, path];>
@@ -886,7 +888,7 @@ C<cmd>, or C<powershell>.
 Prevents C<local::lib> from creating directories when activating dirs.  This is
 likely to cause issues on Win32 systems.
 
-=head1 METHODS
+=head1 CLASS METHODS
 
 =head2 ensure_dir_structure_for
 
@@ -968,6 +970,20 @@ Returns a path describing where to install the Perl modules for this local
 library installation. Appends the directories C<lib> and C<perl5> to the given
 path.
 
+=head2 lib_paths_for
+
+=over 4
+
+=item Arguments: $path
+
+=item Return value: @lib_paths
+
+=back
+
+Returns the list of paths perl will search for libraries, given a base path.
+This includes the base path itself, the architecture specific subdirectory, and
+perl version specific subdirectories.  These paths may not all exist.
+
 =head2 install_base_bin_path
 
 =over 4
@@ -980,6 +996,19 @@ path.
 
 Returns a path describing where to install the executable programs for this
 local library installation. Appends the directory C<bin> to the given path.
+
+=head2 installer_options_for
+
+=over 4
+
+=item Arguments: $path
+
+=item Return value: \%installer_env_vars
+
+=back
+
+Returns a hashref of environment variables that should be set to cause
+installation into the given path.
 
 =head2 resolve_empty_path
 
@@ -1037,6 +1066,141 @@ L</resolve_empty_path> which then returns a result that is passed to
 L</resolve_home_path>, which then has its result passed to
 L</resolve_relative_path>. The result of this final call is returned from
 L</resolve_path>.
+
+=head1 OBJECT INTERFACE
+
+=head2 new
+
+=over 4
+
+=item Arguments: %attributes
+
+=item Return value: $local_lib
+
+=back
+
+Constructs a new C<local::lib> object, representing the current state of
+C<@INC> and the relevant environment variables.
+
+=head1 ATTRIBUTES
+
+=head2 roots
+
+An arrayref representing active C<local::lib> directories.
+
+=head2 inc
+
+An arrayref representing C<@INC>.
+
+=head2 libs
+
+An arrayref representing the PERL5LIB environment variable.
+
+=head2 bins
+
+An arrayref representing the PATH environment variable.
+
+=head2 extra
+
+A hashref of extra environment variables (e.g. C<PERL_MM_OPT> and
+C<PERL_MB_OPT>)
+
+=head2 no_create
+
+If set, C<local::lib> will not try to create directories when activating them.
+
+=head1 OBJECT METHODS
+
+=head2 clone
+
+=over 4
+
+=item Arguments: %attributes
+
+=item Return value: $local_lib
+
+=back
+
+Constructs a new C<local::lib> object based on the existing one, overriding the
+specified attributes.
+
+=head2 activate
+
+=over 4
+
+=item Arguments: $path
+
+=item Return value: $new_local_lib
+
+=back
+
+Constructs a new instance with the specified path active.
+
+=head2 deactivate
+
+=over 4
+
+=item Arguments: $path
+
+=item Return value: $new_local_lib
+
+=back
+
+Constructs a new instance with the specified path deactivated.
+
+=head2 deactivate_all
+
+=over 4
+
+=item Arguments: None
+
+=item Return value: $new_local_lib
+
+=back
+
+Constructs a new instance with all C<local::lib> directories deactivated.
+
+=head2 environment_vars_string
+
+=over 4
+
+=item Arguments: [ $shelltype ]
+
+=item Return value: $shell_env_string
+
+=back
+
+Returns a string to set up the C<local::lib>, meant to be run by a shell.
+
+=head2 build_environment_vars
+
+=over 4
+
+=item Arguments: None
+
+=item Return value: %environment_vars
+
+=back
+
+Returns a hash with the variables listed above, properly set to use the
+given path as the base directory.
+
+=head2 setup_env_hash
+
+=over 4
+
+=item Arguments: None
+
+=item Return value: None
+
+=back
+
+Constructs the C<%ENV> keys for the given path, by calling
+L</build_environment_vars>.
+
+=head2 setup_local_lib
+
+Constructs the C<%ENV> hash using L</setup_env_hash>, and set up C<@INC>.
 
 =head1 A WARNING ABOUT UNINST=1
 
