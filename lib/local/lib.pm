@@ -16,6 +16,7 @@ sub import {
 
   my @steps;
   my %opts;
+  my $shelltype;
 
   while (@args) {
     my $arg = shift @args;
@@ -52,8 +53,7 @@ DEATH
       push @steps, ['deactivate_all'];
     }
     elsif ( $arg =~ /^--shelltype(?:=(.*))?$/ ) {
-      my $shell = defined $1 ? $1 : shift @args;
-      $opts{shelltype} = $shell;
+      $shelltype = defined $1 ? $1 : shift @args;
     }
     elsif ( $arg eq '--no-create' ) {
       $opts{no_create} = 1;
@@ -77,7 +77,7 @@ DEATH
   }
 
   if ($0 eq '-') {
-    $self->print_environment_vars;
+    print $self->environment_vars_string($shelltype);
     exit 0;
   }
   else {
@@ -334,9 +334,11 @@ sub environment_vars_string_for {
   $self->environment_vars_string;
 }
 sub environment_vars_string {
-  my $self = shift;
+  my ($self, $shelltype) = @_;
 
-  my $build_method = 'build_' . $self->shelltype . '_env_declaration';
+  $shelltype ||= $self->guess_shelltype;
+
+  my $build_method = "build_${shelltype}_env_declaration";
 
   my @envs = (
     PATH                => $self->bins,
