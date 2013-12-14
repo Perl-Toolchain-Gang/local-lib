@@ -264,6 +264,20 @@ sub ensure_dir_structure_for {
   return;
 }
 
+=begin testing
+
+#:: test classmethod
+
+File::Path::rmtree('t/var/splat');
+
+$c->ensure_dir_structure_for('t/var/splat');
+
+ok(-d 't/var/splat');
+
+=end testing
+
+=cut
+
 sub guess_shelltype {
   my $shellbin = 'sh';
   if(defined $ENV{'SHELL'}) {
@@ -552,17 +566,8 @@ sub build_deact_all_environment_vars_for {
   return %env;
 }
 
-=begin testing
-
-#:: test classmethod
-
-File::Path::rmtree('t/var/splat');
-
-$c->ensure_dir_structure_for('t/var/splat');
-
-ok(-d 't/var/splat');
-
-=end testing
+1;
+__END__
 
 =encoding utf8
 
@@ -591,7 +596,7 @@ From the shell -
   $ perl -Mlocal::lib
   export PERL_MB_OPT='--install_base /home/username/perl5'
   export PERL_MM_OPT='INSTALL_BASE=/home/username/perl5'
-  export PERL5LIB='/home/username/perl5/lib/perl5/i386-linux:/home/username/perl5/lib/perl5'
+  export PERL5LIB="/home/username/perl5/lib/perl5"
   export PATH="/home/username/perl5/bin:$PATH"
 
 =head2 The bootstrapping technique
@@ -645,8 +650,9 @@ If you are using C shell, you can do this as follows:
   /bin/csh
   perl -I$HOME/perl5/lib/perl5 -Mlocal::lib >> ~/.cshrc
 
-If you passed to bootstrap a directory other than default, you also need to give that as
-import parameter to the call of the local::lib module like this way:
+If you passed to bootstrap a directory other than default, you also need to
+give that as import parameter to the call of the local::lib module like this
+way:
 
   echo 'eval $(perl -I$HOME/foo/lib/perl5 -Mlocal::lib=$HOME/foo)' >>~/.bashrc
 
@@ -713,7 +719,7 @@ C<CMD.exe>, you can use this:
   C:\>perl -Mlocal::lib
   set PERL_MB_OPT=--install_base C:\DOCUME~1\ADMINI~1\perl5
   set PERL_MM_OPT=INSTALL_BASE=C:\DOCUME~1\ADMINI~1\perl5
-  set PERL5LIB=C:\DOCUME~1\ADMINI~1\perl5\lib\perl5;C:\DOCUME~1\ADMINI~1\perl5\lib\perl5\MSWin32-x86-multi-thread
+  set PERL5LIB=C:\DOCUME~1\ADMINI~1\perl5\lib\perl5
   set PATH=C:\DOCUME~1\ADMINI~1\perl5\bin;%PATH%
 
   ### To set the environment for this shell alone
@@ -779,9 +785,9 @@ values:
 
 =item PATH
 
-PATH is appended to, rather than clobbered.
-
 =back
+
+When possible, these will be appended to instead of overwritten entirely.
 
 These values are then available for reference by any code after import.
 
@@ -989,21 +995,19 @@ install UNINST=1" and local::lib if you understand these possible consequences.
 
 =over 4
 
-=item * The perl toolchain is unable to handle directory names with spaces in it,
-so you can't put your local::lib bootstrap into a directory with spaces. What
-you can do is moving your local::lib to a directory with spaces B<after> you
-installed all modules inside your local::lib bootstrap. But be aware that you
-can't update or install CPAN modules after the move.
+=item * Directory names with spaces in them are not well supported by the perl
+toolchain and the programs it uses.  Pure-perl distributions should support
+spaces, but problems are more likely with dists that require compilation. A
+workaround you can do is moving your local::lib to a directory with spaces
+B<after> you installed all modules inside your local::lib bootstrap. But be
+aware that you can't update or install CPAN modules after the move.
 
 =item * Rather basic shell detection. Right now anything with csh in its name is
 assumed to be a C shell or something compatible, and everything else is assumed
 to be Bourne, except on Win32 systems. If the C<SHELL> environment variable is
 not set, a Bourne-compatible shell is assumed.
 
-=item * Bootstrap is a hack and will use CPAN.pm for ExtUtils::MakeMaker even if you
-have CPANPLUS installed.
-
-=item * Kills any existing PERL5LIB, PERL_MM_OPT or PERL_MB_OPT.
+=item * Kills any existing PERL_MM_OPT or PERL_MB_OPT.
 
 =item * Should probably auto-fixup CPAN config if not already done.
 
@@ -1013,8 +1017,8 @@ Patches very much welcome for any of the above.
 
 =over 4
 
-=item * On Win32 systems, does not have a way to write the created environment variables
-to the registry, so that they can persist through a reboot.
+=item * On Win32 systems, does not have a way to write the created environment
+variables to the registry, so that they can persist through a reboot.
 
 =back
 
@@ -1075,8 +1079,8 @@ Patches to correctly output commands for csh style shells, as well as some
 documentation additions, contributed by Christopher Nehren <apeiron@cpan.org>.
 
 Doc patches for a custom local::lib directory, more cleanups in the english
-documentation and a L<german documentation|POD2::DE::local::lib> contributed by Torsten Raudssus
-<torsten@raudssus.de>.
+documentation and a L<german documentation|POD2::DE::local::lib> contributed by
+Torsten Raudssus <torsten@raudssus.de>.
 
 Hans Dieter Pearcey <hdp@cpan.org> sent in some additional tests for ensuring
 things will install properly, submitted a fix for the bug causing problems with
@@ -1098,13 +1102,14 @@ Mark Stosberg <mark@summersault.com> provided the code for the now deleted
 Documentation patches to make win32 usage clearer by
 David Mertens <dcmertens.perl@gmail.com> (run4flat).
 
-Brazilian L<portuguese translation|POD2::PT_BR::local::lib> and minor doc patches contributed by Breno
-G. de Oliveira <garu@cpan.org>.
+Brazilian L<portuguese translation|POD2::PT_BR::local::lib> and minor doc
+patches contributed by Breno G. de Oliveira <garu@cpan.org>.
 
 Improvements to stacking multiple local::lib dirs and removing them from the
 environment later on contributed by Andrew Rodland <arodland@cpan.org>.
 
-Patch for Carp version mismatch contributed by Hakim Cassimally <osfameron@cpan.org>.
+Patch for Carp version mismatch contributed by Hakim Cassimally
+<osfameron@cpan.org>.
 
 =head1 COPYRIGHT
 
@@ -1117,5 +1122,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-
-1;
