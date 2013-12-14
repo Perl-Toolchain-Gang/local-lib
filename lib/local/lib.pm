@@ -32,7 +32,17 @@ dashes with normal minus signs.
 DEATH
     }
     elsif ($arg eq '--self-contained') {
-      die "FATAL: The local::lib --self-contained flag has never worked reliably and the original author, Mark Stosberg, was unable or unwilling to maintain it. As such, this flag has been removed from the local::lib codebase in order to prevent misunderstandings and potentially broken builds. The local::lib authors recommend that you look at the lib::core::only module shipped with this distribution in order to create a more robust environment that is equivalent to what --self-contained provided (although quite possibly not what you originally thought it provided due to the poor quality of the documentation, for which we apologise).\n";
+      die <<'DEATH';
+FATAL: The local::lib --self-contained flag has never worked reliably and the
+original author, Mark Stosberg, was unable or unwilling to maintain it. As
+such, this flag has been removed from the local::lib codebase in order to
+prevent misunderstandings and potentially broken builds. The local::lib authors
+recommend that you look at the lib::core::only module shipped with this
+distribution in order to create a more robust environment that is equivalent to
+what --self-contained provided (although quite possibly not what you originally
+thought it provided due to the poor quality of the documentation, for which we
+apologise).
+DEATH
     }
     elsif( $arg =~ /^--deactivate(?:=(.*))?$/ ) {
       my $path = defined $1 ? $1 : shift @args;
@@ -160,8 +170,10 @@ sub _mb_escape_path {
 sub installer_options_for {
   my ($class, $path) = @_;
   return {
-    PERL_MM_OPT => defined $path ? "INSTALL_BASE="._mm_escape_path($path) : undef,
-    PERL_MB_OPT => defined $path ? "--install_base "._mb_escape_path($path) : undef,
+    PERL_MM_OPT =>
+      defined $path ? "INSTALL_BASE="._mm_escape_path($path) : undef,
+    PERL_MB_OPT =>
+      defined $path ? "--install_base "._mb_escape_path($path) : undef,
   };
 }
 
@@ -191,9 +203,12 @@ sub deactivate {
   }
 
   my %args = (
-    bins  => [ _remove_from($self->bins,  $self->install_base_bin_path($path)) ],
-    libs  => [ _remove_from($self->libs,  $self->install_base_perl_path($path)) ],
-    inc   => [ _remove_from($self->inc,   $self->lib_paths_for($path)) ],
+    bins  => [ _remove_from($self->bins,
+      $self->install_base_bin_path($path)) ],
+    libs  => [ _remove_from($self->libs,
+      $self->install_base_perl_path($path)) ],
+    inc   => [ _remove_from($self->inc,
+      $self->lib_paths_for($path)) ],
     roots => [ _remove_from($self->roots, $path) ],
   );
 
