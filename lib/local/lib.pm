@@ -1232,6 +1232,12 @@ not set, a Bourne-compatible shell is assumed.
 
 =item * Should probably auto-fixup CPAN config if not already done.
 
+=item * local::lib loads L<File::Spec>.  When used to set shell variables,
+this isn't a problem.  When used inside a perl script, any L<File::Spec>
+version inside the local::lib will be ignored.  A workaround for this is using
+C<use lib "$ENV{HOME}/perl5/lib/perl5";> inside the script instead of using
+C<local::lib> directly.
+
 =back
 
 Patches very much welcome for any of the above.
