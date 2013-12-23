@@ -169,12 +169,12 @@ sub _mb_escape_path {
 
 sub installer_options_for {
   my ($class, $path) = @_;
-  return {
+  return (
     PERL_MM_OPT =>
       defined $path ? "INSTALL_BASE="._mm_escape_path($path) : undef,
     PERL_MB_OPT =>
       defined $path ? "--install_base "._mb_escape_path($path) : undef,
-  };
+  );
 }
 
 sub active_paths {
@@ -212,7 +212,7 @@ sub deactivate {
     roots => [ _remove_from($self->roots, $path) ],
   );
 
-  $args{extra} = $self->installer_options_for($args{roots}[0]);
+  $args{extra} = { $self->installer_options_for($args{roots}[0]) };
 
   $self->clone(%args);
 }
@@ -236,7 +236,7 @@ sub deactivate_all {
     );
   }
 
-  $args{extra} = $self->installer_options_for(undef);
+  $args{extra} = { $self->installer_options_for(undef) };
 
   $self->clone(%args);
 }
@@ -266,7 +266,7 @@ sub activate {
     );
   }
 
-  $args{extra} = $self->installer_options_for($path);
+  $args{extra} = { $self->installer_options_for($path) };
 
   $self->clone(%args);
 }
@@ -1003,11 +1003,11 @@ local library installation. Appends the directory C<bin> to the given path.
 
 =item Arguments: $path
 
-=item Return value: \%installer_env_vars
+=item Return value: %installer_env_vars
 
 =back
 
-Returns a hashref of environment variables that should be set to cause
+Returns a hash of environment variables that should be set to cause
 installation into the given path.
 
 =head2 resolve_empty_path
