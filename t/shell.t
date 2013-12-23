@@ -38,6 +38,7 @@ for my $shell (
   },
   {
     name => 'csh',
+    opt => '-f',
   },
   {
     name => 'cmd',
@@ -93,9 +94,10 @@ sub call_ll {
 
   local $ENV{SHELL} = $info->{shell};
 
-  my $file = File::Temp->new('ll-test-script-XXXXX',
-    TMPDIR => 1,
-    SUFFIX => '.'.$info->{ext},
+  my $file = File::Temp->new(
+    TEMPLATE => 'll-test-script-XXXXX',
+    TMPDIR   => 1,
+    SUFFIX   => '.'.$info->{ext},
   );
 
   $file->print(scalar `"$^X" $extra_lib -Mlocal::lib$option` . "\n");
