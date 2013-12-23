@@ -5,24 +5,20 @@ use Test::More tests => 1;
 
 use File::Spec;
 use Cwd;
-use File::Temp qw/ tempdir /;
-my $base;
+use lib 't/lib'; use TempDir;
+use local::lib ();
 
 sub CODE_in_INC() {
     return scalar grep { ref eq 'CODE' } @INC;
 }
 
-my $dir;
+my $dir = mk_temp_dir('sub-in-INC-XXXXX');
 
-BEGIN {
-    $base = CODE_in_INC;
-    unshift @INC, sub { () };
-    splice @INC, 3, 1, sub { () };
-    push @INC, sub { () };
+my $base = CODE_in_INC;
+unshift @INC, sub { () };
+splice @INC, 3, 1, sub { () };
+push @INC, sub { () };
 
-    $dir = tempdir( DIR => Cwd::abs_path('t'), CLEANUP => 1 );
-}
-
-use local::lib( $dir );
+local::lib->import($dir);
 
 is( CODE_in_INC, $base + 3 );
