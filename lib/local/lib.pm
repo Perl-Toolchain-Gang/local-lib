@@ -1365,7 +1365,7 @@ Graham Knop <haarg@haarg.org>.
 
 =head1 COPYRIGHT
 
-Copyright (c) 2007 - 2010 the local::lib L</AUTHOR> and L</CONTRIBUTORS> as
+Copyright (c) 2007 - 2013 the local::lib L</AUTHOR> and L</CONTRIBUTORS> as
 listed above.
 
 =head1 LICENSE
