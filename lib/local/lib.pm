@@ -1269,6 +1269,8 @@ C<PERL_MM_OPT> environment variable.
 
 =item * Conflicts with L<Module::Build>'s C<--prefix> option.  Similar to the
 previous limitation, but any C<--prefix> option specified will be ignored.
+This can be worked around by temporarily unsetting the C<PERL_MB_OPT>
+environment variable.
 
 =back
 
