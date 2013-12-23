@@ -1260,6 +1260,16 @@ version inside the local::lib will be ignored.  A workaround for this is using
 C<use lib "$ENV{HOME}/perl5/lib/perl5";> inside the script instead of using
 C<local::lib> directly.
 
+=item * Conflicts with L<ExtUtils::MakeMaker>'s C<PREFIX> option.
+C<local::lib> uses the C<INSTALL_BASE> option, as it has more predictable and
+sane behavior.  If something attempts to use the C<PREFIX> option when running
+a F<Makefile.PL>, L<ExtUtils::MakeMaker> will refuse to run, as the two
+options conflict.  This can be worked around by temporarily unsetting the
+C<PERL_MM_OPT> environment variable.
+
+=item * Conflicts with L<Module::Build>'s C<--prefix> option.  Similar to the
+previous limitation, but any C<--prefix> option specified will be ignored.
+
 =back
 
 Patches very much welcome for any of the above.
