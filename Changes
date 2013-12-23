@@ -1,5 +1,6 @@
 Revision history for local::lib
 
+2.000_001 - 2013-12-23
         - fix shell output for old bourne shells
         - fix various shell test issues
 
