@@ -380,7 +380,7 @@ sub build_bourne_env_declaration {
   $value =~ s/(^|\G|$_path_sep)\$$name$_path_sep/$1\$$name\${$name+$_path_sep}/g;
   $value =~ s/$_path_sep\$$name$/\${$name+$_path_sep}\$$name/;
 
-  qq{export ${name}="$value";\n}
+  qq{${name}="$value";\nexport ${name};\n}
 }
 
 sub build_csh_env_declaration {
