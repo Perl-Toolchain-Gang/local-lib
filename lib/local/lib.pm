@@ -814,7 +814,7 @@ and the subdirectories are created.
 
 =head3 PowerShell
 
-local::lib also supports PowerShell, and an be used with the
+local::lib also supports PowerShell, and can be used with the
 C<Invoke-Expression> cmdlet.
 
   Invoke-Expression "$(perl -Mlocal::lib)"
