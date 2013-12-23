@@ -670,12 +670,18 @@ By default local::lib installs itself and the CPAN modules into ~/perl5.
 
 Windows users must also see L</Differences when using this module under Win32>.
 
-1. Download and unpack the local::lib tarball from CPAN (search for "Download"
+=over 4
+
+=item 1.
+
+Download and unpack the local::lib tarball from CPAN (search for "Download"
 on the CPAN page about local::lib).  Do this as an ordinary user, not as root
 or administrator.  Unpack the file in your home directory or in any other
 convenient location.
 
-2. Run this:
+=item 2.
+
+Run this:
 
   perl Makefile.PL --bootstrap
 
@@ -687,11 +693,15 @@ to specify the name of the directory when you call bootstrap, as follows:
 
   perl Makefile.PL --bootstrap=~/foo
 
-3. Run this: (local::lib assumes you have make installed on your system)
+=item 3.
+
+Run this: (local::lib assumes you have make installed on your system)
 
   make test && make install
 
-4. Now we need to setup the appropriate environment variables, so that Perl
+=item 4.
+
+Now we need to setup the appropriate environment variables, so that Perl
 starts using our newly generated lib/ directory. If you are using bash or
 any other Bourne shells, you can add this to your shell startup script this
 way:
@@ -709,11 +719,13 @@ If you passed to bootstrap a directory other than default, you also need to
 give that as import parameter to the call of the local::lib module like this
 way:
 
-  echo 'eval $(perl -I$HOME/foo/lib/perl5 -Mlocal::lib=$HOME/foo)' >>~/.bashrc
+  echo 'eval "$(perl -I$HOME/foo/lib/perl5 -Mlocal::lib=$HOME/foo)"' >>~/.bashrc
 
 After writing your shell configuration file, be sure to re-read it to get the
 changed settings into your current shell's environment. Bourne shells use
 C<. ~/.bashrc> for this, whereas C shells use C<source ~/.cshrc>.
+
+=back
 
 If you're on a slower machine, or are operating under draconian disk space
 limitations, you can disable the automatic generation of manpages from POD when
