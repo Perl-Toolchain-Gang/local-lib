@@ -1,5 +1,15 @@
 Revision history for local::lib
 
+        - significant refactor of internals, adding an object oriented interface
+        - add --no-create option to prevent directory creation on activation
+        - add support for powershell output
+        - add --shelltype option to specify shell instead of auto detecting
+        - document recommended use of $SHLVL
+        - document limitations regarding File::Spec
+        - avoid including empty path segments in output
+        - fix output for csh to allow direct use in eval
+        - improve taint handling test
+        - fix docs for build_environment_vars, install_base_bin_path
         - use Distar instead of Module::Install for packaging
 
 1.008026 - 2013-11-05
