@@ -1360,6 +1360,9 @@ environment later on contributed by Andrew Rodland <arodland@cpan.org>.
 Patch for Carp version mismatch contributed by Hakim Cassimally
 <osfameron@cpan.org>.
 
+Rewrite of internals and numerous bug fixes and added features contributed by
+Graham Knop <haarg@haarg.org>.
+
 =head1 COPYRIGHT
 
 Copyright (c) 2007 - 2010 the local::lib L</AUTHOR> and L</CONTRIBUTORS> as
