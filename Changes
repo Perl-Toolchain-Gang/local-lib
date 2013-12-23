@@ -1,5 +1,8 @@
 Revision history for local::lib
 
+        - fix shell output for old bourne shells
+        - fix various shell test issues
+
 2.000_000 - 2013-12-22
         - significant refactor of internals, adding an object oriented interface
         - add --no-create option to prevent directory creation on activation
