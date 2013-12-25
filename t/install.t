@@ -89,3 +89,4 @@ for my $dir_base (@dirs) {
     });
   }
 }
+chdir $orig_dir;
