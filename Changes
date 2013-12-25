@@ -1,8 +1,13 @@
 Revision history for local::lib
 
+        - fix CPAN setup error check in Makefile.PL
+        - fix install test warnings
+        - fix shell test to skip cmd/powershell startup scripts
+
 2.000_001 - 2013-12-23
         - fix shell output for old bourne shells
         - fix various shell test issues
+        - note issues/workarounds when combining with PREFIX/--prefix options
 
 2.000_000 - 2013-12-22
         - significant refactor of internals, adding an object oriented interface
