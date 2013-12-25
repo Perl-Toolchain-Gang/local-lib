@@ -259,7 +259,7 @@ else {
                 my $value = $CPAN::Config->{$setting} or next;
                 if ($setting =~ /^make/
                   ? $value =~ /(?:PREFIX|INSTALL_BASE)/
-                  : /(?:--prefix|--install_base)/
+                  : $value =~ /(?:--prefix|--install_base)/
                 ) {
                     die <<"DEATH";
 WHOA THERE! It looks like you've got $CPAN::Config->{$setting} set in
