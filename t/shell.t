@@ -42,13 +42,13 @@ for my $shell (
   },
   {
     name => 'cmd',
-    opt => '/c',
+    opt => '/D /C',
     ext => 'bat',
     perl => qq{@"$^X"},
   },
   {
     name => 'powershell',
-    opt => '-ExecutionPolicy Unrestricted',
+    opt => '-NoProfile -ExecutionPolicy Unrestricted',
     ext => 'ps1',
     perl => qq{& '$^X'},
   },
