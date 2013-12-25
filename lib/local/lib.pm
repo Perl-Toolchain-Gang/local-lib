@@ -8,7 +8,7 @@ use 5.006;
 use File::Spec ();
 use Config;
 
-our $VERSION = '2.000_001'; # 2.0.1
+our $VERSION = '2.000_002'; # 2.0.2
 $VERSION = eval $VERSION;
 
 sub import {
