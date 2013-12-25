@@ -1,5 +1,6 @@
 Revision history for local::lib
 
+2.000_002 - 2013-12-25
         - fix CPAN setup error check in Makefile.PL
         - fix install test warnings
         - fix shell test to skip cmd/powershell startup scripts
