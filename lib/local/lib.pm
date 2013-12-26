@@ -444,7 +444,7 @@ sub wrap_powershell_output {
 
 sub build_fish_env_declaration {
   my ($class, $name, $args) = @_;
-  my $value = $class->_interpolate($args, '"%s"', '"', '\\%s');
+  my $value = $class->_interpolate($args, '$%s', '"', '\\%s');
   if (!defined $value) {
     return qq{set -e $name;\n};
   }
@@ -567,6 +567,7 @@ sub guess_shelltype {
   for ($shellbin) {
     return
         /csh$/                   ? 'csh'
+      : /fish/                   ? 'fish'
       : /command(?:\.com)?$/i    ? 'cmd'
       : /cmd(?:\.exe)?$/i        ? 'cmd'
       : /4nt(?:\.exe)?$/i        ? 'cmd'

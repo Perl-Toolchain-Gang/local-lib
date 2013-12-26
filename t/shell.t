@@ -29,6 +29,9 @@ for my $shell (
     opt => '-f',
   },
   {
+    name => 'fish',
+  },
+  {
     name => 'cmd.exe',
     opt => '/Q /D /C',
     ext => 'bat',
