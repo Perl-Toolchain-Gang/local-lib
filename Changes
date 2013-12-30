@@ -1,5 +1,7 @@
 Revision history for local::lib
 
+        - releasing 2.000_002 as stable
+
 2.000_002 - 2013-12-25
         - fix CPAN setup error check in Makefile.PL
         - fix install test warnings
