@@ -2,6 +2,7 @@ use strict;
 use warnings;
 use Test::More;
 use File::Spec;
+use File::Basename qw(dirname);
 use File::Temp ();
 use Config;
 use local::lib ();
@@ -21,15 +22,7 @@ sub which {
   return;
 }
 
-my @extra_lib = do {
-  my @paths = `$^X -le"print for \@INC"`;
-  chomp @paths;
-  my %paths;
-  @paths{@paths} = ();
-  grep { !exists $paths{$_} } @INC;
-};
-
-my $extra_lib = join ' ', map { qq{"-I$_"} } @extra_lib;
+my $extra_lib = '-I"' . dirname(dirname($INC{'local/lib.pm'})) . '"';
 
 my @shells;
 for my $shell (
@@ -65,7 +58,7 @@ for my $shell (
 if (!@shells) {
   plan skip_all => 'no supported shells found';
 }
-plan tests => 4*@shells;
+plan tests => 6*@shells;
 
 my $sep = $Config{path_sep};
 
@@ -74,18 +67,27 @@ for my $shell (@shells) {
   my $ll = File::Temp->newdir();
   my $ll_dir = local::lib->normalize_path("$ll");
   local $ENV{PERL_LOCAL_LIB_ROOT};
-  local $ENV{PATH} = $root;
-  local $ENV{PERL5LIB} = $ENV{PERL5LIB};
   delete $ENV{PERL_LOCAL_LIB_ROOT};
+  local $ENV{PATH} = $root;
+  local $ENV{PERL5LIB};
+  delete $ENV{PERL5LIB};
   my $env = call_ll($shell, "$ll");
-  is $env->{PERL_LOCAL_LIB_ROOT}, $ll_dir, "$shell->{name}: activate root";
-  is $env->{PATH}, local::lib->install_base_bin_path($ll_dir)."$sep$root", "$shell->{name}: activate PATH";
+  is $env->{PERL_LOCAL_LIB_ROOT}, $ll_dir,
+    "$shell->{name}: activate root";
+  is $env->{PATH}, local::lib->install_base_bin_path($ll_dir)."$sep$root",
+    "$shell->{name}: activate PATH";
+  is $env->{PERL5LIB}, local::lib->install_base_perl_path($ll_dir),
+    "$shell->{name}: activate PERL5LIB";
 
   $ENV{$_} = $env->{$_} for qw(PATH PERL5LIB PERL_LOCAL_LIB_ROOT);
   $env = call_ll($shell, '--deactivate', "$ll");
 
-  is $env->{PERL_LOCAL_LIB_ROOT}, undef, "$shell->{name}: deactivate root";
-  is $env->{PATH}, $root, "$shell->{name}: deactivate PATH";
+  is $env->{PERL_LOCAL_LIB_ROOT}, undef,
+    "$shell->{name}: deactivate root";
+  is $env->{PATH}, $root,
+    "$shell->{name}: deactivate PATH";
+  is $env->{PERL5LIB}, undef,
+    "$shell->{name}: deactivate PERL5LIB";
 }
 
 sub call_ll {
