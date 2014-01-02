@@ -107,19 +107,24 @@ sub call_ll {
 
   local $ENV{SHELL} = $info->{shell};
 
+  my $script
+    = `"$^X" $extra_lib -Mlocal::lib$option` . "\n"
+    . qq{$info->{perl} -Mt::lib::ENVDumper -e1\n};
+
   my $file = File::Temp->new(
     TEMPLATE => 'll-test-script-XXXXX',
     TMPDIR   => 1,
     SUFFIX   => '.'.$info->{ext},
   );
-
-  $file->print(scalar `"$^X" $extra_lib -Mlocal::lib$option` . "\n");
-  $file->print(qq{$info->{perl} -Mt::lib::ENVDumper -e1\n});
-  $file->close;
+  print { $file } $script;
+  close $file;
 
   my $opt = $info->{opt} ? "$info->{opt} " : '';
-  my $out = `"$info->{shell}" $opt"$file"`;
+  my $cmd = qq{"$info->{shell}" $opt"$file"};
+  my $out = `$cmd`;
   if ($?) {
+    diag "script:\n$script";
+    diag "running:\n$cmd";
     die "failed with code: $?";
   }
   my $VAR1;
