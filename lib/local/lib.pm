@@ -426,7 +426,7 @@ sub build_powershell_env_declaration {
   my $value = $class->_interpolate($args, '$env:%s', '"', '`%s');
 
   if (!$value) {
-    return qq{Remove-Item Env:\\$name;\n};
+    return qq{Remove-Item -ErrorAction 0 Env:\\$name;\n};
   }
 
   my $maybe_path_sep = qq{\$(if("\$env:$name"-eq""){""}else{"$_path_sep"})};
