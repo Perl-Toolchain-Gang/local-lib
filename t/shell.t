@@ -47,11 +47,20 @@ for my $shell (
   },
 ) {
   my $name = $shell->{name};
-  next
-    if @ARGV && !grep {$_ eq $name} @ARGV;
-  $shell->{shell} = which($name) || next;
+  $shell->{shell} = which($name);
   $shell->{ext}   ||= $name;
   $shell->{perl}  ||= qq{"$^X"};
+  if (@ARGV) {
+    next
+      if !grep {$_ eq $name} @ARGV;
+    if (!$shell->{shell}) {
+      warn "unable to find executable for $name";
+      next;
+    }
+  }
+  elsif (!$shell->{shell}) {
+    next;
+  }
   push @shells, $shell;
 }
 
