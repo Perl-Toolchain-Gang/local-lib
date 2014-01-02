@@ -35,15 +35,17 @@ for my $shell (
   },
   {
     name => 'cmd',
-    opt => '/D /C',
+    opt => '/Q /D /C',
     ext => 'bat',
     perl => qq{@"$^X"},
+    skip => $^O eq 'cygwin',
   },
   {
     name => 'powershell',
-    opt => '-NoProfile -ExecutionPolicy Unrestricted',
+    opt => '-NoProfile -ExecutionPolicy Unrestricted -File',
     ext => 'ps1',
     perl => qq{& '$^X'},
+    skip => $^O eq 'cygwin',
   },
 ) {
   my $name = $shell->{name};
@@ -58,7 +60,7 @@ for my $shell (
       next;
     }
   }
-  elsif (!$shell->{shell}) {
+  elsif ($shell->{skip} || !$shell->{shell}) {
     next;
   }
   push @shells, $shell;
