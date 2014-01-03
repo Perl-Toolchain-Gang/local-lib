@@ -1,5 +1,6 @@
 Revision history for local::lib
 
+2.000004 - 2014-01-03
         - fix errors in PowerShell output when clearing nonexistant variables
         - fix shell test to avoid extremely long lines
         - fix shell test to avoid testing standard Win32 shells on Cygwin
