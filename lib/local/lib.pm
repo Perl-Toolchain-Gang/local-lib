@@ -13,6 +13,8 @@ $VERSION = eval $VERSION;
 
 sub import {
   my ($class, @args) = @_;
+  push @args, @ARGV
+    if $0 eq '-';
 
   my @steps;
   my %opts;
