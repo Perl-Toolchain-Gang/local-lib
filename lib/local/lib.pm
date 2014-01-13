@@ -448,7 +448,7 @@ sub build_fish_env_declaration {
   if (!defined $value) {
     return qq{set -e $name;\n};
   }
-  $value =~ s/$_path_sep/ /;
+  $value =~ s/$_path_sep/ /g;
   qq{set -x $name $value;\n};
 }
 

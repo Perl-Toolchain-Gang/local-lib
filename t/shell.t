@@ -80,10 +80,11 @@ for my $shell (@shells) {
   local $ENV{PATH} = $root;
   local $ENV{PERL5LIB};
   delete $ENV{PERL5LIB};
+  my $bin_path = local::lib->install_base_bin_path($ll_dir);
+  mkdir $bin_path;
   my $env = call_ll($shell, "$ll");
   is $env->{PERL_LOCAL_LIB_ROOT}, $ll_dir,
     "$shell->{name}: activate root";
-  my $bin_path = local::lib->install_base_bin_path($ll_dir);
   like $env->{PATH}, qr/^\Q$bin_path$sep$root\E(?:$|\Q$sep\E)/,
     "$shell->{name}: activate PATH";
   is $env->{PERL5LIB}, local::lib->install_base_perl_path($ll_dir),
