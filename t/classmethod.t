@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 4;;
+use Test::More tests => 5;
 use File::Temp;
 
 use local::lib ();
@@ -19,7 +19,10 @@ my $c = 'local::lib';
 }
 
 {
+    my $warn = '';
+    local $SIG{__WARN__} = sub { $warn .= $_[0] };
     my $dir = File::Temp::tempdir();
     $c->ensure_dir_structure_for("$dir/splat");
     ok(-d "$dir/splat");
+    like($warn, qr/^Attempting to create directory/);
 }
