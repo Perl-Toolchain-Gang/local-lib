@@ -1,5 +1,11 @@
 Revision history for local::lib
 
+ - more relaxed shell output testing
+ - use normal arguments to be used on the command line in addition to import
+   arguments
+ - support fish shell
+ - stop trying to test csh/sh on Win32
+
 2.000004 - 2014-01-03
  - fix errors in PowerShell output when clearing nonexistant variables
  - fix shell test to avoid extremely long lines
