@@ -1,339 +1,306 @@
 Revision history for local::lib
 
 2.000004 - 2014-01-03
-        - fix errors in PowerShell output when clearing nonexistant variables
-        - fix shell test to avoid extremely long lines
-        - fix shell test to avoid testing standard Win32 shells on Cygwin
-        - improved diagnostics in shell test
+ - fix errors in PowerShell output when clearing nonexistant variables
+ - fix shell test to avoid extremely long lines
+ - fix shell test to avoid testing standard Win32 shells on Cygwin
+ - improved diagnostics in shell test
 
 2.000003 - 2013-12-30
-        - releasing 2.000_002 as stable
+ - releasing 2.000_002 as stable
 
 2.000_002 - 2013-12-25
-        - fix CPAN setup error check in Makefile.PL
-        - fix install test warnings
-        - fix shell test to skip cmd/powershell startup scripts
+ - fix CPAN setup error check in Makefile.PL
+ - fix install test warnings
+ - fix shell test to skip cmd/powershell startup scripts
 
 2.000_001 - 2013-12-23
-        - fix shell output for old bourne shells
-        - fix various shell test issues
-        - note issues/workarounds when combining with PREFIX/--prefix options
+ - fix shell output for old bourne shells
+ - fix various shell test issues
+ - note issues/workarounds when combining with PREFIX/--prefix options
 
 2.000_000 - 2013-12-22
-        - significant refactor of internals, adding an object oriented interface
-        - add --no-create option to prevent directory creation on activation
-        - add support for powershell output
-        - add --shelltype option to specify shell instead of auto detecting
-        - document recommended use of $SHLVL
-        - document limitations regarding File::Spec
-        - avoid including empty path segments in output
-        - fix output for csh to allow direct use in eval
-        - improve taint handling test
-        - fix docs for build_environment_vars, install_base_bin_path
-        - use Distar instead of Module::Install for packaging
+ - significant refactor of internals, adding an object oriented interface
+ - add --no-create option to prevent directory creation on activation
+ - add support for powershell output
+ - add --shelltype option to specify shell instead of auto detecting
+ - document recommended use of $SHLVL
+ - document limitations regarding File::Spec
+ - avoid including empty path segments in output
+ - fix output for csh to allow direct use in eval
+ - improve taint handling test
+ - fix docs for build_environment_vars, install_base_bin_path
+ - use Distar instead of Module::Install for packaging
 
 1.008026 - 2013-11-05
-        - drop perl prerequisite to 5.6, since everything works there.
+ - drop perl prerequisite to 5.6, since everything works there.
 
 1.008025 - 2013-11-01  (development release, unindexed)
-        - fix install test on cygwin
-        - fix stackable test on win32 and when external local::lib is set
-        - clarify errors in Makefile.PL about CPAN configuration
-        - adjust csh output to allow use directly by eval
-        - silence a possible warning in Makefile.PL
-        - add additional docs about combining local::lib with lib::core::only
-        - reverse order of PERL_LOCAL_LIB_ROOT.  new local::libs are now added
-          to the beginning instead of the end, to match the order of other
-          similar environment variables.
+ - fix install test on cygwin
+ - fix stackable test on win32 and when external local::lib is set
+ - clarify errors in Makefile.PL about CPAN configuration
+ - adjust csh output to allow use directly by eval
+ - silence a possible warning in Makefile.PL
+ - add additional docs about combining local::lib with lib::core::only
+ - reverse order of PERL_LOCAL_LIB_ROOT.  new local::libs are now added
+   to the beginning instead of the end, to match the order of other
+   similar environment variables.
 
 1.008024 - 2013-10-28  (development release, unindexed)
-        - fix installation into directories with spaces or backslashes, as
-          well as Win32 test failures when Capture::Tiny is installed
-        - fix test breaking in some cases when an external local::lib is set
-        - fix test compatibility with old versions of Exporter
+ - fix installation into directories with spaces or backslashes, as
+   well as Win32 test failures when Capture::Tiny is installed
+ - fix test breaking in some cases when an external local::lib is set
+ - fix test compatibility with old versions of Exporter
 
 1.008023 - 2013-10-19
-        - stable release of 1.008022 (no code changes since 1.008012)
+ - stable release of 1.008022 (no code changes since 1.008012)
 
 1.008022 - 2013-10-07 (development release, unindexed)
-        - see 1.008019 through 1.008021
+ - see 1.008019 through 1.008021
 
 1.008021 - 2013-10-04 (development release, unindexed)
-        - yet another attempt to overcome win32 testing issues (paths with
-          spaces, backslashes)
+ - yet another attempt to overcome win32 testing issues (paths with
+   spaces, backslashes)
 
 1.008020 - 2013-10-03 (development release, unindexed)
-        - yet another attempt to overcome win32 testing issues (paths with
-          spaces, backslashes)
+ - yet another attempt to overcome win32 testing issues (paths with
+   spaces, backslashes)
 
 1.008019 - 2013-09-29 (development release, unindexed)
-        - another attempt to overcome win32 testing issues (paths with spaces,
-          backslashes)
+ - another attempt to overcome win32 testing issues (paths with spaces,
+   backslashes)
 
 1.008018 - 2013-09-15
-        - print out actual paths in more test cases, for helping to diagnose
-          mysterious failures
+ - print out actual paths in more test cases, for helping to diagnose
+   mysterious failures
 
 1.008017 - 2013-09-14
-        - avoid "Unrecognized escape \s passed through" errors on win32
-          (again)
+ - avoid "Unrecognized escape \s passed through" errors on win32
+   (again)
 
 1.008016 - 2013-09-13
-        - avoid "Unrecognized escape \s passed through" errors on win32
+ - avoid "Unrecognized escape \s passed through" errors on win32
 
 1.008015 - 2013-09-12
-        - re-release 1.008014 to fix broken MANIFEST
+ - re-release 1.008014 to fix broken MANIFEST
 
 1.008014 - 2013-09-12
-        - fix new test to use alternate path representations on windows, to
-          handle potential space issues (regression since 1.008012)
+ - fix new test to use alternate path representations on windows, to
+   handle potential space issues (regression since 1.008012)
 
 1.008013 - 2013-09-11
-        - fix undef value errors when not installing into a local::lib
+ - fix undef value errors when not installing into a local::lib
 
 1.008012 - 2013-09-11
-        - now handling using -Mlocal::lib in a taintperl environment, by
-          ensuring that all libs in PERL_LOCAL_LIB_ROOT are properly added to
-          @INC (RT#76661, Karen Etheridge)
+ - now handling using -Mlocal::lib in a taintperl environment, by
+   ensuring that all libs in PERL_LOCAL_LIB_ROOT are properly added to
+   @INC (RT#76661, Karen Etheridge)
 
 1.008011 - 2013-07-26
-        - skip CPAN workaround if running via cpanminus  (miyagawa, RT#85731)
+ - skip CPAN workaround if running via cpanminus  (miyagawa, RT#85731)
 
 1.008010 - 2013-05-26
-        - Fix a split on undefined value warning (David Golden -- see
-          https://github.com/gugod/App-perlbrew/issues/305)
+ - Fix a split on undefined value warning (David Golden -- see
+   https://github.com/gugod/App-perlbrew/issues/305)
 
 1.008009 - 2013-02-24
-        - Remove Carp::Always dep
+ - Remove Carp::Always dep
 
 1.008008 - 2013-02-24
-        - Fix putting arch path in PERL5LIB
-        - Refactor Win32 path handling out of ensure_dir_structure_for()
-        - Fix active_paths when PERL_LOCAL_LIB_ROOT starts with :
-        - Fix ~/perl5/bin missing in $PATH
-        - The environment variables definition for the shell is now output in
-          a way that allows to put the generated content directly in the
-          .profile without requiring to launch perl
-          (the only difference is how PERL_LOCAL_LIB_ROOT is generated)
-          (Olivier Mengué).
+ - Fix putting arch path in PERL5LIB
+ - Refactor Win32 path handling out of ensure_dir_structure_for()
+ - Fix active_paths when PERL_LOCAL_LIB_ROOT starts with :
+ - Fix ~/perl5/bin missing in $PATH
+ - The environment variables definition for the shell is now output in
+   a way that allows to put the generated content directly in the
+   .profile without requiring to launch perl
+   (the only difference is how PERL_LOCAL_LIB_ROOT is generated)
+   (Olivier Mengué).
 
 1.008007 - 2013-02-17
-        - Back to 1.008004 with Carp fix since subsequent releases were botched
-        - Avoid issue where PERL5LIB Carp is older than local::lib one
+ - Back to 1.008004 with Carp fix since subsequent releases were botched
+ - Avoid issue where PERL5LIB Carp is older than local::lib one
 
 1.008004 - 2011-02-24
-
-        - Fix stackable tests on win32 by canonicalizing the path ahead of time
+ - Fix stackable tests on win32 by canonicalizing the path ahead of time
 
 1.008003 - 2011-02-23
-
-        - Fix tests with stacking l::ls.
+ - Fix tests with stacking l::ls.
 
 1.008002 - 2011-02-23
-
-        - Add local::lib stacking support.
-        - Add activation/deactivation support.
+ - Add local::lib stacking support.
+ - Add activation/deactivation support.
 
 1.008001 - 2011-01-09
-
-        - Bootstrap Module::Build just like ExtUtils::MakeMaker
+ - Bootstrap Module::Build just like ExtUtils::MakeMaker
 
 1.008000 - 2011-01-05
-
-        - Remove redundant prereqs now that Module::Build 0.36 is required
-        - Makefile.PL avoids CPAN client configuration when not required
-        - print_environment_vars_for() refactored with separate function
-          environment_vars_string_for()
-        - PERL_LOCAL_LIB_ROOT environment is added to disambiguate when
-          PERL_MM_OPT, etc. was set by local::lib or other means
+ - Remove redundant prereqs now that Module::Build 0.36 is required
+ - Makefile.PL avoids CPAN client configuration when not required
+ - print_environment_vars_for() refactored with separate function
+   environment_vars_string_for()
+ - PERL_LOCAL_LIB_ROOT environment is added to disambiguate when
+   PERL_MM_OPT, etc. was set by local::lib or other means
 
 1.007000 - 2010-12-09
-        - Chase the Module::Build version which supports PERL_MB_OPT. Thanks to
-        miyagawa for pointing this out.
+ - Chase the Module::Build version which supports PERL_MB_OPT. Thanks to
+   miyagawa for pointing this out.
 
 1.006009 - 2010-12-09
-
-        - Split up method guess_shelltype from parts of print_environment_vars_for
-        - Updated documentation about change of use with .modulebuildrc
+ - Split up method guess_shelltype from parts of print_environment_vars_for
+ - Updated documentation about change of use with .modulebuildrc
 
 1.006008 - 2010-11-17
-
-        - Finally move to PERL_MB_OPT rather than using .modulebuildrc.
+ - Finally move to PERL_MB_OPT rather than using .modulebuildrc.
 
 1.006007 - 2010-08-12
-
-        - Fixing stuff so that search.cpan.org displays right
-        - Documented one method in all languages
+ - Fixing stuff so that search.cpan.org displays right
+ - Documented one method in all languages
 
 1.006006 - 2010-08-12
-
-        - Added portuguese translation
-        - Several minor fixes in the documentation
-        - Changed methods look in documentation
+ - Added portuguese translation
+ - Several minor fixes in the documentation
+ - Changed methods look in documentation
 
 1.006005 - 2010-07-13
-
-        - Added support informations (also for german)
-        - Fixed newline in german translation from DOS2UNIX
+ - Added support informations (also for german)
+ - Fixed newline in german translation from DOS2UNIX
 
 1.006004 - 2010-06-10
-
-        - I am stupid.
+ - I am stupid.
 
 1.006003 - 2010-06-10
-
-        - Added german translation right
+ - Added german translation right
 
 1.006002 - 2010-06-10
-
-        - Hotfix for a search.cpan.org "Bug"
+ - Hotfix for a search.cpan.org "Bug"
 
 1.006001 - 2010-06-10
-
-        - Added german translation
-        - Enhanced some parts of english documentation
-        - doc patch for win32 from run4flat
-        - reverse the perl/arch paths in PERL5LIB
+ - Added german translation
+ - Enhanced some parts of english documentation
+ - doc patch for win32 from run4flat
+ - reverse the perl/arch paths in PERL5LIB
 
 1.006000 - 2010-03-31
-
-        - Create lib::core::only that provides the "set @INC to core dirs
-          only" functionality that was the only part of --self-contained that
-          ever worked usefully.
-        - Delete broken --self-contained flag from core
+ - Create lib::core::only that provides the "set @INC to core dirs
+   only" functionality that was the only part of --self-contained that
+   ever worked usefully.
+ - Delete broken --self-contained flag from core
 
 1.005001 - 2010-03-10
-
-        - I am an idiot.
+ - I am an idiot.
 
 1.005000 - 2010-03-10
-
-        - More robust handling of running new toolchains on older perls. This
-          should sort out issues users have with bootstrapping on e.g. Solaris
-          and other traditional Unices. In addition, try to find a GNU tar
-          capable of dealing with @LongLink so bootstrapping doesn't fail.
-
-        - Warnings for missing PATH/PERL5LIB (as when not running interactively)
-          silenced by a patch from Marco Emilio Poleggi.
-
-        - Start of better docs for C<--self-contained> thanks to
-          markstos@cpan.org.
+ - More robust handling of running new toolchains on older perls. This
+   should sort out issues users have with bootstrapping on e.g. Solaris
+   and other traditional Unices. In addition, try to find a GNU tar
+   capable of dealing with @LongLink so bootstrapping doesn't fail.
+ - Warnings for missing PATH/PERL5LIB (as when not running interactively)
+   silenced by a patch from Marco Emilio Poleggi.
+ - Start of better docs for C<--self-contained> thanks to
+   markstos@cpan.org.
 
 1.004009 - 2009-11-07
-
-        - Fix warning if your $ENV{PERL5LIB} is undef
-
-        - Doc improvement from kgish/#perl-help@irc.perl.org
-
-        - t0m and chrisa on #local-lib@irc.perl.org pointed out a PERL5LIB ordering issue
-          with C<--self-contained>.
+ - Fix warning if your $ENV{PERL5LIB} is undef
+ - Doc improvement from kgish/#perl-help@irc.perl.org
+ - t0m and chrisa on #local-lib@irc.perl.org pointed out a PERL5LIB ordering issue
+   with C<--self-contained>.
 
 1.004008 - 2009-10-13
-
-        - Clarify re-reading the shell config file after writing to it.
-
-        - Clarify copyright and licensing for packaging by vendors.
+ - Clarify re-reading the shell config file after writing to it.
+ - Clarify copyright and licensing for packaging by vendors.
 
 1.004007 - 2009-09-02
-
-        - Ensure that $ENV{PERL5LIB} and @INC are always de-duped, stopping
-          them from growing if local::lib is invoked multiple times for the
-          same path. (t0m)
-
-        - Doc improvements by kurisuto@irc.perl.org/#catalyst.
-
-        - Cleaned up indentation of code lines in the POD. Everything should be
-          nice and flush, now.
+ - Ensure that $ENV{PERL5LIB} and @INC are always de-duped, stopping
+   them from growing if local::lib is invoked multiple times for the
+   same path. (t0m)
+ - Doc improvements by kurisuto@irc.perl.org/#catalyst.
+ - Cleaned up indentation of code lines in the POD. Everything should be
+   nice and flush, now.
 
 1.004006 - 2009-08-25
-        - Fix parsing of --self-contained and local lib directory. It's now
-          possible to specify flags and the directory in any order. Also made
-          adding future flags easier in the future. Thanks to
-          frew@irc.perl.org/#catalyst for pointing out that --self-contained
-          wouldn't work without a directory.
+ - Fix parsing of --self-contained and local lib directory. It's now
+   possible to specify flags and the directory in any order. Also made
+   adding future flags easier in the future. Thanks to
+   frew@irc.perl.org/#catalyst for pointing out that --self-contained
+   wouldn't work without a directory.
 
 1.004005 - 2009-08-23
-        - Add the --no-manpages option to bootstraping to tell EUMM / MB to not
-          generate manpages from POD. Thanks to RKITOVER for providing the
-          necessary values for CPAN.pm's configuration.
+ - Add the --no-manpages option to bootstraping to tell EUMM / MB to not
+   generate manpages from POD. Thanks to RKITOVER for providing the
+   necessary values for CPAN.pm's configuration.
 
 1.004004 - 2009-08-05
-
-        - Add dependency on Extutils::Install 1.43 and install in --bootstrap
-          otherwise we fail to build with latest MakeMaker on OpenSolaris (t0m)
-
-        - Fix Win32 / Cygwin detection (emazep).
+ - Add dependency on Extutils::Install 1.43 and install in --bootstrap
+   otherwise we fail to build with latest MakeMaker on OpenSolaris (t0m)
+ - Fix Win32 / Cygwin detection (emazep).
 
 1.004003 - 2009-16-16
-        - Stop Makefile.PL exploding if your CPAN is too old to have
-          CPAN::HandleConfig. Needed when installing local::lib via CPAN
-          using an old CPAN version (t0m)
-        - Fix warning from Makefile.PL about ExtUtils::MakeMaker::prompt (t0m)
-        - Set PERL5LIB back to calculated @INC with --self-contained, to stop
-          invoking other perl scripts from losing the local::lib if they
-          mangle @INC from $ENV{PERL5LIB}, and fix install of 'difficult'
-          modules with such as Test::Deep (t0m)
+ - Stop Makefile.PL exploding if your CPAN is too old to have
+   CPAN::HandleConfig. Needed when installing local::lib via CPAN
+   using an old CPAN version (t0m)
+ - Fix warning from Makefile.PL about ExtUtils::MakeMaker::prompt (t0m)
+ - Set PERL5LIB back to calculated @INC with --self-contained, to stop
+   invoking other perl scripts from losing the local::lib if they
+   mangle @INC from $ENV{PERL5LIB}, and fix install of 'difficult'
+   modules with such as Test::Deep (t0m)
 
 1.004002 - 2009-06-15
-        - Fixed up INC untaint procedure to skip/ignore CODE, ARRAY,
-          blessed entries. (grink)
-        - Include test in xt/ for the above
-
-        - Put PERL5LIB first, so it'll be favored over privlibexp and
-          archlibexp when self contained.
-        - Automatically untaint @INC (t0m)
-        - Prevent @INC from growing when you have multiple scripts using
-          --self-contained called from inside one another. (grink by way of t0m)
-        - eg/scripted_install.pl now no longer requires TARGET, but still
-          respects it. (confound)
+ - Fixed up INC untaint procedure to skip/ignore CODE, ARRAY,
+   blessed entries. (grink)
+ - Include test in xt/ for the above
+ - Put PERL5LIB first, so it'll be favored over privlibexp and
+   archlibexp when self contained.
+ - Automatically untaint @INC (t0m)
+ - Prevent @INC from growing when you have multiple scripts using
+   --self-contained called from inside one another. (grink by way of t0m)
+ - eg/scripted_install.pl now no longer requires TARGET, but still
+   respects it. (confound)
 
 1.004001 - 2009-05-21
-        - Clean up CPAN.pm's environment variable the same way we do for
-          CPANPLUS. Add an example program showing local::lib employed
-          programmatically (confound).
-
-        - Add the beginnings of a troubleshooting section (pattern).
+ - Clean up CPAN.pm's environment variable the same way we do for
+   CPANPLUS. Add an example program showing local::lib employed
+   programmatically (confound).
+ - Add the beginnings of a troubleshooting section (pattern).
 
 1.004000 - 2009-05-14
-        - Don't allow dangerous settings for CPAN.pm that affect where CPAN
-          installs stuff, as this conflicts with what we're trying to do.
-
-        - Make sure that our Makefile is written to the correct directory when
-          bootstrapping (confound).
+ - Don't allow dangerous settings for CPAN.pm that affect where CPAN
+   installs stuff, as this conflicts with what we're trying to do.
+ - Make sure that our Makefile is written to the correct directory when
+   bootstrapping (confound).
 
 1.003004 - 2009-05-12
-        - Additional documentation and examples concerning having multiple
-          local::lib enviornments (amiri)
-
-        - Some install tests courtesy of Hans Dieter Pearcey <hdp@cpan.org>.
-          Thanks!
+ - Additional documentation and examples concerning having multiple
+   local::lib enviornments (amiri)
+ - Some install tests courtesy of Hans Dieter Pearcey <hdp@cpan.org>.
+   Thanks!
 
 1.003003 - 2009-04-09
-        - Expose the internals per RT #36846.
-        - Fix the MANIFEST up a bit.
+ - Expose the internals per RT #36846.
+ - Fix the MANIFEST up a bit.
 
 1.003002 - 2009-02-25
-        - Add a doc patch from Torsten Raudssus <torsten@raudssus.de> that
-          clarifies how to specify a directory other than ~/perl5.
+ - Add a doc patch from Torsten Raudssus <torsten@raudssus.de> that
+   clarifies how to specify a directory other than ~/perl5.
 
 1.003001 - 2009-01-14
-        - Properly bail if given fancy dashes obtained by copy-pasting from a
-          UTF8-happy POD formatter. This will bail in both the Makefile.PL and
-          in local::lib::import().
+ - Properly bail if given fancy dashes obtained by copy-pasting from a
+   UTF8-happy POD formatter. This will bail in both the Makefile.PL and
+   in local::lib::import().
 
 1.003000 - 2009-01-13
-        - Add the --self-contained flag from Mark Stosberg, which also contains
-          a doc patch warning about the dangers of UNINST=1. Thanks, Mark!
+ - Add the --self-contained flag from Mark Stosberg, which also contains
+   a doc patch warning about the dangers of UNINST=1. Thanks, Mark!
 
 1.002000 - 2008-08-06
-        - make CPAN config reinit non-prompting but still robust
-        - make bootstrap auto-init CPAN config and set USE_DEFAULT for deps
+ - make CPAN config reinit non-prompting but still robust
+ - make bootstrap auto-init CPAN config and set USE_DEFAULT for deps
 
 1.001000 - 2007-09-19
-        - refactored shell command generation
-        - implemented C shell command generation based on this (checks $SHELL}
-        - improved docs
-        - modified Makefile.PL to install an up-to-date CPAN.pm if needed
+ - refactored shell command generation
+ - implemented C shell command generation based on this (checks $SHELL}
+ - improved docs
+ - modified Makefile.PL to install an up-to-date CPAN.pm if needed
 
 1.000000 - 2007-09-13
-        - initial release
+ - initial release
