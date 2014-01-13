@@ -8,18 +8,13 @@ use Config;
 use local::lib ();
 
 my @paths = File::Spec->path;
-my @ext = $^O eq 'MSWin32'  ? (split /\Q$Config{path_sep}/, $ENV{PATHEXT}) : ('');
 sub which {
   my $shell = shift;
-  for my $dir (@paths) {
-    my $file = File::Spec->catfile($dir||'.', $shell);
-    for my $ext (@ext) {
-      my $full = $file . $ext;
-      return $full
-        if -x $full;
-    }
-  }
-  return;
+  my ($full) =
+    grep { -x }
+    map { File::Spec->catfile( $_, $shell) }
+    File::Spec->path;
+  return $full;
 }
 
 my $extra_lib = '-I"' . dirname(dirname($INC{'local/lib.pm'})) . '"';
@@ -34,14 +29,14 @@ for my $shell (
     opt => '-f',
   },
   {
-    name => 'cmd',
+    name => 'cmd.exe',
     opt => '/Q /D /C',
     ext => 'bat',
     perl => qq{@"$^X"},
     skip => $^O eq 'cygwin',
   },
   {
-    name => 'powershell',
+    name => 'powershell.exe',
     opt => '-NoProfile -ExecutionPolicy Unrestricted -File',
     ext => 'ps1',
     perl => qq{& '$^X'},
