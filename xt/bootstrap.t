@@ -58,6 +58,8 @@ for my $perl (@perl) {
   delete $ENV{PERL_LOCAL_LIB_ROOT};
   delete $ENV{PERL_MM_OPT};
   delete $ENV{PERL_MB_OPT};
+  my $home = File::Temp->newdir;
+  local $ENV{HOME} = $home->dirname;
 
   diag "testing bootstrap with $perl";
   for my $module (@modules) {
@@ -67,7 +69,6 @@ for my $perl (@perl) {
     }
   }
 
-  $ENV{HOME} = my $home = File::Temp::tempdir( CLEANUP => 1 );
   my $ll = File::Spec->catdir($home, 'local-lib');
 
   open my $null_in, '<', File::Spec->devnull;
@@ -86,6 +87,5 @@ for my $perl (@perl) {
     my $version = check_version($perl, $module->[0]);
     cmp_ok $version, '>=', $module->[1], "bootstrap installed new enough $module->[0]"
       or diag "PERL5LIB: $ENV{PERL5LIB}";
-
   }
 }
