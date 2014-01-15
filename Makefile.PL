@@ -309,8 +309,8 @@ WriteMakefile(
   PREREQ_PM => {
     %RUN_DEPS,
   },
-  keys %BUILD_DEPS ? ( BUILD_REQUIRES => \%BUILD_DEPS ) : (),
-  keys %TEST_DEPS ? ( TEST_REQUIRES => \%TEST_DEPS ) : (),
+  BUILD_REQUIRES => \%BUILD_DEPS,
+  TEST_REQUIRES => \%TEST_DEPS,
   META_ADD => \%extra_info,
   META_MERGE => {
     no_index => {
