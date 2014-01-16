@@ -5,6 +5,7 @@ Revision history for local::lib
    arguments
  - support fish shell
  - stop trying to test csh/sh on Win32
+ - work around CPAN.pm issues with checking prerequisites
 
 2.000004 - 2014-01-03
  - fix errors in PowerShell output when clearing nonexistant variables
