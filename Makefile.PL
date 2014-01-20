@@ -196,9 +196,8 @@ my %extra_info = (
   'meta-spec' => { version => 2 },
   resources => {
     repository => {
-      # r/w: p5sagit@git.shadowcat.co.uk:local-lib.git
-      url => 'git://git.shadowcat.co.uk/p5sagit/local-lib.git',
-      web => 'http://git.shadowcat.co.uk/gitweb/gitweb.cgi?p=p5sagit/local-lib.git',
+      url => 'git://github.com/Perl-Toolchain-Gang/local-lib',
+      web => 'https://github.com/Perl-Toolchain-Gang/local-lib',
       type => 'git',
     },
     x_IRC => 'irc://irc.perl.org/#local-lib',
