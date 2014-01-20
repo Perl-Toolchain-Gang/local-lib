@@ -209,7 +209,7 @@ my %extra_info = (
     license => [ 'http://dev.perl.org/licenses/' ],
   },
   prereqs => {
-    runtime   => { requires => { perl => '5.8.1' } },
+    runtime   => { requires => { perl => '5.6.0' } },
   },
 );
 
