@@ -102,7 +102,6 @@ sub libs { $_[0]->{libs}   ||= [ \'PERL5LIB' ] }
 sub bins { $_[0]->{bins}   ||= [ \'PATH' ] }
 sub roots { $_[0]->{roots} ||= [ \'PERL_LOCAL_LIB_ROOT' ] }
 sub extra { $_[0]->{extra} ||= {} }
-sub shelltype { $_[0]->{shelltype} ||= $_[0]->guess_shelltype }
 sub no_create { $_[0]->{no_create} }
 
 my $_archname = $Config{archname};
@@ -364,7 +363,7 @@ sub environment_vars_string {
     }
     $out .= $self->$build_method($name, $value);
   }
-  my $wrap_method = 'wrap_' . $self->shelltype . '_output';
+  my $wrap_method = "wrap_${shelltype}_output";
   if ($self->can($wrap_method)) {
     return $self->$wrap_method($out);
   }
