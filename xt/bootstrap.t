@@ -50,6 +50,7 @@ plan tests => @perl * (1+@modules);
 
 for my $perl (@perl) {
   local @INC = @INC;
+  local $ENV{AUTOMATED_TESTING} = 1;
   local $ENV{PERL5LIB};
   local $ENV{PERL_LOCAL_LIB_ROOT};
   local $ENV{PERL_MM_OPT};
