@@ -24,6 +24,7 @@ use Test::More 0.81_01;
 use IPC::Open3;
 use File::Temp;
 use File::Spec;
+use Parse::CPAN::Meta;
 use local::lib ();
 
 my @perl;
@@ -81,11 +82,17 @@ for my $perl (@perl) {
   is $?, 0, 'Makefile.PL ran successfully'
     or diag $out;
 
+  my $meta = Parse::CPAN::Meta->load_file('MYMETA.yml');
+
   local::lib->setup_env_hash_for($ll);
 
   for my $module (@modules) {
-    my $version = check_version($perl, $module->[0]);
-    cmp_ok $version, '>=', $module->[1], "bootstrap installed new enough $module->[0]"
-      or diag "PERL5LIB: $ENV{PERL5LIB}";
+    SKIP: {
+      my $need_version = $meta->{requires}{$module->[0]}
+        or skip "$module->[0] not needed for $perl", 1;
+      my $version = check_version($perl, $module->[0]);
+      cmp_ok $version, '>=', $module->[1], "bootstrap installed new enough $module->[0]"
+        or diag "PERL5LIB: $ENV{PERL5LIB}";
+    }
   }
 }
