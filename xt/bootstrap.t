@@ -20,7 +20,7 @@ sub check_version {
   length $version ? $version : undef;
 }
 
-use Test::More;
+use Test::More 0.81_01;
 use IPC::Open3;
 use File::Temp;
 use File::Spec;
@@ -58,8 +58,7 @@ for my $perl (@perl) {
   delete $ENV{PERL_LOCAL_LIB_ROOT};
   delete $ENV{PERL_MM_OPT};
   delete $ENV{PERL_MB_OPT};
-  my $home = File::Temp->newdir;
-  local $ENV{HOME} = $home->dirname;
+  local $ENV{HOME} = my $home = File::Temp::tempdir('local-lib-home-XXXXX', CLEANUP => 1, TMPDIR => 1);
 
   diag "testing bootstrap with $perl";
   for my $module (@modules) {
