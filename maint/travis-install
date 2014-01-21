@@ -1,0 +1,69 @@
+#!/bin/bash
+set -e
+
+export PERL_CPANM_OPT="--mirror http://www.cpan.org/ $PERL_CPANM_OPT"
+
+function clean_up {
+  kill $PROG 2>/dev/null || true
+  wait 2>/dev/null || true
+}
+
+function cpanm_install {
+  (
+    set +e
+    for dep in "$@"; do
+      printf "Installing (without testing) $dep ..."
+      (
+        while true; do
+          sleep 3
+          printf '.'
+        done
+      ) &
+      local PROG=$!
+      trap "clean_up $PROG; exit 1" SIGHUP SIGINT SIGTERM
+      OUT="$(cpanm --verbose --no-interactive --no-man-pages --notest $dep 2>&1 )"
+      STATUS=$?
+      kill $PROG 2>/dev/null
+      wait $PROG 2>/dev/null
+      trap - SIGHUP SIGINT SIGTERM
+      if [ $STATUS != 0 ]; then
+        echo ' Failed!'
+        echo "$OUT"
+        return $STATUS
+      fi
+      echo ' Done'
+    done
+  )
+}
+
+for arg; do
+  case $arg in
+    --deps)
+      CPANM='cpanm --sudo --showdeps -q --with-develop .'
+      if [ -z "$AUTHOR_TESTING" ] || [ "$AUTHOR_TESTING" -ne 0 ]; then
+        CPANM="$CPANM --with-recommends"
+      fi
+      DEPS="$(PERL_CPANM_OPT= $CPANM )"
+      for dep in $DEPS; do
+        [[ "$dep" =~ perl* ]] && continue
+        cpanm_install $dep
+      done
+      for dep in $(PERL_CPANM_OPT= $CPANM); do
+        [[ "$dep" =~ perl* ]] && continue
+        DEP_DONE=
+        for done_dep in $DEPS; do
+          if [ "$dep" == "$done_dep" ]; then
+            DEP_DONE=1
+            break
+          fi
+        done
+        if [ -z "$DEP_DONE" ]; then
+          cpanm_install $dep
+        fi
+      done
+    ;;
+    *)
+      cpanm_install $arg
+    ;;
+  esac
+done

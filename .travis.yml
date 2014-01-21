@@ -1,0 +1,29 @@
+language: perl
+perl:
+  - "5.8.1"
+  - "5.8.5"
+  - "5.8.8"
+  - "5.8.9"
+  - "5.10.0"
+  - "5.10.1"
+  - "5.12.0"
+  - "5.12.5"
+  - "5.18.2"
+before_install:
+  - source maint/travis-perlbrew
+  - perl -V
+install:
+  - export AUTOMATED_TESTING=1
+  - LL_ROOT="$(mktemp -d -t local-lib-XXXXXX)"
+  - export PERL5LIB="$LL_ROOT/lib/perl5"
+  - export PERL_CPANM_OPT="-l $LL_ROOT"
+  - maint/travis-install --deps
+script:
+  - perl Makefile.PL
+  - make test TEST_VERBOSE=1
+branches:
+  except:
+    - /^wip\//
+    - /^blocked/
+notifications:
+  email: false
