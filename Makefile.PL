@@ -214,6 +214,7 @@ my %extra_info = (
       'Test::EOL'     => 0,
       'Test::NoTabs'  => 0,
       'Test::Pod'     => 0,
+      'Capture::Tiny' => 0,
     } },
   },
 );
