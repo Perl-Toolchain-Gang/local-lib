@@ -111,7 +111,7 @@ if (my ($x) = grep { /^--bootstrap(?:=.*)?$/ } @ARGV) {
 }
 
 my $requires = $META{prereqs}{runtime}{requires};
-$requires = { %$requires } unless -f 'META.yml';
+$requires = { %$requires } unless -f 'META.yml' or $ENV{AUTOMATED_TESTING};
 if ($ENV{PERL5_CPANM_IS_RUNNING}) {
   delete $requires->{CPAN};
 }
