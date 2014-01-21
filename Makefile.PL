@@ -209,6 +209,12 @@ my %extra_info = (
   },
   prereqs => {
     runtime   => { requires => { perl => '5.6.0' } },
+    develop   => { requires => {
+      'Test::CPAN::Changes' => 0,
+      'Test::EOL'     => 0,
+      'Test::NoTabs'  => 0,
+      'Test::Pod'     => 0,
+    } },
   },
 );
 
