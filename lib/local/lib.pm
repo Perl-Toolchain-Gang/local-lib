@@ -603,10 +603,13 @@ From the shell -
 
   # Just print out useful shell commands
   $ perl -Mlocal::lib
-  export PERL_MB_OPT='--install_base /home/username/perl5'
-  export PERL_MM_OPT='INSTALL_BASE=/home/username/perl5'
-  export PERL5LIB="/home/username/perl5/lib/perl5"
-  export PATH="/home/username/perl5/bin:$PATH"
+  PERL_MB_OPT='--install_base /home/username/perl5'; export PERL_MB_OPT
+  PERL_MM_OPT='INSTALL_BASE=/home/username/perl5'; export PERL_MM_OPT
+  PERL5LIB="/home/username/perl5/lib/perl5"; export PERL5LIB
+  PATH="/home/username/perl5/bin:$PATH"; export PATH
+  PERL_LOCAL_LIB_ROOT="/home/usename/perl5:$PERL_LOCAL_LIB_ROOT"; export PERL_LOCAL_LIB_ROOT
+
+
 
 From a .bashrc file -
 
