@@ -159,9 +159,9 @@ END
   }
 }
 
-if (!$ENV{PERL5_CPANM_IS_RUNNING}) {
-  my $status = system $^X, '-Minc::ConfigCPAN', '-', 'check',
-    $META{prereqs}{runtime}{requires}{CPAN};
+if (!$ENV{PERL5_CPANM_IS_RUNNING}
+    and my $cpan_req = $META{prereqs}{runtime}{CPAN}) {
+  my $status = system $^X, '-Minc::ConfigCPAN', '-', 'check', $cpan_req;
   exit $status
     if $status;
 }
