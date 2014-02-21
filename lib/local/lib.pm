@@ -3,7 +3,7 @@ use 5.006;
 use strict;
 use warnings;
 use Config;
-use File::Spec ();
+use File::Spec::Functions qw(catdir rel2abs);
 
 our $VERSION = '2.000004'; # 2.0.4
 $VERSION = eval $VERSION;
@@ -133,21 +133,21 @@ my @_lib_subdirs = (
 
 sub install_base_bin_path {
   my ($class, $path) = @_;
-  return File::Spec->catdir($path, 'bin');
+  return catdir($path, 'bin');
 }
 sub install_base_perl_path {
   my ($class, $path) = @_;
-  return File::Spec->catdir($path, 'lib', 'perl5');
+  return catdir($path, 'lib', 'perl5');
 }
 sub install_base_arch_path {
   my ($class, $path) = @_;
-  File::Spec->catdir($class->install_base_perl_path($path), $_archname);
+  catdir($class->install_base_perl_path($path), $_archname);
 }
 
 sub lib_paths_for {
   my ($class, $path) = @_;
   my $base = $class->install_base_perl_path($path);
-  return map { File::Spec->catdir($base, @$_) } @_lib_subdirs;
+  return map { catdir($base, @$_) } @_lib_subdirs;
 }
 
 sub _mm_escape_path {
@@ -531,7 +531,7 @@ sub resolve_home_path {
 
 sub resolve_relative_path {
   my ($class, $path) = @_;
-  $path = File::Spec->rel2abs($path);
+  rel2abs($path);
 }
 
 sub ensure_dir_structure_for {
