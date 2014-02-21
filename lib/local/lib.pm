@@ -510,11 +510,11 @@ sub resolve_empty_path {
 
 sub resolve_home_path {
   my ($class, $path) = @_;
-  return $path unless ($path =~ /^~/);
-  my ($user) = ($path =~ /^~([^\/]+)/); # can assume ^~ so undef for 'us'
+  $path =~ /^~([^\/]*)/ or return $path;
+  my $user = $1;
   my $homedir = do {
-    if (!defined $user && defined $ENV{HOME}) {
-      $ENV{HOME}
+    if (! length($user) && defined $ENV{HOME}) {
+      $ENV{HOME};
     }
     else {
       require File::Glob;
