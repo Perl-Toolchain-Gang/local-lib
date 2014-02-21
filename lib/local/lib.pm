@@ -3,10 +3,59 @@ use 5.006;
 use strict;
 use warnings;
 use Config;
-use File::Spec::Functions qw(catdir rel2abs);
 
 our $VERSION = '2.000004'; # 2.0.4
 $VERSION = eval $VERSION;
+
+BEGIN {
+  *_WIN32 = ($^O eq 'MSWin32' || $^O eq 'NetWare' || $^O eq 'symbian') ? sub(){1} : sub(){0};
+  *_MAC = $^O eq 'MacOS' ? sub(){1} : sub(){0};
+  *_VMS = $^O eq 'VMS' ? sub(){1} : sub(){0};
+}
+
+sub cwd () {
+  local @ENV{qw(PATH IFS CDPATH ENV BASH_ENV)};
+  my ($perl) = $^X =~ /(.+)/; # $^X is internal how could it be tainted?!
+  my $cwd = `"$perl" -MCwd -le "print getcwd"`;
+  chomp $cwd;
+  $cwd;
+}
+
+sub catdir {
+  if (_WIN32) {
+    my $dir = join("\\", @_);
+    $dir =~ s{([/\\])(?:\.?[/\\])+}{$1}g;
+    $dir;
+  }
+  elsif (_MAC) {
+    my @parts = grep { $_ ne ':' } @_;
+    for (@parts[1 .. $#parts]) {
+      s/^:://;
+      s/([^:]):$/$1/;
+    }
+    join ':', @parts;
+  }
+  elsif (_VMS) {
+    # punt
+    require File::Spec;
+    File::Spec->catdir(@_);
+  }
+  else {
+    my $dir = join('/', @_);
+    $dir =~ s{(?:/\.?)+/}{/}g;
+    $dir;
+  }
+}
+
+sub rel2abs {
+  my ($dir, $base) = @_;
+  return $dir
+    if (_WIN32 && $dir =~ m{^(?:[a-z]:)?[/\\]}i)
+    or (_MAC && $dir =~ m{^[^:]})
+    or (_VMS && do { require File::Spec; File::Spec->file_name_is_absolute($dir) })
+    or ($dir =~ m{^/});
+  return catdir($dir, $base || cwd);
+}
 
 sub import {
   my ($class, @args) = @_;
