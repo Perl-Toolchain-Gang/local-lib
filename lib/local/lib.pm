@@ -381,7 +381,7 @@ sub build_bourne_env_declaration {
   $value =~ s/(^|\G|$_path_sep)\$$name$_path_sep/$1\$$name\${$name+$_path_sep}/g;
   $value =~ s/$_path_sep\$$name$/\${$name+$_path_sep}\$$name/;
 
-  qq{${name}="$value"; export ${name}\n}
+  qq{${name}="$value"; export ${name};\n}
 }
 
 sub build_csh_env_declaration {
@@ -603,13 +603,11 @@ From the shell -
 
   # Just print out useful shell commands
   $ perl -Mlocal::lib
-  PERL_MB_OPT='--install_base /home/username/perl5'; export PERL_MB_OPT
-  PERL_MM_OPT='INSTALL_BASE=/home/username/perl5'; export PERL_MM_OPT
-  PERL5LIB="/home/username/perl5/lib/perl5"; export PERL5LIB
-  PATH="/home/username/perl5/bin:$PATH"; export PATH
-  PERL_LOCAL_LIB_ROOT="/home/usename/perl5:$PERL_LOCAL_LIB_ROOT"; export PERL_LOCAL_LIB_ROOT
-
-
+  PERL_MB_OPT='--install_base /home/username/perl5'; export PERL_MB_OPT;
+  PERL_MM_OPT='INSTALL_BASE=/home/username/perl5'; export PERL_MM_OPT;
+  PERL5LIB="/home/username/perl5/lib/perl5"; export PERL5LIB;
+  PATH="/home/username/perl5/bin:$PATH"; export PATH;
+  PERL_LOCAL_LIB_ROOT="/home/usename/perl5:$PERL_LOCAL_LIB_ROOT"; export PERL_LOCAL_LIB_ROOT;
 
 From a .bashrc file -
 
