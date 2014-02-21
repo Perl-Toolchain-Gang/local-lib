@@ -555,11 +555,11 @@ sub ensure_dir_structure_for {
 sub guess_shelltype {
   my $shellbin
     = defined $ENV{SHELL}
-      ? (File::Spec->splitpath($ENV{SHELL}))[-1]
+      ? ($ENV{SHELL} =~ /([\w.]+)$/)[-1]
     : ( $^O eq 'MSWin32' && exists $ENV{'!EXITCODE'} )
       ? 'bash'
     : ( $^O eq 'MSWin32' && $ENV{PROMPT} && $ENV{COMSPEC} )
-      ? (File::Spec->splitpath($ENV{COMSPEC}))[-1]
+      ? ($ENV{COMSPEC} =~ /([\w.]+)$/)[-1]
     : ( $^O eq 'MSWin32' && !$ENV{PROMPT} )
       ? 'powershell.exe'
     : 'sh';
