@@ -1,12 +1,9 @@
+package local::lib;
+use 5.006;
 use strict;
 use warnings;
-
-package local::lib;
-
-use 5.006;
-
-use File::Spec ();
 use Config;
+use File::Spec ();
 
 our $VERSION = '2.000004'; # 2.0.4
 $VERSION = eval $VERSION;
