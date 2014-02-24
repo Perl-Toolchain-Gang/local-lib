@@ -8,53 +8,58 @@ our $VERSION = '2.000004'; # 2.0.4
 $VERSION = eval $VERSION;
 
 BEGIN {
-  *_WIN32 = ($^O eq 'MSWin32' || $^O eq 'NetWare' || $^O eq 'symbian') ? sub(){1} : sub(){0};
-  *_MAC = $^O eq 'MacOS' ? sub(){1} : sub(){0};
-  *_VMS = $^O eq 'VMS' ? sub(){1} : sub(){0};
+  *_WIN32 = ($^O eq 'MSWin32' || $^O eq 'NetWare' || $^O eq 'symbian')
+    ? sub(){1} : sub(){0};
+  # punt on these systems
+  *_USE_FSPEC = ($^O eq 'MacOS' || $^O eq 'VMS' || $INC{'File/Spec.pm'})
+    ? sub(){1} : sub(){0};
 }
+our $_DIR_JOIN = _WIN32 ? '\\' : '/';
+our $_DIR_SPLIT = (_WIN32 || $^O eq 'cygwin') ? qr{[\\/]}
+                                              : qr{/};
+our $_ROOT = _WIN32 ? do {
+  my $UNC = qr{[\\/]{2}[^\\/]+[\\/][^\\/]+};
+  qr{^(?:$UNC|[A-Za-z]:|)$_DIR_SPLIT};
+} : qr{^/};
+our ($_PERL) = $^X =~ /(.+)/; # $^X is internal how could it be tainted?!
 
-sub cwd () {
+sub _cwd {
+  my $drive = shift;
   local @ENV{qw(PATH IFS CDPATH ENV BASH_ENV)};
-  my ($perl) = $^X =~ /(.+)/; # $^X is internal how could it be tainted?!
-  my $cwd = `"$perl" -MCwd -le "print getcwd"`;
+  my $cmd = $drive ? "eval { Cwd::getdcwd(q($drive)) }"
+                   : 'getcwd';
+  my $cwd = `"$_PERL" -MCwd -le "print $cmd"`;
   chomp $cwd;
+  if (!length $cwd && $drive) {
+    $cwd = $drive;
+  }
+  $cwd =~ s/$_DIR_SPLIT?$/$_DIR_JOIN/;
   $cwd;
 }
 
-sub catdir {
-  if (_WIN32) {
-    my $dir = join("\\", @_);
-    $dir =~ s{([/\\])(?:\.?[/\\])+}{$1}g;
-    $dir;
-  }
-  elsif (_MAC) {
-    my @parts = grep { $_ ne ':' } @_;
-    for (@parts[1 .. $#parts]) {
-      s/^:://;
-      s/([^:]):$/$1/;
-    }
-    join ':', @parts;
-  }
-  elsif (_VMS) {
-    # punt
+sub _catdir {
+  if (_USE_FSPEC) {
     require File::Spec;
     File::Spec->catdir(@_);
   }
   else {
-    my $dir = join('/', @_);
-    $dir =~ s{(?:/\.?)+/}{/}g;
+    my $dir = join($_DIR_JOIN, @_);
+    $dir =~ s{($_DIR_SPLIT)(?:\.?$_DIR_SPLIT)+}{$1}g;
     $dir;
   }
 }
 
-sub rel2abs {
+sub _rel2abs {
   my ($dir, $base) = @_;
   return $dir
-    if (_WIN32 && $dir =~ m{^(?:[a-z]:)?[/\\]}i)
-    or (_MAC && $dir =~ m{^[^:]})
-    or (_VMS && do { require File::Spec; File::Spec->file_name_is_absolute($dir) })
-    or ($dir =~ m{^/});
-  return catdir($dir, $base || cwd);
+    if (_USE_FSPEC && require File::Spec)
+      ? File::Spec->file_name_is_absolute($dir)
+      : $dir =~ $_ROOT;
+
+  $base = _WIN32 && $dir =~ s/^([A-Za-z]:)// ? _cwd("$1")
+        : $base                              ? $base
+                                             : _cwd;
+  return _catdir($base, $dir);
 }
 
 sub import {
@@ -182,21 +187,21 @@ my @_lib_subdirs = (
 
 sub install_base_bin_path {
   my ($class, $path) = @_;
-  return catdir($path, 'bin');
+  return _catdir($path, 'bin');
 }
 sub install_base_perl_path {
   my ($class, $path) = @_;
-  return catdir($path, 'lib', 'perl5');
+  return _catdir($path, 'lib', 'perl5');
 }
 sub install_base_arch_path {
   my ($class, $path) = @_;
-  catdir($class->install_base_perl_path($path), $_archname);
+  _catdir($class->install_base_perl_path($path), $_archname);
 }
 
 sub lib_paths_for {
   my ($class, $path) = @_;
   my $base = $class->install_base_perl_path($path);
-  return map { catdir($base, @$_) } @_lib_subdirs;
+  return map { _catdir($base, @$_) } @_lib_subdirs;
 }
 
 sub _mm_escape_path {
@@ -580,7 +585,7 @@ sub resolve_home_path {
 
 sub resolve_relative_path {
   my ($class, $path) = @_;
-  rel2abs($path);
+  _rel2abs($path);
 }
 
 sub ensure_dir_structure_for {
@@ -1256,11 +1261,10 @@ not set, a Bourne-compatible shell is assumed.
 
 =item * Should probably auto-fixup CPAN config if not already done.
 
-=item * local::lib loads L<File::Spec>.  When used to set shell variables,
-this isn't a problem.  When used inside a perl script, any L<File::Spec>
-version inside the local::lib will be ignored.  A workaround for this is using
-C<use lib "$ENV{HOME}/perl5/lib/perl5";> inside the script instead of using
-C<local::lib> directly.
+=item * On VMS and MacOS Classic (pre-OS X), local::lib loads L<File::Spec>.
+This means any L<File::Spec> version installed in the local::lib will be
+ignored by scripts using local::lib.  A workaround for this is using
+C<use lib "$local_lib/lib/perl5";> instead of using C<local::lib> directly.
 
 =item * Conflicts with L<ExtUtils::MakeMaker>'s C<PREFIX> option.
 C<local::lib> uses the C<INSTALL_BASE> option, as it has more predictable and
