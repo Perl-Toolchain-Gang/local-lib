@@ -1,8 +1,6 @@
 use strict;
 use warnings;
 use Test::More;
-BEGIN { plan skip_all => "Install Capture::Tiny to test installation"
-  unless eval { require Capture::Tiny; 1 } }
 use Capture::Tiny qw(capture_merged);
 use File::Spec;
 use File::Path qw(mkpath);
