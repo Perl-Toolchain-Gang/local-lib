@@ -336,11 +336,12 @@ sub environment_vars_string {
 
   my $build_method = "build_${shelltype}_env_declaration";
 
+  my $extra = $self->extra;
   my @envs = (
     PATH                => $self->bins,
     PERL5LIB            => $self->libs,
     PERL_LOCAL_LIB_ROOT => $self->roots,
-    %{$self->extra},
+    map { $_ => $extra->{$_} } sort keys %$extra,
   );
   my $out = '';
   while (@envs) {
