@@ -1,5 +1,8 @@
 Revision history for local::lib
 
+ - no longer loads File::Spec, so an upgraded version installed inside a local
+   lib dir can be used by scripts
+
 2.000008 - 2014-03-13
  - fix --bootstrap option without a path specified
 
