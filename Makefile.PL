@@ -20,7 +20,7 @@ my %META = (
       'CPAN'                => '1.82', # sudo support + CPAN::HandleConfig
     } },
     develop   => { requires => {
-      $] >= 5.010 ? ('Test::CPAN::Changes' => 0) : (),
+      'Test::CPAN::Changes' => 0,
       'Test::EOL'     => 0,
       'Test::NoTabs'  => 0,
       'Test::Pod'     => 0,
@@ -111,18 +111,19 @@ if (my ($x) = grep { /^--bootstrap(?:=.*)?$/ } @ARGV) {
 }
 
 my $requires = $META{prereqs}{runtime}{requires};
-$requires = { %$requires } unless -f 'META.yml' or $ENV{AUTOMATED_TESTING};
+$MM_ARGS{PREREQ_PM} = { %$requires };
 if ($ENV{PERL5_CPANM_IS_RUNNING}) {
-  delete $requires->{CPAN};
+  $requires->{CPAN} = undef;
 }
 for my $module (grep { $_ ne 'perl' } keys %$requires) {
+  my $v = $requires->{$module} or next;
   open my $olderr, '>&', \*STDERR or die "Can't dup STDERR: $!";
   open STDERR, '>', File::Spec->devnull or die "Can't open /dev/null: $!";
   if (system $^X, "-m$module", '-e1') {
-    delete $requires->{$module};
+    $requires->{$module} = undef;
   }
-  elsif (! system $^X, "-M$module $requires->{$module}", '-e1') {
-    delete $requires->{$module};
+  elsif (! system $^X, "-M$module $v", '-e1') {
+    $requires->{$module} = undef;
   }
   open STDERR, '>&', $olderr or die "Can't dup to STDERR: $!";
 }
@@ -159,61 +160,48 @@ END
   }
 }
 
-if (!$ENV{PERL5_CPANM_IS_RUNNING}
-    and my $cpan_req = $META{prereqs}{runtime}{CPAN}) {
-  my $status = system $^X, '-Minc::ConfigCPAN', '-', 'check', $cpan_req;
+if (!$ENV{PERL5_CPANM_IS_RUNNING}) {
+  my $status = system $^X, '-Minc::ConfigCPAN', '-', 'check', $META{prereqs}{runtime}{CPAN};
   exit $status
     if $status;
 }
 
 ##############################################################################
 require ExtUtils::MakeMaker;
-ExtUtils::MakeMaker->import;
-
 (do 'maint/Makefile.PL.include' or die $@) unless -f 'META.yml';
 
 # have to do this since old EUMM dev releases miss the eval $VERSION line
-my $eumm_version = eval $ExtUtils::MakeMaker::VERSION;
-my $mymeta_works      = $eumm_version >= 6.57_07;
-my $mymeta            = $eumm_version >= 6.57_02;
-my $has_test_requires = $eumm_version >= 6.63_03;
+my $eumm_version  = eval $ExtUtils::MakeMaker::VERSION;
+my $mymeta        = $eumm_version >= 6.57_02;
+my $mymeta_broken = $mymeta && $eumm_version < 6.57_07;
 
-my %configure_deps = %{$META{prereqs}{configure}{requires}};
-my %build_deps     = %{$META{prereqs}{build}{requires}};
-my %test_deps      = %{$META{prereqs}{test}{requires}};
-my %run_deps       = %{$META{prereqs}{runtime}{requires}};
+($MM_ARGS{NAME} = $META{name}) =~ s/-/::/g;
+($MM_ARGS{VERSION_FROM} = "lib/$MM_ARGS{NAME}.pm") =~ s{::}{/}g;
+$MM_ARGS{LICENSE} = $META{license}
+  if $eumm_version >= 6.30;
+$MM_ARGS{NO_MYMETA} = 1
+  if $mymeta_broken;
+$MM_ARGS{META_ADD} = { 'meta-spec' => { version => 2 }, %META }
+  unless -f 'META.yml';
 
-my $min_perl_version = delete $run_deps{perl};
-
-if (not $has_test_requires) {
-  %build_deps = (%build_deps, %test_deps);
-  %test_deps = ();
+for (qw(configure build test runtime)) {
+  my $key = $_ eq 'runtime' ? 'PREREQ_PM' : uc $_.'_REQUIRES';
+  my $r = $MM_ARGS{$key} = {
+    %{$META{prereqs}{$_}{requires}},
+    %{delete $MM_ARGS{$key} || {}},
+  };
+  defined $r->{$_} or delete $r->{$_} for keys %$r;
 }
-if (not $mymeta_works) {
-  %run_deps = (%run_deps, %build_deps);
-  %build_deps = ();
-}
 
-(my $module_name = $META{name}) =~ s/-/::/g;
-(my $module_file = "lib/$module_name.pm") =~ s{::}{/}g;
+$MM_ARGS{MIN_PERL_VERSION} = delete $MM_ARGS{PREREQ_PM}{perl} || 0;
 
-WriteMakefile(
-  NAME => $module_name,
-  VERSION_FROM => $module_file,
-  LICENSE => $META{license},
+delete $MM_ARGS{MIN_PERL_VERSION}
+  if $eumm_version < 6.47_01;
+$MM_ARGS{BUILD_REQUIRES} = {%{$MM_ARGS{BUILD_REQUIRES}}, %{delete $MM_ARGS{TEST_REQUIRES}}}
+  if $eumm_version < 6.63_03;
+$MM_ARGS{PREREQ_PM} = {%{$MM_ARGS{PREREQ_PM}}, %{delete $MM_ARGS{BUILD_REQUIRES}}}
+  if $eumm_version < 6.55_01;
+delete $MM_ARGS{CONFIGURE_REQUIRES}
+  if $eumm_version < 6.51_03;
 
-  $eumm_version >= 6.47_01 && $min_perl_version
-    ? ( MIN_PERL_VERSION    => $min_perl_version ) : (),
-  $eumm_version >= 6.51_03
-    ? ( CONFIGURE_REQUIRES  => \%configure_deps ) : (),
-  $eumm_version >= 6.55_01
-    ? ( BUILD_REQUIRES      => \%build_deps ) : (),
-  $eumm_version >= 6.63_03
-    ? ( TEST_REQUIRES       => \%test_deps ) : (),
-  PREREQ_PM => \%run_deps,
-
-  ($mymeta && !$mymeta_works ? (NO_MYMETA => 1) : ()),
-  -f 'META.yml' ? () : (META_ADD => { 'meta-spec' => { version => 2 }, %META }),
-
-  %MM_ARGS,
-);
+ExtUtils::MakeMaker::WriteMakefile(%MM_ARGS);
