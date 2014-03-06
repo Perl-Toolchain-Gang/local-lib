@@ -110,8 +110,7 @@ if (my ($x) = grep { /^--bootstrap(?:=.*)?$/ } @ARGV) {
   $bootstrapping = 1;
 }
 
-my $requires = $META{prereqs}{runtime}{requires};
-$MM_ARGS{PREREQ_PM} = { %$requires };
+my $requires = $MM_ARGS{PREREQ_PM} = { %{$META{prereqs}{runtime}{requires}} };
 if ($ENV{PERL5_CPANM_IS_RUNNING}) {
   $requires->{CPAN} = undef;
 }
@@ -161,7 +160,8 @@ END
 }
 
 if (!$ENV{PERL5_CPANM_IS_RUNNING}) {
-  my $status = system $^X, '-Minc::ConfigCPAN', '-', 'check', $META{prereqs}{runtime}{CPAN};
+  my $status = system $^X, '-Minc::ConfigCPAN', '-', 'check',
+    $META{prereqs}{runtime}{requires}{CPAN};
   exit $status
     if $status;
 }
