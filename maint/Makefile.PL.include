@@ -12,6 +12,7 @@ author 'mst - Matt S. Trout (cpan:MSTROUT) <mst@shadowcat.co.uk>';
 manifest_include eg => 'scripted_install.pl';
 
 manifest_include lib => '.pod';
+manifest_include inc => '.pm';
 
 manifest_include '' => 'cpan-configure.pl';
 
