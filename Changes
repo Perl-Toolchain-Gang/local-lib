@@ -1,5 +1,7 @@
 Revision history for local::lib
 
+ - no longer loads File::Spec, so an upgraded version installed inside a local
+   lib dir can be used by scripts
  - more relaxed shell output testing
  - use normal arguments to be used on the command line in addition to import
    arguments
