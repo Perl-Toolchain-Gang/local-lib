@@ -1,5 +1,6 @@
 Revision history for local::lib
 
+ - fix bootstrapping not auto-configuring in some cases
  - more relaxed shell output testing
  - use normal arguments to be used on the command line in addition to import
    arguments
