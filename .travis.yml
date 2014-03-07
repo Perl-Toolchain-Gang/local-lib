@@ -10,17 +10,19 @@ perl:
   - "5.12.5"
   - "5.18.2"
 before_install:
-  - source maint/travis-perlbrew
+  - git clone git://github.com/haarg/perl-travis-helper
+  - source perl-travis-helper/init
+  - build-perl
   - perl -V
+  - build-dist
+  - cd $BUILD_DIR
 install:
-  - export AUTOMATED_TESTING=1
   - LL_ROOT="$(mktemp -d -t local-lib-XXXXXX)"
   - export PERL5LIB="$LL_ROOT/lib/perl5"
   - export PERL_CPANM_OPT="-l $LL_ROOT"
-  - maint/travis-install --deps
+  - cpan-install --deps
 script:
-  - perl Makefile.PL
-  - make test TEST_VERBOSE=1
+  - prove -l $(test-dirs)
 branches:
   except:
     - /^wip\//
