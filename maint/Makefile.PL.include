@@ -2,10 +2,7 @@ BEGIN { -e 'Distar' or system("git clone git://git.shadowcat.co.uk/p5sagit/Dista
 use lib 'Distar/lib';
 use Distar 0.001;
 
-if (!$ENV{AUTOMATED_TESTING}) {
-  require ExtUtils::MakeMaker;
-  ExtUtils::MakeMaker->VERSION(6.57_10);
-}
+use ExtUtils::MakeMaker 6.57_10 ();
 
 author 'mst - Matt S. Trout (cpan:MSTROUT) <mst@shadowcat.co.uk>';
 
