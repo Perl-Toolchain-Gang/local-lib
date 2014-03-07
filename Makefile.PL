@@ -19,13 +19,17 @@ my %META = (
       'Module::Build'       => '0.36', # PERL_MB_OPT
       'CPAN'                => '1.82', # sudo support + CPAN::HandleConfig
     } },
-    develop   => { requires => {
-      'Test::CPAN::Changes' => 0,
-      'Test::EOL'     => 0,
-      'Test::NoTabs'  => 0,
-      'Test::Pod'     => 0,
-      'Capture::Tiny' => 0,
-    } },
+    develop   => {
+      requires => {
+        'Test::EOL'     => 0,
+        'Test::NoTabs'  => 0,
+        'Test::Pod'     => 0,
+        'Capture::Tiny' => 0,
+      },
+      recommends => {
+        'Test::CPAN::Changes' => 0,
+      },
+    },
   },
   resources => {
     repository => {
