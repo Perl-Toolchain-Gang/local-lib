@@ -25,6 +25,7 @@ my %META = (
         'Test::NoTabs'  => 0,
         'Test::Pod'     => 0,
         'Capture::Tiny' => 0,
+        'Test::More'    => 0.81_01,
       },
       recommends => {
         'Test::CPAN::Changes' => 0,
