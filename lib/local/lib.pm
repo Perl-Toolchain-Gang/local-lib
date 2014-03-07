@@ -5,7 +5,7 @@ use warnings;
 use Config;
 use File::Spec ();
 
-our $VERSION = '2.000004'; # 2.0.4
+our $VERSION = '2.000006'; # 2.0.6
 $VERSION = eval $VERSION;
 
 sub import {
