@@ -60,6 +60,9 @@ sub cmd_disable_manpages {
 # cause us problems for the next few steps.
 sub cmd_check {
   my $cpan_version = shift;
+  # if CPAN loads this, it calls into CPAN::Shell which tries to run
+  # autoconfiguration.  if it doesn't exist, we don't care
+  eval { require File::HomeDir; };
   require CPAN;
 
   # Need newish CPAN.pm for this, ergo skip it if that version of CPAN isn't
