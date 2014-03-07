@@ -28,15 +28,23 @@ use Parse::CPAN::Meta;
 use local::lib ();
 
 my @perl;
+my $force;
 while (@ARGV) {
   my $arg = shift @ARGV;
   if ($arg =~ /^--perl(?:=(.*))$/) {
     push @perl, ($1 || shift @ARGV);
   }
+  elsif ($arg eq '-f') {
+    $force = 1;
+  }
   else {
     warn "unrecognized option: $arg\n";
   }
 }
+
+plan skip_all => 'this test will overwrite Makefile.  use -f to force.'
+  if -e 'Makefile' && !$force;
+
 @perl = $^X
   unless @perl;
 
@@ -96,3 +104,5 @@ for my $perl (@perl) {
     }
   }
 }
+
+unlink 'Makefile';
