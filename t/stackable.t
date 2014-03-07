@@ -16,8 +16,6 @@ my $dir1 = mk_temp_dir('test_local_lib-XXXXX');
 my $dir2 = mk_temp_dir('test_local_lib-XXXXX');
 
 my ($dir1_arch, $dir2_arch) = map { File::Spec->catfile($_, qw'lib perl5', $Config{archname}) } $dir1, $dir2;
-note $dir1_arch;
-note $dir2_arch;
 
 my $prev_active = () = local::lib->active_paths;
 
@@ -25,7 +23,6 @@ local::lib->import($dir1);
 is +() = local::lib->active_paths, $prev_active + 1, 'one active path';
 like $ENV{PERL_LOCAL_LIB_ROOT}, qr/\Q$dir1/, 'added one dir in root';
 like $ENV{PERL5LIB}, qr/\Q$dir1/, 'added one dir in lib';
-note $ENV{PERL5LIB};
 unlike $ENV{PERL5LIB}, qr/\Q$dir1_arch/, 'no arch in PERL5LIB';
 my $dir1_escape = local::lib::_mm_escape_path($dir1);
 like $ENV{PERL_MM_OPT}, qr/\Q$dir1_escape/, 'first path is installation target';

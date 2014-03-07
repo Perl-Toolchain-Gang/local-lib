@@ -47,9 +47,9 @@ is $?, 0, 'test script ran without error';
 my $dir1_lib = local::lib->install_base_perl_path($dir1);
 ok grep($_ eq $dir1_lib, @libs),
   'local::lib used in taint script added to @INC'
-  or diag "searched for '$dir1_lib' in: ", explain \@libs;
+  or diag "searched for '$dir1_lib' in: ", join(', ', map "'$_'", @libs);
 
 my $dir2_lib = local::lib->install_base_perl_path($dir2);
 ok !grep($_ eq $dir2_lib, @libs),
   'local::lib not used used in taint script not added to @INC'
-  or diag "searched for '$dir2_lib' in: ", explain \@libs;
+  or diag "searched for '$dir2_lib' in: ", join(', ', map "'$_'", @libs);
