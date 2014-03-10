@@ -7,7 +7,6 @@ use File::Temp ();
 use Config;
 use local::lib ();
 
-my @paths = File::Spec->path;
 sub which {
   my $shell = shift;
   my ($full) =
@@ -15,6 +14,20 @@ sub which {
     map { File::Spec->catfile( $_, $shell) }
     File::Spec->path;
   return $full;
+}
+
+my %shell_path;
+{
+  my @shell_paths;
+  if (open my $fh, '<', '/etc/shells') {
+    my @lines = <$fh>;
+    s/^\s+//, s/\s+$// for @lines;
+    @shell_paths = grep { length && !/^#/ } @lines;
+  }
+  %shell_path =
+    map { m{[\\/]([^\\/]+)$} ? ($1 => $_) : () }
+    grep { defined && -x }
+    ( '/bin/sh', '/bin/csh', $ENV{'ComSpec'}, @shell_paths );
 }
 
 my $extra_lib = '-I"' . dirname(dirname($INC{'local/lib.pm'})) . '"';
@@ -40,6 +53,7 @@ for my $shell (
   },
   {
     name => 'powershell.exe',
+    shell => which('powershell.exe'),
     opt => '-NoProfile -ExecutionPolicy Unrestricted -File',
     ext => 'ps1',
     perl => qq{& '$^X'},
@@ -47,13 +61,14 @@ for my $shell (
   },
 ) {
   my $name = $shell->{name};
-  $shell->{shell} = which($name);
+  $shell->{shell} ||= $shell_path{$name};
   $shell->{ext}   ||= $name;
   $shell->{perl}  ||= qq{"$^X"};
   if (@ARGV) {
     next
       if !grep {$_ eq $name} @ARGV;
-    if (!$shell->{shell}) {
+    my $exec = $shell->{shell} ||= which($name);
+    if (!$exec) {
       warn "unable to find executable for $name";
       next;
     }
@@ -85,7 +100,7 @@ for my $shell (@shells) {
   my $env = call_ll($shell, "$ll");
   is $env->{PERL_LOCAL_LIB_ROOT}, $ll_dir,
     "$shell->{name}: activate root";
-  like $env->{PATH}, qr/^\Q$bin_path$sep\E)/,
+  like $env->{PATH}, qr/^\Q$bin_path$sep\E/,
     "$shell->{name}: activate PATH";
   is $env->{PERL5LIB}, local::lib->install_base_perl_path($ll_dir),
     "$shell->{name}: activate PERL5LIB";
@@ -95,7 +110,7 @@ for my $shell (@shells) {
 
   is $env->{PERL_LOCAL_LIB_ROOT}, undef,
     "$shell->{name}: deactivate root";
-  unlike $env->{PATH}, qr/^\Q$bin_path$sep\E)/,
+  unlike $env->{PATH}, qr/^\Q$bin_path$sep\E/,
     "$shell->{name}: deactivate PATH";
   is $env->{PERL5LIB}, undef,
     "$shell->{name}: deactivate PERL5LIB";
