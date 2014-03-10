@@ -22,7 +22,7 @@ install:
   - LL_ROOT="$(mktemp -d -t local-lib-XXXXXX)"
   - export PERL5LIB="$LL_ROOT/lib/perl5"
   - export PERL_CPANM_OPT="-l $LL_ROOT"
-  - cpan-install ExtUtils::MakeMaker~6.58 --deps
+  - cpan-install ExtUtils::MakeMaker~6.58 App::Prove --deps
   - make realclean
 script:
   - prove -lv $(test-dirs)
