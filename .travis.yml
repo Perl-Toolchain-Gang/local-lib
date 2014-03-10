@@ -19,9 +19,7 @@ before_install:
   - cd $BUILD_DIR
 install:
   - sudo apt-get install -qq fish
-  - LL_ROOT="$(mktemp -d -t local-lib-XXXXXX)"
-  - export PERL5LIB="$LL_ROOT/lib/perl5"
-  - export PERL_CPANM_OPT="-l $LL_ROOT"
+  - local-lib
   - cpan-install ExtUtils::MakeMaker~6.58 App::Prove --deps
   - make realclean
 script:
