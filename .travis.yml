@@ -18,7 +18,7 @@ before_install:
   - build-dist
   - cd $BUILD_DIR
 install:
-  - sudo apt-get install -qq fish
+  - sudo apt-get install -qq bash dash ksh zsh tcsh csh fish
   - local-lib
   - cpan-install ExtUtils::MakeMaker~6.58 App::Prove --deps
   - make realclean
