@@ -38,7 +38,23 @@ for my $shell (
     name => 'sh',
   },
   {
+    name => 'dash',
+  },
+  {
+    name => 'bash',
+  },
+  {
+    name => 'zsh',
+  },
+  {
+    name => 'ksh',
+  },
+  {
     name => 'csh',
+    opt => '-f',
+  },
+  {
+    name => 'tcsh',
     opt => '-f',
   },
   {
