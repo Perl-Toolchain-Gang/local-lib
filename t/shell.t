@@ -7,10 +7,12 @@ use File::Temp ();
 use Config;
 use local::lib ();
 
+my @ext = $^O eq 'MSWin32' ? (split /\Q$Config{path_sep}/, $ENV{PATHEXT}) : ();
 sub which {
   my $shell = shift;
   my ($full) =
     grep { -x }
+    map { my $x = $_; $x, map { $x . $_ } @ext }
     map { File::Spec->catfile( $_, $shell) }
     File::Spec->path;
   return $full;
@@ -65,7 +67,7 @@ for my $shell (
     opt => '/Q /D /C',
     ext => 'bat',
     perl => qq{@"$^X"},
-    skip => $^O eq 'cygwin',
+    skip => !$^O eq 'MSWin32',
   },
   {
     name => 'powershell.exe',
@@ -73,7 +75,7 @@ for my $shell (
     opt => '-NoProfile -ExecutionPolicy Unrestricted -File',
     ext => 'ps1',
     perl => qq{& '$^X'},
-    skip => $^O eq 'cygwin',
+    skip => !$^O eq 'MSWin32',
   },
 ) {
   my $name = $shell->{name};
