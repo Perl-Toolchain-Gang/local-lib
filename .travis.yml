@@ -10,6 +10,7 @@ perl:
   - "5.12.5"
   - "5.18.2"
 before_install:
+  - sudo apt-get update -qq
   - git clone git://github.com/haarg/perl-travis-helper
   - source perl-travis-helper/init
   - build-perl
@@ -17,6 +18,7 @@ before_install:
   - build-dist
   - cd $BUILD_DIR
 install:
+  - sudo apt-get install -qq fish
   - LL_ROOT="$(mktemp -d -t local-lib-XXXXXX)"
   - export PERL5LIB="$LL_ROOT/lib/perl5"
   - export PERL_CPANM_OPT="-l $LL_ROOT"
