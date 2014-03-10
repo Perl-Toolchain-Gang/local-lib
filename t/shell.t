@@ -142,7 +142,6 @@ sub call_ll {
     diag "running:\n$cmd";
     die "failed with code: $?";
   }
-  my $VAR1;
-  eval $out or die "bad output: $@";
-  $VAR1;
+  my $env = eval $out or die "bad output: $@";
+  $env;
 }

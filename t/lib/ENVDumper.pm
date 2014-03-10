@@ -1,3 +1,9 @@
-package ENVDumper;
+package t::lib::ENVDumper;
 use Data::Dumper;
-print Dumper(\%ENV);
+
+sub import {
+  local $Data::Dumper::Terse = 1;
+  print Dumper(\%ENV);
+}
+
+1;
