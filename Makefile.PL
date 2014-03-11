@@ -66,7 +66,7 @@ unless (exists $ENV{PERL_LL_TAR} ? -x $ENV{PERL_LL_TAR}
   : $^O eq 'solaris'
     ? (grep -x,
       map File::Spec->catfile($_, 'gtar'),
-      File::Spec->paths)
+      File::Spec->path)
   : 1) {
   die <<'DEATH';
 You are using Solaris (or another traditional Unix) that does not provide a sane
