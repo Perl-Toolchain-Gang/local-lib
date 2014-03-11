@@ -1,5 +1,6 @@
 Revision history for local::lib
 
+2.000007 - 2014-03-11
  - even more relaxed shell output testing
  - only test shells in /etc/shells
  - fix Makefile.PL on solaris
