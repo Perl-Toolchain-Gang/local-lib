@@ -98,8 +98,8 @@ DEATH
 my $bootstrapping;
 my $disable_manpages;
 if (my ($x) = grep { /^--bootstrap(?:=.*)?$/ } @ARGV) {
-  (my $path = $x) =~ s/^.*?=//;
   @ARGV = grep { !/^--bootstrap(?:=.*)?$/ } @ARGV;
+  my ($path) = $x =~ /^--bootstrap(?:=(.*))?$/;
   if(my ($x) = grep { /^--no-manpages$/ } @ARGV) {
     $disable_manpages = 1;
     @ARGV = grep { !/^--no-manpages/ } @ARGV;
