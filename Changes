@@ -1,5 +1,7 @@
 Revision history for local::lib
 
+ - fix --bootstrap option without a path specified
+
 2.000007 - 2014-03-11
  - even more relaxed shell output testing
  - only test shells in /etc/shells
