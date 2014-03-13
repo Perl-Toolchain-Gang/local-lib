@@ -1,5 +1,6 @@
 Revision history for local::lib
 
+2.000008 - 2014-03-13
  - fix --bootstrap option without a path specified
 
 2.000007 - 2014-03-11
