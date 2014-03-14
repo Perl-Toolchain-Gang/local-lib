@@ -90,6 +90,7 @@ for my $versioned (0, 1) {
       if ($versioned) {
         $dest_dir = File::Spec->catdir($dest_dir, $Config{version});
       }
+      note "building $dist_dir";
       my $file = File::Spec->catfile($dest_dir, "$dist_type.pm");
       (my $short_file = $file) =~ s/^\Q$ll/$ll_dir/;
       ok(
