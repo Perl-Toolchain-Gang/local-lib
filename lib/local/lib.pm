@@ -328,15 +328,16 @@ sub installer_versioned_options_for {
   );
   my %mm;
   my %mb;
-  $mm{PRIVLIB} = $mb{lib}    = $lib;
-  $mm{ARCHLIB} = $mb{arch}   = File::Spec->catdir($lib, $Config{archname});
-  $mm{BIN}     = $mb{bin}    =
-  $mm{SCRIPT}  = $mb{script} = $class->install_base_bin_versioned_path($path);
-  $mm{MAN1DIR} = $mm{MAN3DIR} = 'none';
-  $mb{bindoc}  = $mb{libdoc} = '';
+  $mm{SITELIB}      = $mb{lib}    = $lib;
+  $mm{SITEARCH}     = $mb{arch}   = File::Spec->catdir($lib, $Config{archname});
+  $mm{SITEBIN}      = $mb{bin}    =
+  $mm{SITESCRIPT}   = $mb{script} = $class->install_base_bin_versioned_path($path);
+  $mm{SITEMAN1DIR}  = $mm{SITEMAN3DIR} = 'none';
+  $mb{bindoc}       = $mb{libdoc} = '';
 
   return (
     PERL_MM_OPT => join(' ',
+      INSTALLDIRS => 'site',
       map { "INSTALL$_="._mm_escape_path($mm{$_}) }
       sort keys %mm
     ),
