@@ -1068,6 +1068,8 @@ values:
 
 =item PERL_LOCAL_LIB_ROOT
 
+=item PERL_LOCAL_LIB_VER
+
 =back
 
 When possible, these will be appended to instead of overwritten entirely.
@@ -1106,6 +1108,11 @@ C<cmd>, or C<powershell>.
 
 Prevents C<local::lib> from creating directories when activating dirs.  This is
 likely to cause issues on Win32 systems.
+
+=head2 --versioned
+
+Installs modules into a subdirectory based on the perl version.  This prevents
+binary incompatible perls from trying to use the modules that were installed.
 
 =head1 CLASS METHODS
 
