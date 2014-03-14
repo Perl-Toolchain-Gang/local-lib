@@ -52,49 +52,54 @@ END_BUILD
   },
 );
 
-plan tests => @dirs * keys(%dist_types) * 2;
+plan tests => @dirs * keys(%dist_types) * 4;
 
 my $orig_dir = cwd;
-for my $dir_base (@dirs) {
-  for my $dist_type (sort keys %dist_types) {
-    chdir $orig_dir;
-    local @ENV{
-      'PERL_MM_OPT',
-      'PERL_MB_OPT',
-      grep /^MAKE|^PERL_LOCAL_LIB_/, keys %ENV
-    };
-    local $ENV{PERL5LIB} = $ENV{PERL5LIB};
-    my $temp = mk_temp_dir("install-$dist_type");
-    my $ll_dir = "$dist_type-$dir_base";
-    my $ll = "$temp/$ll_dir";
-    mkpath(File::Spec->canonpath($ll));
+for my $versioned (0, 1) {
+  for my $dir_base (@dirs) {
+    for my $dist_type (sort keys %dist_types) {
+      chdir $orig_dir;
+      local @ENV{
+        'PERL_MM_OPT',
+        'PERL_MB_OPT',
+        grep /^MAKE|^PERL_LOCAL_LIB_/, keys %ENV
+      };
+      local $ENV{PERL5LIB} = $ENV{PERL5LIB};
+      my $temp = mk_temp_dir("install-$dist_type");
+      my $ll_dir = "$dist_type-$dir_base";
+      my $ll = "$temp/$ll_dir";
+      mkpath(File::Spec->canonpath($ll));
 
-    local::lib->import($ll, '--quiet');
+      local::lib->import($ll, '--quiet', $versioned ? '--versioned' : ());
 
-    my $dist_dir = mk_temp_dir("source-$dist_type");
-    chdir $dist_dir;
-    mkdir 'lib';
-    open my $fh, '>', "lib/$dist_type.pm";
-    binmode $fh;
-    print $fh '1;';
-    close $fh;
+      my $dist_dir = mk_temp_dir("source-$dist_type");
+      chdir $dist_dir;
+      mkdir 'lib';
+      open my $fh, '>', "lib/$dist_type.pm";
+      binmode $fh;
+      print $fh '1;';
+      close $fh;
 
-    my $output = capture_merged { eval {
-      $dist_types{$dist_type}->();
-    } };
-    is $@, '', "installed $dist_type into '$ll_dir'"
-      or diag $output;
+      my $output = capture_merged { eval {
+        $dist_types{$dist_type}->();
+      } };
+      is $@, '', "installed $dist_type into '$ll_dir'"
+        or diag $output;
 
-    my $dest_dir = local::lib->install_base_perl_path($ll);
-    my $file = File::Spec->catfile($dest_dir, "$dist_type.pm");
-    (my $short_file = $file) =~ s/^\Q$ll/$ll_dir/;
-    ok(
-      -e $file,
-      "$dist_type - $dir_base - $dist_type.pm installed as '$short_file'",
-    ) or diag 'Files in ' . $dest_dir . ":\n", join("\n", do {
-      my $dh;
-      (opendir $dh, $dest_dir) ? readdir $dh : "doesn't exist";
-    });
+      my $dest_dir = local::lib->install_base_perl_path($ll);
+      if ($versioned) {
+        $dest_dir = File::Spec->catdir($dest_dir, $Config{version});
+      }
+      my $file = File::Spec->catfile($dest_dir, "$dist_type.pm");
+      (my $short_file = $file) =~ s/^\Q$ll/$ll_dir/;
+      ok(
+        -e $file,
+        "$dist_type - $dir_base - $dist_type.pm installed as '$short_file'",
+      ) or diag 'Files in ' . $dest_dir . ":\n", join("\n", do {
+        my $dh;
+        (opendir $dh, $dest_dir) ? readdir $dh : "doesn't exist";
+      });
+    }
   }
 }
 chdir $orig_dir;
