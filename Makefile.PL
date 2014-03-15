@@ -157,7 +157,7 @@ if ($bootstrapping) {
       for @modules;
   }
   if (grep { $_ eq 'CPAN' } @modules ) {
-    system($^X, '-MCPAN', '-e', 'CPAN::Config->load;CPAN::Config->commit;');
+    system($^X, '-Minc::CPAN=postconfigure');
   }
   if ($disable_manpages) {
     system($^X, '-Minc::CPAN=disable_manpages');

@@ -108,4 +108,14 @@ DEATH
   }
 }
 
+sub cmd_postconfigure {
+  require CPAN;
+  if (eval { require CPAN::HandleConfig; } ) {
+    CPAN::HandleConfig->require_myconfig_or_config;
+  }
+  $CPAN::Config->{urllist} = ["http://www.cpan.org/"];
+  CPAN::Config->load;
+  CPAN::Config->commit;
+}
+
 1;
