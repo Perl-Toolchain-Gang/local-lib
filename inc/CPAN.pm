@@ -13,6 +13,30 @@ sub import {
   exit 0;
 }
 
+sub no_configpm {
+  unshift @INC, sub {
+    if ($_[1] eq 'CPAN/Config.pm') {
+      my ($f, $l) = (caller)[1,2];
+      die "Can't locate CPAN/Config.pm in \@INC (@INC) at $f line $l.\n";
+    }
+    0;
+  };
+  require CPAN;
+  for (qw(CPAN::Config CPAN::HandleConfig)) {
+    my $sub = $_.'::_configpmtest';
+    no strict 'refs';
+    if (defined &$sub) {
+      my $orig = \&$sub;
+      no warnings 'redefine';
+      *$sub = sub {
+        return
+          if $_[1] !~ /MyConfig\.pm/;
+        $orig->(@_);
+      };
+    }
+  }
+}
+
 sub cmd_init_config {
   require ExtUtils::MakeMaker;
   my $done;
@@ -26,6 +50,7 @@ sub cmd_init_config {
     return $orig->(@_);
   };
   require CPAN;
+  no_configpm();
   CPAN->import;
   $CPAN::Config->{urllist} = ["http://www.cpan.org/"];
 
@@ -42,6 +67,7 @@ sub cmd_install {
   my @modules = @_;
   package main;
   require CPAN;
+  no_configpm();
   CPAN->import;
   CPAN::Config->load;
 
@@ -58,7 +84,7 @@ sub cmd_install {
 
 sub cmd_disable_manpages {
   require CPAN;
-  CPAN->import;
+  no_configpm();
   CPAN::HandleConfig->load;
   $CPAN::Config->{makepl_arg} = 'INSTALLMAN1DIR=none INSTALLMAN3DIR=none';
   $CPAN::Config->{buildpl_arg} = '--install_path libdoc="" --install_path bindoc=""';
@@ -110,6 +136,7 @@ DEATH
 
 sub cmd_postconfigure {
   require CPAN;
+  no_configpm();
   if (eval { require CPAN::HandleConfig; } ) {
     CPAN::HandleConfig->require_myconfig_or_config;
   }
