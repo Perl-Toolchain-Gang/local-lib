@@ -1,5 +1,6 @@
 Revision history for local::lib
 
+2.000_009 - 2014-03-15
  - no longer loads File::Spec, so an upgraded version installed inside a local
    lib dir can be used by scripts
 
