@@ -48,14 +48,14 @@ plan skip_all => 'this test will overwrite Makefile.  use -f to force.'
 @perl = $^X
   unless @perl;
 
-my @modules = (
-  [ 'ExtUtils::MakeMaker' => 6.74 ],
-  [ 'ExtUtils::Install'   => 1.43 ],
-  [ 'Module::Build'       => 0.36 ],
-  [ 'CPAN'                => 1.82 ],
+my %modules = (
+  'ExtUtils::MakeMaker' => 6.74,
+  'ExtUtils::Install'   => 1.43,
+  'Module::Build'       => 0.36,
+  'CPAN'                => 1.82,
 );
 
-plan tests => @perl * (1+@modules);
+plan tests => @perl * (1+keys %modules);
 
 for my $perl (@perl) {
   local @INC = @INC;
@@ -71,10 +71,12 @@ for my $perl (@perl) {
   local $ENV{HOME} = my $home = File::Temp::tempdir('local-lib-home-XXXXX', CLEANUP => 1, TMPDIR => 1);
 
   diag "testing bootstrap with $perl";
-  for my $module (@modules) {
-    my $version = check_version($perl, $module->[0]);
-    if ($version && $version >= $module->[1]) {
-      diag "Can't test bootstrap of $module->[0], version $version already meets requirement of $module->[1]";
+  my %old_versions;
+  for my $module (sort keys %modules) {
+    my $version = check_version($perl, $module);
+    $old_versions{$module} = $version;
+    if ($version && $version >= $modules{$module}) {
+      diag "Can't test bootstrap of $module, version $version already meets requirement of $modules{$module}";
     }
   }
 
@@ -94,13 +96,18 @@ for my $perl (@perl) {
 
   local::lib->setup_env_hash_for($ll);
 
-  for my $module (@modules) {
+  for my $module (sort keys %modules) {
     SKIP: {
-      my $need_version = $meta->{requires}{$module->[0]}
-        or skip "$module->[0] not needed for $perl", 1;
-      my $version = check_version($perl, $module->[0]);
-      cmp_ok $version, '>=', $module->[1], "bootstrap installed new enough $module->[0]"
-        or diag "PERL5LIB: $ENV{PERL5LIB}";
+      my $need_version = $meta->{requires}{$module}
+        or skip "$module not needed for $perl", 1;
+      my $version = check_version($perl, $module);
+      if (defined $old_versions{$module}) {
+        cmp_ok $version, '>=', $modules{$module}, "bootstrap upgraded to new enough $module"
+          or diag "PERL5LIB: $ENV{PERL5LIB}";
+      }
+      else {
+        is $version, undef, "bootstrap didn't install new module $module";
+      }
     }
   }
 }
