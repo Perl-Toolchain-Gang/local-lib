@@ -67,7 +67,7 @@ for my $shell (
     opt => '/Q /D /C',
     ext => 'bat',
     perl => qq{@"$^X"},
-    skip => !$^O eq 'MSWin32',
+    skip => $^O ne 'MSWin32',
   },
   {
     name => 'powershell.exe',
@@ -75,7 +75,7 @@ for my $shell (
     opt => '-NoProfile -ExecutionPolicy Unrestricted -File',
     ext => 'ps1',
     perl => qq{& '$^X'},
-    skip => !$^O eq 'MSWin32',
+    skip => $^O ne 'MSWin32',
   },
 ) {
   my $name = $shell->{name};
