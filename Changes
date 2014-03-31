@@ -1,5 +1,8 @@
 Revision history for local::lib
 
+ - more fixes for issue where PERL5LIB Carp is not the same version as in the
+   local-lib
+
 2.000010 - 2014-03-28
  - fix shell test on cygwin
 

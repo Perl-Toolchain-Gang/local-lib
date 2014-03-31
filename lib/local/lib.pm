@@ -573,7 +573,7 @@ sub resolve_home_path {
     }
   };
   unless (defined $homedir) {
-    require Carp;
+    require Carp; require Carp::Heavy;
     Carp::croak(
       "Couldn't resolve homedir for "
       .(defined $user ? $user : 'current user')
