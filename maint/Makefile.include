@@ -1,0 +1,11 @@
+bump:
+	maint/bump-version
+	rm Makefile
+bumpminor:
+	maint/bump-version minor
+	rm Makefile
+bumpmajor:
+	maint/bump-version major
+	rm Makefile
+upload: $(DISTVNAME).tar$(SUFFIX)
+	cpan-upload $<
