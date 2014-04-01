@@ -351,6 +351,12 @@ sub setup_local_lib_for {
 
 sub setup_local_lib {
   my $self = shift;
+
+  # if Carp is already loaded, ensure Carp::Heavy is also loaded, to avoid
+  # $VERSION mismatch errors (Carp::Heavy loads Carp, so we do not need to
+  # check in the other direction)
+  require Carp::Heavy if $INC{'Carp.pm'};
+
   $self->setup_env_hash;
   @INC = @{$self->inc};
 }
