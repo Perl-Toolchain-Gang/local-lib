@@ -1,5 +1,6 @@
 Revision history for local::lib
 
+2.000011 - 2014-04-02
  - more fixes for issue where PERL5LIB Carp is not the same version as in the
    local-lib
 
