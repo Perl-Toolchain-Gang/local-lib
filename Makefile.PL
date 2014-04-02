@@ -205,4 +205,6 @@ $MM_ARGS{PREREQ_PM} = {%{$MM_ARGS{PREREQ_PM}}, %{delete $MM_ARGS{BUILD_REQUIRES}
 delete $MM_ARGS{CONFIGURE_REQUIRES}
   if $eumm_version < 6.51_03;
 
+$MM_ARGS{realclean}{FILES} = 'Distar/';
+
 ExtUtils::MakeMaker::WriteMakefile(%MM_ARGS);
