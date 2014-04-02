@@ -5,8 +5,8 @@ use warnings;
 # and then later on something loads Carp::Heavy from the local-lib, which is
 # at a newer version
 
-use Test::More tests => 4 + ( $Carp::VERSION < '1.22' ? 0 : 1 );
 use Carp;
+use Test::More tests => 4 + ( $Carp::VERSION < '1.22' ? 0 : 1 );
 use File::Spec;
 use File::Path qw(mkpath rmtree);   # use legacy versions for backcompat
 use local::lib ();
