@@ -11,7 +11,7 @@ use File::Spec;
 use File::Path qw(mkpath rmtree);   # use legacy versions for backcompat
 use local::lib ();
 
-is($Carp::Heavy::VERSION, undef, 'Carp::Heavy is not yet loaded');
+is $Carp::Heavy::VERSION, undef, 'Carp::Heavy is not yet loaded';
 
 # we do not use File::Temp because it loads Carp::Heavy.
 my $libdir = File::Spec->catdir(File::Spec->tmpdir, 'tmp-carp-newer-' . $$);
@@ -20,14 +20,14 @@ mkpath($carpdir);
 
 {
     my $heavy = File::Spec->catfile($carpdir, 'Heavy.pm');
-    open my $fh, ">$heavy" or die "failed to open $heavy for writing: $!";
+    open my $fh, '>', $heavy or die "failed to open $heavy for writing: $!";
     print $fh "package Carp::Heavy;\nour \$VERSION = '500.0';\n";
     close $fh;
 }
 {
     # another module, simply to ensure that we got the libdir path correct
     my $foo = File::Spec->catfile($carpdir, 'Foo.pm');
-    open my $fh, ">$foo" or die "failed to open foo heavy for writing: $!";
+    open my $fh, '>', $foo or die "failed to open foo heavy for writing: $!";
     print $fh "package Carp::Foo;\nour \$VERSION = '200.0';\n";
     close $fh;
 }
@@ -35,10 +35,12 @@ mkpath($carpdir);
 local::lib->import($libdir);
 
 require Carp::Foo;
-is($Carp::Foo::VERSION, '200.0', 'some other module was loaded from our local::lib');
+is $Carp::Foo::VERSION, '200.0',
+  'some other module was loaded from our local::lib';
 
-ok($Carp::Heavy::VERSION, 'Carp::Heavy has now been loaded');
-isnt($Carp::Heavy::VERSION, '500.0', 'Carp::Heavy was not loaded from our local::lib');
+ok $Carp::Heavy::VERSION, 'Carp::Heavy has now been loaded';
+isnt $Carp::Heavy::VERSION, '500.0',
+  'Carp::Heavy was not loaded from our local::lib';
 
 
 END {
