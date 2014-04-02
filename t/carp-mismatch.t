@@ -38,7 +38,7 @@ require Carp::Foo;
 is $Carp::Foo::VERSION, '200.0',
   'some other module was loaded from our local::lib';
 
-ok $Carp::Heavy::VERSION, 'Carp::Heavy has now been loaded';
+ok $INC{'Carp/Heavy.pm'}, 'Carp::Heavy has now been loaded';
 isnt $Carp::Heavy::VERSION, '500.0',
   'Carp::Heavy was not loaded from our local::lib';
 
