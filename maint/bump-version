@@ -29,9 +29,7 @@ my $NEW_DECIMAL = sprintf('%i.%03i%03i', @new_parts);
 warn "Bumping $OLD_DECIMAL -> $NEW_DECIMAL\n";
 
 for my $PM_FILE (qw(
-  lib/Devel/Declare.pm
-  lib/Devel/Declare/Context/Simple.pm
-  lib/Devel/Declare/MethodInstaller/Simple.pm
+    lib/local/lib.pm
 )) {
   my $file = do { local (@ARGV, $/) = ($PM_FILE); <> };
 
