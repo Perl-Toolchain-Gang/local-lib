@@ -5,7 +5,7 @@ use warnings;
 # and then later on something loads Carp::Heavy from the local-lib, which is
 # at a newer version
 
-use Test::More tests => 5;
+use Test::More tests => 4 + ( $Carp::VERSION < '1.22' ? 0 : 1 );
 use Carp;
 use File::Spec;
 use File::Path qw(mkpath rmtree);   # use legacy versions for backcompat
@@ -40,7 +40,8 @@ is $Carp::Foo::VERSION, '200.0',
 
 ok $INC{'Carp/Heavy.pm'}, 'Carp::Heavy has now been loaded';
 is $Carp::Heavy::VERSION, $Carp::VERSION,
-  'Carp::Heavy matching Carp was loaded';
+  'Carp::Heavy matching Carp was loaded'
+    unless $Carp::VERSION < '1.22'; # Carp::Heavy namespace did not exist
 isnt $Carp::Heavy::VERSION, '500.0',
   'Carp::Heavy was not loaded from our local::lib';
 
