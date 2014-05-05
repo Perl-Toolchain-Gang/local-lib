@@ -21,10 +21,25 @@ our $_ROOT = _WIN32 ? do {
   my $UNC = qr{[\\/]{2}[^\\/]+[\\/][^\\/]+};
   qr{^(?:$UNC|[A-Za-z]:|)$_DIR_SPLIT};
 } : qr{^/};
-our ($_PERL) = $^X =~ /(.+)/; # $^X is internal how could it be tainted?!
+our $_PERL;
 
 sub _cwd {
   my $drive = shift;
+  if (!$_PERL) {
+    ($_PERL) = $^X =~ /(.+)/; # $^X is internal how could it be tainted?!
+    if (_is_abs($_PERL)) {
+    }
+    elsif (-x $Config{perlpath}) {
+      $_PERL = $Config{perlpath};
+    }
+    else {
+      ($_PERL) =
+        map { /(.*)/ }
+        grep { -x $_ }
+        map { join($_DIR_JOIN, $_, $_PERL) }
+        split /\Q$Config{path_sep}\E/, $ENV{PATH};
+    }
+  }
   local @ENV{qw(PATH IFS CDPATH ENV BASH_ENV)};
   my $cmd = $drive ? "eval { Cwd::getdcwd(q($drive)) }"
                    : 'getcwd';
@@ -49,12 +64,20 @@ sub _catdir {
   }
 }
 
+sub _is_abs {
+  if (_USE_FSPEC) {
+    require File::Spec;
+    File::Spec->file_name_is_absolute($_[0]);
+  }
+  else {
+    $_[0] =~ $_ROOT;
+  }
+}
+
 sub _rel2abs {
   my ($dir, $base) = @_;
   return $dir
-    if (_USE_FSPEC && require File::Spec)
-      ? File::Spec->file_name_is_absolute($dir)
-      : $dir =~ $_ROOT;
+    if _is_abs($dir);
 
   $base = _WIN32 && $dir =~ s/^([A-Za-z]:)// ? _cwd("$1")
         : $base                              ? $base
