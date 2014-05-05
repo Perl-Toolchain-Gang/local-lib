@@ -334,6 +334,18 @@ sub build_environment_vars_for {
   my $self = $_[0]->new->activate($_[1]);
   $self->build_environment_vars;
 }
+sub build_activate_environment_vars_for {
+  my $self = $_[0]->new->activate($_[1]);
+  $self->build_environment_vars;
+}
+sub build_deactivate_environment_vars_for {
+  my $self = $_[0]->new->deactivate($_[1]);
+  $self->build_environment_vars;
+}
+sub build_deact_all_environment_vars_for {
+  my $self = $_[0]->new->deactivate_all;
+  $self->build_environment_vars;
+}
 sub build_environment_vars {
   my $self = shift;
   (
