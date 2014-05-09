@@ -6,11 +6,13 @@
 
 use strict;
 use warnings;
-use Test::More tests => 3;
+use Test::More tests => 4;
 use File::Temp 'tempfile';
+use File::Basename qw(basename dirname);
 use Cwd;
 use File::Spec;
 use IPC::Open3;
+use Config;
 
 use lib 't/lib'; use TempDir;
 
@@ -26,7 +28,12 @@ local::lib->import($dir2);
 
 # Create a script that has taint mode turned on, and tries to use a
 # local lib to the same temp dir.
-my ($fh, $filename) = tempfile('test_local_lib-XXXXX', DIR => Cwd::abs_path('t'), UNLINK => 1);
+mkdir 't/temp';
+my ($fh, $filename) = tempfile(
+  'test_local_lib-XXXXX',
+  DIR => Cwd::abs_path('t/temp'),
+  UNLINK => 1,
+);
 
 print $fh <<"EOM";
 #!/usr/bin/perl -T
@@ -53,3 +60,34 @@ my $dir2_lib = local::lib->install_base_perl_path($dir2);
 ok !grep($_ eq $dir2_lib, @libs),
   'local::lib not used used in taint script not added to @INC'
   or diag "searched for '$dir2_lib' in: ", join(', ', map "'$_'", @libs);
+
+{
+  my $perl_file = basename($^X);
+  if (!File::Spec->file_name_is_absolute($^X)) {
+    my $perl_dir = dirname($^X);
+    $ENV{PATH} = join($Config{path_sep}, $ENV{PATH});
+  }
+
+  my ($fh, $filename) = tempfile(
+    'test_local_lib-XXXXX',
+    DIR => Cwd::abs_path('t/temp'),
+    UNLINK => 1,
+  );
+
+  print $fh <<'EOM';
+#!/usr/bin/perl -T
+use strict; use warnings;
+use local::lib ();
+print local::lib::_cwd();
+EOM
+  close $fh;
+
+  open my $err, '>', File::Spec->devnull
+    or die "can't open null output: $!";
+  my $out;
+  my $pid = open3($in, $out, $err, $^X, map("-I$_", @INC_CLEAN), '-T', $filename);
+  my $cwd = do { local $/; <$out> };
+  $cwd =~ s/[\r\n]*\z//;
+  $cwd = Cwd::abs_path($cwd);
+  is $cwd, Cwd::cwd(), 'reimplemented cwd matches standard cwd';
+}
