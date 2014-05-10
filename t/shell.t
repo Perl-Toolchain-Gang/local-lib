@@ -100,7 +100,9 @@ for my $shell (
 if (!@shells) {
   plan skip_all => 'no supported shells found';
 }
-plan tests => 6*@shells;
+my @vars = qw(PATH PERL5LIB PERL_LOCAL_LIB_ROOT PERL_MM_OPT PERL_MB_OPT);
+
+plan tests => 2*@vars*@shells;
 
 my $sep = $Config{path_sep};
 
@@ -108,11 +110,11 @@ my $root = File::Spec->rootdir;
 for my $shell (@shells) {
   my $ll = File::Temp->newdir();
   my $ll_dir = local::lib->normalize_path("$ll");
-  local $ENV{PERL_LOCAL_LIB_ROOT};
-  delete $ENV{PERL_LOCAL_LIB_ROOT};
-  local $ENV{PATH} = $root;
-  local $ENV{PERL5LIB};
-  delete $ENV{PERL5LIB};
+  local $ENV{$_}
+    for @vars;
+  delete $ENV{$_}
+    for @vars;
+  $ENV{PATH} = $root;
   my $bin_path = local::lib->install_base_bin_path($ll_dir);
   mkdir $bin_path;
   my $env = call_ll($shell, "$ll");
@@ -122,16 +124,21 @@ for my $shell (@shells) {
     "$shell->{name}: activate PATH";
   is $env->{PERL5LIB}, local::lib->install_base_perl_path($ll_dir),
     "$shell->{name}: activate PERL5LIB";
+  my %install_opts = local::lib->installer_options_for($ll_dir);
+  for my $var (qw(PERL_MM_OPT PERL_MB_OPT)) {
+    is $env->{$var}, $install_opts{$var},
+      "$shell->{name}: activate $var";
+  }
 
-  $ENV{$_} = $env->{$_} for qw(PATH PERL5LIB PERL_LOCAL_LIB_ROOT);
+  $ENV{$_} = $env->{$_} for @vars;
   $env = call_ll($shell, '--deactivate', "$ll");
 
-  is $env->{PERL_LOCAL_LIB_ROOT}, undef,
-    "$shell->{name}: deactivate root";
   unlike $env->{PATH}, qr/^\Q$bin_path$sep\E/,
     "$shell->{name}: deactivate PATH";
-  is $env->{PERL5LIB}, undef,
-    "$shell->{name}: deactivate PERL5LIB";
+  for my $var (grep { $_ ne 'PATH' } @vars) {
+    is $env->{$var}, undef,
+      "$shell->{name}: deactivate $var";
+  }
 }
 
 sub call_ll {
