@@ -446,14 +446,6 @@ sub environment_vars_string {
         && ${$value->[0]} eq $name) {
       next;
     }
-    if (
-        !ref $value
-        and defined $value
-          ? (defined $ENV{$name} && $value eq $ENV{$name})
-          : !defined $ENV{$name}
-    ) {
-      next;
-    }
     $out .= $self->$build_method($name, $value);
   }
   my $wrap_method = "wrap_${shelltype}_output";
