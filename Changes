@@ -1,5 +1,6 @@
 Revision history for local::lib
 
+2.000012 - 2014-05-12
  - restore build_activate_environment_vars_for,
    build_deactivate_environment_vars_for, build_deact_all_environment_vars_for
    methods for perlbrew compatibility
