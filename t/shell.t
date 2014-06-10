@@ -108,7 +108,7 @@ my $sep = $Config{path_sep};
 
 my $root = File::Spec->rootdir;
 for my $shell (@shells) {
-  my $ll = File::Temp->newdir();
+  my $ll = File::Temp::tempdir(CLEANUP => 1);
   my $ll_dir = local::lib->normalize_path("$ll");
   local $ENV{$_}
     for @vars;
@@ -151,13 +151,14 @@ sub call_ll {
     = `"$^X" $extra_lib -Mlocal::lib$option` . "\n"
     . qq{$info->{perl} -Mt::lib::ENVDumper -e1\n};
 
-  my $file = File::Temp->new(
-    TEMPLATE => 'll-test-script-XXXXX',
-    TMPDIR   => 1,
+  my ($fh, $file) = File::Temp::tempfile(
+    'll-test-script-XXXXX',
+    DIR      => File::Spec->tmpdir,
     SUFFIX   => '.'.$info->{ext},
+    UNLINK   => 1,
   );
-  print { $file } $script;
-  close $file;
+  print { $fh } $script;
+  close $fh;
 
   my $opt = $info->{opt} ? "$info->{opt} " : '';
   my $cmd = qq{"$info->{shell}" $opt"$file"};
