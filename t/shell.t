@@ -33,38 +33,48 @@ my %shell_path;
 }
 
 my $extra_lib = '-I"' . dirname(dirname($INC{'local/lib.pm'})) . '"';
+my $nul = File::Spec->devnull;
 
 my @shells;
 for my $shell (
   {
     name => 'sh',
+    test => '-c "exit 0"',
   },
   {
     name => 'dash',
+    test => '-c "exit 0"',
   },
   {
     name => 'bash',
+    test => '-c "exit 0"',
   },
   {
     name => 'zsh',
+    test => '-c "exit 0"',
   },
   {
     name => 'ksh',
+    test => '-c "exit 0"',
   },
   {
     name => 'csh',
+    test => '-c "exit 0"',
     opt => '-f',
   },
   {
     name => 'tcsh',
+    test => '-c "exit 0"',
     opt => '-f',
   },
   {
     name => 'fish',
+    test => '-c "exit 0"',
   },
   {
     name => 'cmd.exe',
     opt => '/Q /D /C',
+    test => '/Q /D /C "exit 0"',
     ext => 'bat',
     perl => qq{@"$^X"},
     skip => $^O ne 'MSWin32',
@@ -73,6 +83,7 @@ for my $shell (
     name => 'powershell.exe',
     shell => which('powershell.exe'),
     opt => '-NoProfile -ExecutionPolicy Unrestricted -File',
+    test => '-NoProfile -Command "exit 0"',
     ext => 'ps1',
     perl => qq{& '$^X'},
     skip => $^O ne 'MSWin32',
@@ -92,6 +103,10 @@ for my $shell (
     }
   }
   elsif ($shell->{skip} || !$shell->{shell}) {
+    next;
+  }
+  elsif ($shell->{test} && system "$shell->{shell} $shell->{test} > $nul 2> $nul") {
+    diag "$name seems broken, skipping";
     next;
   }
   push @shells, $shell;
