@@ -105,9 +105,12 @@ for my $shell (
   elsif ($shell->{skip} || !$shell->{shell}) {
     next;
   }
-  elsif ($shell->{test} && system "$shell->{shell} $shell->{test} > $nul 2> $nul") {
-    diag "$name seems broken, skipping";
-    next;
+  elsif ($shell->{test}) {
+    no warnings 'exec';
+    if (system "$shell->{shell} $shell->{test} > $nul 2> $nul") {
+      diag "$name seems broken, skipping";
+      next;
+    }
   }
   push @shells, $shell;
 }
