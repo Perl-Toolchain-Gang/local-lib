@@ -457,7 +457,7 @@ sub environment_vars_string {
 
 sub build_bourne_env_declaration {
   my ($class, $name, $args) = @_;
-  my $value = $class->_interpolate($args, '$%s', '"', '\\%s');
+  my $value = $class->_interpolate($args, '$%s', qr/["\\\$!`]/, '\\%s');
 
   if (!defined $value) {
     return qq{unset $name;\n};
