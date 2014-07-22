@@ -492,7 +492,7 @@ sub build_csh_env_declaration {
 
 sub build_cmd_env_declaration {
   my ($class, $name, $args) = @_;
-  my $value = $class->_interpolate($args, '%%%s%%', qr([()!^"<>&|]), '^%s');
+  my $value = $class->_interpolate($args, '%%%s%%', qr(%), '%s');
   if (!$value) {
     return qq{\@set $name=\n};
   }
@@ -500,10 +500,10 @@ sub build_cmd_env_declaration {
   my $out = '';
   my $value_without = $value;
   if ($value_without =~ s/(?:^|$_path_sep)%$name%(?:$_path_sep|$)//g) {
-    $out .= qq{\@if not "%$name%"=="" set $name=$value\n};
+    $out .= qq{\@if not "%$name%"=="" set "$name=$value"\n};
     $out .= qq{\@if "%$name%"=="" };
   }
-  $out .= qq{\@set $name=$value_without\n};
+  $out .= qq{\@set "$name=$value_without"\n};
   return $out;
 }
 
