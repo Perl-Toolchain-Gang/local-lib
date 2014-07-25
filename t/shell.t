@@ -220,7 +220,8 @@ sub call_shell {
   if ($?) {
     diag "script:\n$script";
     diag "running:\n$cmd";
-    die "failed with code: $?";
+    diag "failed with code: $?";
+    return {};
   }
   my $env = eval $output or die "bad output: $@";
   $env;
