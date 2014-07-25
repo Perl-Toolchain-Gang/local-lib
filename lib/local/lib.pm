@@ -535,7 +535,7 @@ sub wrap_powershell_output {
 
 sub build_fish_env_declaration {
   my ($class, $name, $args) = @_;
-  my $value = $class->_interpolate($args, '$%s', qr/[" ]/, '\\%s');
+  my $value = $class->_interpolate($args, '$%s', qr/[\\"' ]/, '\\%s');
   if (!defined $value) {
     return qq{set -e $name;\n};
   }
