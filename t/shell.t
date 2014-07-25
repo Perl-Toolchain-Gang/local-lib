@@ -196,10 +196,14 @@ sub call_ll {
     $^X, @extra_lib, '-Mlocal::lib', '-', '--no-create',
     map { quote_literal($_) } @options
     or die "blah";
-  my $script
-    = do { local $/; <$out> } . "\n"
-    . qq{$info->{perl} -Mt::lib::ENVDumper -e1\n};
+  my $script = do { local $/; <$out> };
   close $out;
+  call_shell($info, $script);
+}
+
+sub call_shell {
+  my ($info, $script) = @_;
+  $script .= "\n" . qq{$info->{perl} -Mt::lib::ENVDumper -e1\n};
 
   my ($fh, $file) = File::Temp::tempfile(
     'll-test-script-XXXXX',
