@@ -134,55 +134,77 @@ if (!@shells) {
   plan skip_all => 'no supported shells found';
 }
 my @vars = qw(PATH PERL5LIB PERL_LOCAL_LIB_ROOT PERL_MM_OPT PERL_MB_OPT);
+my @strings = (
+  'string',
+  'with space',
+  'with"quote',
+  "with'squote",
+  'with\\bslash',
+  'with%per%cent',
+);
 
-plan tests => @shells*5*(6+@vars-1);
+plan tests => @shells * (@vars * 2 + @strings * 2);
 
 my $sep = $Config{path_sep};
 
 my $root = File::Spec->rootdir;
 for my $shell (@shells) {
-  my $temp_root = local::lib->normalize_path(File::Temp::tempdir(CLEANUP => 1));
-  for my $ll_part (
-    'dir',
-    'with space',
-    'with"quote',
-    "with'squote",
-    'with\\bslash',
-  ) {
-    SKIP: {
-      skip "$shell->{name} - $ll_part: can't quote double quotes properly", (6+@vars-1)
-        if $shell->{name} eq 'cmd.exe' && $ll_part =~ /["]/;
-      my $ll = File::Spec->catdir($temp_root, $ll_part);
-  my $ll_dir = local::lib->normalize_path("$ll");
+  my $ll = local::lib->normalize_path(File::Temp::tempdir(CLEANUP => 1));
   local $ENV{$_}
     for @vars;
   delete $ENV{$_}
     for @vars;
   $ENV{PATH} = $root;
-  my $bin_path = local::lib->install_base_bin_path($ll_dir);
-  my $env = call_ll($shell, "$ll");
-  is $env->{PERL_LOCAL_LIB_ROOT}, $ll_dir,
-    "$shell->{name} - $ll_part: activate root";
+  my $bin_path = local::lib->install_base_bin_path($ll);
+  my $env = call_ll($shell, $ll);
+  is $env->{PERL_LOCAL_LIB_ROOT}, $ll,
+    "$shell->{name}: activate root";
   like $env->{PATH}, qr/^\Q$bin_path$sep\E/,
-    "$shell->{name} - $ll_part: activate PATH";
-  is $env->{PERL5LIB}, local::lib->install_base_perl_path($ll_dir),
-    "$shell->{name} - $ll_part: activate PERL5LIB";
-  my %install_opts = local::lib->installer_options_for($ll_dir);
+    "$shell->{name}: activate PATH";
+  is $env->{PERL5LIB}, local::lib->install_base_perl_path($ll),
+    "$shell->{name}: activate PERL5LIB";
+  my %install_opts = local::lib->installer_options_for($ll);
   for my $var (qw(PERL_MM_OPT PERL_MB_OPT)) {
     is $env->{$var}, $install_opts{$var},
-      "$shell->{name} - $ll_part: activate $var";
+      "$shell->{name}: activate $var";
   }
 
   $ENV{$_} = $env->{$_} for @vars;
   $env = call_ll($shell, '--deactivate', "$ll");
 
   unlike $env->{PATH}, qr/^\Q$bin_path$sep\E/,
-    "$shell->{name} - $ll_part: deactivate PATH";
+    "$shell->{name}: deactivate PATH";
   for my $var (grep { $_ ne 'PATH' } @vars) {
     is $env->{$var}, undef,
-      "$shell->{name} - $ll_part: deactivate $var";
+      "$shell->{name}: deactivate $var";
   }
-  }
+
+  my $shelltype = do {
+    local $ENV{SHELL} = $shell->{shell};
+    local::lib->guess_shelltype;
+  };
+  for my $string (@strings) {
+    local $TODO = "$shell->{name}: can't quote strings with percents"
+      if $shell->{name} eq 'cmd.exe' && $string =~ /%/;
+
+    local $ENV{LL_TEST};
+    delete $ENV{LL_TEST};
+    my $script = local::lib->_build_env_string($shelltype, [
+      LL_TEST => $string,
+    ]);
+    my $env = call_shell($shell, $script);
+    is $env->{LL_TEST}, $string, "$shell->{name}: can quote [$string]";
+
+    local $TODO = "$shell->{name}: can't test strings with double quotes"
+      if $shell->{name} eq 'cmd.exe' && $string =~ /"/;
+
+    $ENV{LL_TEST} = 'pre';
+    $script = local::lib->_build_env_string($shelltype, [
+      LL_TEST => [\"LL_TEST", $string],
+    ]);
+    $env = call_shell($shell, $script);
+    is $env->{LL_TEST}, "pre$sep$string",
+      "$shell->{name}: can append [$string]";
   }
 }
 
