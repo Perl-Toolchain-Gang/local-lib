@@ -426,8 +426,6 @@ sub environment_vars_string {
 
   $shelltype ||= $self->guess_shelltype;
 
-  my $build_method = "build_${shelltype}_env_declaration";
-
   my $extra = $self->extra;
   my @envs = (
     PATH                => $self->bins,
@@ -435,6 +433,15 @@ sub environment_vars_string {
     PERL_LOCAL_LIB_ROOT => $self->roots,
     map { $_ => $extra->{$_} } sort keys %$extra,
   );
+  $self->_build_env_string($shelltype, \@envs);
+}
+
+sub _build_env_string {
+  my ($self, $shelltype, $envs) = @_;
+  my @envs = @$envs;
+
+  my $build_method = "build_${shelltype}_env_declaration";
+
   my $out = '';
   while (@envs) {
     my ($name, $value) = (shift(@envs), shift(@envs));
