@@ -59,9 +59,9 @@ for my $dir_base (@dirs) {
       'PERL_MM_OPT',
       'PERL_MB_OPT',
       'PERL_LOCAL_LIB_ROOT',
-      'PERL5LIB',
       grep /^MAKE/, keys %ENV
     };
+    local $ENV{PERL5LIB} = $ENV{PERL5LIB};
     my $temp = mk_temp_dir("install-$dist_type-XXXXX");
     my $ll_dir = "$dist_type-$dir_base";
     my $ll = "$temp/$ll_dir";
