@@ -156,6 +156,7 @@ for my $shell (@shells) {
     for @vars;
   $ENV{PATH} = $root;
   my $bin_path = local::lib->install_base_bin_path($ll);
+  mkdir $bin_path;
   my $env = call_ll($shell, $ll);
   is $env->{PERL_LOCAL_LIB_ROOT}, $ll,
     "$shell->{name}: activate root";
