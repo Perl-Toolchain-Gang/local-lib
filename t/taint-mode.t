@@ -88,6 +88,6 @@ EOM
   my $pid = open3($in, $out, $err, $^X, map("-I$_", @INC_CLEAN), '-T', $filename);
   my $cwd = do { local $/; <$out> };
   $cwd =~ s/[\r\n]*\z//;
-  $cwd = Cwd::abs_path($cwd);
-  is $cwd, Cwd::cwd(), 'reimplemented cwd matches standard cwd';
+  $cwd = File::Spec->canonpath($cwd);
+  is $cwd, File::Spec->canonpath(Cwd::cwd()), 'reimplemented cwd matches standard cwd';
 }
