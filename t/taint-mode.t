@@ -65,7 +65,7 @@ ok !grep($_ eq $dir2_lib, @libs),
   my $perl_file = basename($^X);
   if (!File::Spec->file_name_is_absolute($^X)) {
     my $perl_dir = dirname($^X);
-    $ENV{PATH} = join($Config{path_sep}, $ENV{PATH});
+    $ENV{PATH} = join($Config{path_sep}, $ENV{PATH}, $perl_dir);
   }
 
   my ($fh, $filename) = tempfile(
