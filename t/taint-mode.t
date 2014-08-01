@@ -6,10 +6,10 @@
 
 use strict;
 use warnings;
+use Cwd; # load before anything else to work around ActiveState bug
 use Test::More tests => 4;
 use File::Temp 'tempfile';
 use File::Basename qw(basename dirname);
-use Cwd;
 use File::Spec;
 use IPC::Open3;
 use Config;
