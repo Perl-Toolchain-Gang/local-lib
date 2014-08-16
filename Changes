@@ -1,5 +1,6 @@
 Revision history for local::lib
 
+2.000013 - 2014-08-16
  - fix test failure in ActiveState perl
  - better test diagnostics
  - fix quoting of spaces for fish shell (rt#95268)
