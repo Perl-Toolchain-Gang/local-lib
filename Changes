@@ -1,5 +1,12 @@
 Revision history for local::lib
 
+ - fix test failure in ActiveState perl
+ - better test diagnostics
+ - fix quoting of spaces for fish shell (rt#95268)
+ - improve quoting for use with cmd.exe
+ - fix quoting any arbitrary character when contructing strings for bash
+ - skip testing use with shells if the shell doesn't work at all
+
 2.000012 - 2014-05-12
  - restore build_activate_environment_vars_for,
    build_deactivate_environment_vars_for, build_deact_all_environment_vars_for
