@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Config;
 
-our $VERSION = '2.000012';
+our $VERSION = '2.000013';
 $VERSION = eval $VERSION;
 
 BEGIN {
