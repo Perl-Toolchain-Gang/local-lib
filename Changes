@@ -1,5 +1,7 @@
 Revision history for local::lib
 
+ - fix taint-mode test in some cases on case insensitive filesystems
+
 2.000013 - 2014-08-16
  - fix test failure in ActiveState perl
  - better test diagnostics

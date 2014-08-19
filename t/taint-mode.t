@@ -89,5 +89,5 @@ EOM
   my $cwd = do { local $/; <$out> };
   $cwd =~ s/[\r\n]*\z//;
   $cwd = File::Spec->canonpath($cwd);
-  is $cwd, File::Spec->canonpath(Cwd::cwd()), 'reimplemented cwd matches standard cwd';
+  is $cwd, File::Spec->canonpath(Cwd::getcwd()), 'reimplemented cwd matches standard cwd';
 }
