@@ -1,5 +1,6 @@
 Revision history for local::lib
 
+2.000014 - 2014-09-04
  - fix taint-mode test in some cases on case insensitive filesystems
 
 2.000013 - 2014-08-16
