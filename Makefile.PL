@@ -14,7 +14,7 @@ my %META = (
     } },
     runtime => { requires => {
       'perl'                => 5.006,
-      'ExtUtils::MakeMaker' => '6.74', # version PERL_MM_OPT is shell parsed
+      'ExtUtils::MakeMaker' => '7.00', # version INSTALL_BASE taken as string, not shell
       'ExtUtils::Install'   => '1.43', # version INSTALL_BASE was added
       'Module::Build'       => '0.36', # PERL_MB_OPT
       'CPAN'                => '1.82', # sudo support + CPAN::HandleConfig
