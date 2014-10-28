@@ -1,5 +1,8 @@
 Revision history for local::lib
 
+ - fix shell test for shells where we can't prevent some rc files from being
+   loaded, like zsh (RT#99819).
+
 2.000014 - 2014-09-04
  - fix taint-mode test in some cases on case insensitive filesystems
 
