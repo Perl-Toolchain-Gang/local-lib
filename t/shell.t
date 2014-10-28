@@ -155,28 +155,33 @@ for my $shell (@shells) {
   delete $ENV{$_}
     for @vars;
   $ENV{PATH} = $root;
+  my $orig = call_shell($shell, '');
   my $bin_path = local::lib->install_base_bin_path($ll);
   mkdir $bin_path;
   my $env = call_ll($shell, $ll);
-  is $env->{PERL_LOCAL_LIB_ROOT}, $ll,
-    "$shell->{name}: activate root";
-  like $env->{PATH}, qr/^\Q$bin_path$sep\E/,
-    "$shell->{name}: activate PATH";
-  is $env->{PERL5LIB}, local::lib->install_base_perl_path($ll),
-    "$shell->{name}: activate PERL5LIB";
   my %install_opts = local::lib->installer_options_for($ll);
-  for my $var (qw(PERL_MM_OPT PERL_MB_OPT)) {
-    is $env->{$var}, $install_opts{$var},
+
+  delete $orig->{$_} for qw(PERL_MM_OPT PERL_MB_OPT);
+  my $want = {
+    PERL_LOCAL_LIB_ROOT => $ll,
+    PATH                => $bin_path,
+    PERL5LIB            => local::lib->install_base_perl_path($ll),
+    (map {; $_ => $install_opts{$_}} qw(PERL_MM_OPT PERL_MB_OPT)),
+  };
+  for my $var (keys %$want) {
+    $want->{$var} = join($sep, $want->{$var}, $orig->{$var} || ()),
+  }
+
+  for my $var (@vars) {
+    is $env->{$var}, $want->{$var},
       "$shell->{name}: activate $var";
   }
 
   $ENV{$_} = $env->{$_} for @vars;
   $env = call_ll($shell, '--deactivate', "$ll");
 
-  unlike $env->{PATH}, qr/^\Q$bin_path$sep\E/,
-    "$shell->{name}: deactivate PATH";
-  for my $var (grep { $_ ne 'PATH' } @vars) {
-    is $env->{$var}, undef,
+  for my $var (@vars) {
+    is $env->{$var}, $orig->{$var},
       "$shell->{name}: deactivate $var";
   }
 
