@@ -135,11 +135,12 @@ if ($bootstrapping) {
     qw(ExtUtils::MakeMaker ExtUtils::Install Module::Build CPAN);
 
   no warnings 'once';
-  *MY::postamble = sub {
-    <<"END";
-PERL     += -I\$(INSTALLPRIVLIB)
-FULLPERL += -I\$(INSTALLPRIVLIB)
-END
+  package MY;
+  *MY::init_PERL = sub {
+    my $self = shift;
+    $self->SUPER::init_PERL(@_);
+    $self->{PERL}     .= ' -I$(INSTALLPRIVLIB)';
+    $self->{FULLPERL} .= ' -I$(INSTALLPRIVLIB)';
   };
 
   local $ENV{PERL_AUTOINSTALL_PREFER_CPAN} = 1;
