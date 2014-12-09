@@ -66,7 +66,7 @@ for my $shell (
   },
   {
     name => 'zsh',
-    test => '-c "exit 0"',
+    test => '-f -c "exit 0"',
   },
   {
     name => 'ksh',
