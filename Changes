@@ -1,5 +1,6 @@
 Revision history for local::lib
 
+ - Avoid using += in Makefile when bootstrapping for portability (RT#100797)
  - adjust quoting of paths with spaces to work with ExtUtils::MakeMaker 7.0,
    and bump our EUMM prereq to 7.0.
  - fix shell test for shells where we can't prevent some rc files from being
