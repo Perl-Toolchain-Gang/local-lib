@@ -134,14 +134,16 @@ if ($bootstrapping) {
   my @modules = grep $requires->{$_},
     qw(ExtUtils::MakeMaker ExtUtils::Install Module::Build CPAN);
 
-  no warnings 'once';
-  package MY;
-  *MY::init_PERL = sub {
-    my $self = shift;
-    $self->SUPER::init_PERL(@_);
-    $self->{PERL}     .= ' -I$(INSTALLPRIVLIB)';
-    $self->{FULLPERL} .= ' -I$(INSTALLPRIVLIB)';
-  };
+  {
+    no warnings 'once';
+    package MY;
+    *init_PERL = sub {
+      my $self = shift;
+      $self->SUPER::init_PERL(@_);
+      $self->{PERL}     .= ' -I$(INSTALLPRIVLIB)';
+      $self->{FULLPERL} .= ' -I$(INSTALLPRIVLIB)';
+    };
+  }
 
   local $ENV{PERL_AUTOINSTALL_PREFER_CPAN} = 1;
   local $ENV{PERL_MM_USE_DEFAULT} = 1;
