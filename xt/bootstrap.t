@@ -49,10 +49,10 @@ plan skip_all => 'this test will overwrite Makefile.  use -f to force.'
   unless @perl;
 
 my %modules = (
-  'ExtUtils::MakeMaker' => 6.74,
-  'ExtUtils::Install'   => 1.43,
-  'Module::Build'       => 0.36,
-  'CPAN'                => 1.82,
+  'ExtUtils::MakeMaker' => '7.00', # version INSTALL_BASE taken as string, not shell
+  'ExtUtils::Install'   => '1.43', # version INSTALL_BASE was added
+  'Module::Build'       => '0.36', # PERL_MB_OPT
+  'CPAN'                => '1.82', # sudo support + CPAN::HandleConfig
 );
 
 plan tests => @perl * (1+keys %modules);
