@@ -29,17 +29,6 @@ sub cmd_init_config {
   CPAN->import;
   $CPAN::Config->{urllist} = ["http://www.cpan.org/"];
 
-  # <mst> all bootstrapped fine on one DH account
-  # <mst> on another, it tries to install man stuff into /usr/local
-  # <mst> cannot for the life of me figure out why
-  # <mst> (same fucking server as well)
-  # <mst> GOT THE BASTARD
-  # <mst> ExtUtils::ParseXS uses Module::Build
-  # <mst> but Module::Build depends on it
-  # <mst> so you need to set prefer_installer MM
-  # <mst> so cpan uses EU::ParseXS Makefile.PL
-  # <mst> since we already got EUMM, *that* works
-  $CPAN::Config->{prefer_installer} = "EUMM";
   CPAN::Config->load;
   unless ($done || -w $CPAN::Config->{keep_source_where}) {
     my $save = $CPAN::Config->{urllist};
@@ -54,6 +43,16 @@ sub cmd_install {
   package main;
   require CPAN;
   CPAN->import;
+  CPAN::Config->load;
+
+  # ExtUtils::ParseXS is a prerequisite of Module::Build.  Previously,
+  # it included a Build.PL file.  If CPAN.pm is configured to prefer
+  # Module::Build (the default), it would see the Build.PL file and assume
+  # MB was a prerequisite.  This introduces a circular dependency, which would
+  # break installation.  None of Module::Build's prerequisites include a
+  # Build.PL anymore, but continue to prefer EUMM as a precaution.
+  $CPAN::Config->{prefer_installer} = "EUMM";
+
   force('install', @modules);
 }
 
