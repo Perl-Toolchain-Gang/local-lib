@@ -1,4 +1,4 @@
-package inc::ConfigCPAN;
+package inc::CPAN;
 use strict;
 use warnings;
 
