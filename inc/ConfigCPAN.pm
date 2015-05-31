@@ -3,15 +3,17 @@ use strict;
 use warnings;
 
 sub import {
-  my $op = shift @ARGV
-    or die "no operation specified!\n";
-  my $do = __PACKAGE__->can("cmd_$op")
+  my ($class, $op) = @_;
+
+  die "no operation specified!\n"
+    unless $op;
+  my $do = $class->can("cmd_$op")
     or die "invalid operation $op\n";
   $do->(@ARGV);
   exit 0;
 }
 
-sub cmd_configure {
+sub cmd_init_config {
   require ExtUtils::MakeMaker;
   my $done;
   my $orig = ExtUtils::MakeMaker->can("prompt");

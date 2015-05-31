@@ -151,7 +151,7 @@ if ($bootstrapping) {
   my @cpan_command = map qq{force(q[install],q[$_]);}, @modules;
 
   if (@cpan_command || $disable_manpages) {
-    system($^X, '-Minc::ConfigCPAN', '-', 'configure');
+    system($^X, '-Minc::ConfigCPAN=init_config');
   }
   if (@cpan_command) {
     system($^X, '-MCPAN', '-e', $_)
@@ -161,12 +161,12 @@ if ($bootstrapping) {
     system($^X, '-MCPAN', '-e', 'CPAN::Config->load;CPAN::Config->commit;');
   }
   if ($disable_manpages) {
-    system($^X, '-Minc::ConfigCPAN', '-', 'disable_manpages');
+    system($^X, '-Minc::ConfigCPAN=disable_manpages');
   }
 }
 
 if (!$ENV{PERL5_CPANM_IS_RUNNING}) {
-  my $status = system $^X, '-Minc::ConfigCPAN', '-', 'check',
+  my $status = system $^X, '-Minc::ConfigCPAN=check', '-',
     $META{prereqs}{runtime}{requires}{CPAN};
   exit $status
     if $status;
