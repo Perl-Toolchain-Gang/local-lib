@@ -49,6 +49,14 @@ sub cmd_init_config {
   }
 }
 
+sub cmd_install {
+  my @modules = @_;
+  package main;
+  require CPAN;
+  CPAN->import;
+  force('install', @modules);
+}
+
 sub cmd_disable_manpages {
   require CPAN;
   CPAN->import;
