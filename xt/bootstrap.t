@@ -1,44 +1,45 @@
 use strict;
 use warnings;
-BEGIN {
-  if (@ARGV && $ARGV[0] eq '--check-version') {
-    my $module = $ARGV[1];
-    (my $file = "$module.pm") =~ s{::}{/}g;
-    eval {
-      require $file;
-      my $version = do { no strict; ${"${module}::VERSION"} };
-      print eval $version;
-    };
-    exit;
-  }
-}
-
-sub check_version {
-  my ($perl, $module) = @_;
-  my $version = `$perl $0 --check-version $module`;
-  chomp $version;
-  length $version ? $version : undef;
-}
 
 use Test::More 0.81_01;
 use IPC::Open3;
 use File::Temp;
 use File::Spec;
-use Parse::CPAN::Meta;
 use local::lib ();
+use ExtUtils::MakeMaker;
+
+sub check_version {
+  my ($perl, $module) = @_;
+  my @inc = `$perl -le "print for \@INC"`;
+  chomp @inc;
+  (my $file = "$module.pm") =~ s{::}{/}g;
+  ($file) = grep -e, map { "$_/$file" } @inc;
+  return undef
+    unless $file;
+  my $version = MM->parse_version($file);
+  eval $version;
+}
 
 my @perl;
 my $force;
+my $verbose;
 while (@ARGV) {
   my $arg = shift @ARGV;
-  if ($arg =~ /^--perl(?:=(.*))$/) {
-    push @perl, ($1 || shift @ARGV);
-  }
-  elsif ($arg eq '-f') {
+  if ($arg eq '-f') {
     $force = 1;
   }
-  else {
+  elsif ($arg eq '-v') {
+    $verbose = 1;
+  }
+  elsif ($arg eq '--') {
+    push @perl, @ARGV;
+    @ARGV = ();
+  }
+  elsif ($arg =~ /^-/) {
     warn "unrecognized option: $arg\n";
+  }
+  else {
+    push @perl, $arg;
   }
 }
 
@@ -55,7 +56,7 @@ my %modules = (
   'CPAN'                => '1.82', # sudo support + CPAN::HandleConfig
 );
 
-plan tests => @perl * (1+keys %modules);
+plan tests => @perl * (2+2*keys %modules);
 
 for my $perl (@perl) {
   local @INC = @INC;
@@ -82,32 +83,51 @@ for my $perl (@perl) {
 
   my $ll = File::Spec->catdir($home, 'local-lib');
 
+  unlink 'MYMETA.yml';
+  unlink 'META.yml';
+  unlink 'Makefile';
+
   open my $null_in, '<', File::Spec->devnull;
   my $pid = open3 $null_in, my $out, undef, $perl, 'Makefile.PL', '--bootstrap='.$ll;
   while (my $line = <$out>) {
-    note $line;
+    note $line
+      if $verbose || $line =~ /^Running |^\s.* -- (?:NOT OK|OK|NA|TIMED OUT)$/;
   }
   waitpid $pid, 0;
 
-  is $?, 0, 'Makefile.PL ran successfully'
-    or diag $out;
+  is $?, 0, 'Makefile.PL ran successfully';
 
-  my $meta = Parse::CPAN::Meta->load_file('MYMETA.yml');
+  ok -e 'Makefile', 'Makefile created';
+
+  my $prereqs = {};
+  open my $fh, '<', 'Makefile'
+    or die "Unable to open Makefile: $!";
+
+  while (<$fh>) {
+    last if /MakeMaker post_initialize section/;
+    my ($p) = m{^[\#]\s+PREREQ_PM\s+=>\s+(.+)}
+      or next;
+
+    while ( $p =~ m/(?:\s)([\w\:]+)=>(?:q\[(.*?)\]|undef),?/g ) {
+      $prereqs->{$1} = $2;
+    }
+  }
+  close $fh;
 
   local::lib->setup_env_hash_for($ll);
 
   for my $module (sort keys %modules) {
-    SKIP: {
-      my $need_version = $meta->{requires}{$module}
-        or skip "$module not needed for $perl", 1;
-      my $version = check_version($perl, $module);
-      if (defined $old_versions{$module}) {
-        cmp_ok $version, '>=', $modules{$module}, "bootstrap upgraded to new enough $module"
-          or diag "PERL5LIB: $ENV{PERL5LIB}";
-      }
-      else {
-        is $version, undef, "bootstrap didn't install new module $module";
-      }
+    my $version = check_version($perl, $module);
+    if (defined $old_versions{$module}) {
+      is $prereqs->{$module}, $modules{$module},
+        "prereqs correct for $module";
+      cmp_ok $version, '>=', $modules{$module}, "bootstrap upgraded to new enough $module"
+        or diag "PERL5LIB: $ENV{PERL5LIB}";
+    }
+    else {
+      ok !exists $prereqs->{$module},
+        "$module not listed as prereq";
+      is $version, undef, "bootstrap didn't install new module $module";
     }
   }
 }
