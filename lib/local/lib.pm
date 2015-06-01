@@ -635,11 +635,15 @@ sub ensure_dir_structure_for {
   }
   require File::Basename;
   my @dirs;
-  while(!-d $path) {
-    push @dirs, $path;
-    $path = File::Basename::dirname($path);
+  my $mkpath = $class->install_base_arch_path($path);
+  while (!-d $mkpath) {
+    unshift @dirs, $mkpath;
+    $mkpath = File::Basename::dirname($mkpath);
   }
-  mkdir $_ for reverse @dirs;
+  push @dirs, $class->install_base_bin_path($path);
+  mkdir $_ for @dirs;
+  die "Unable to create $path"
+    unless -d $path;
   return;
 }
 
@@ -969,8 +973,8 @@ likely to cause issues on Win32 systems.
 
 =back
 
-Attempts to create the given path, and all required parent directories. Throws
-an exception on failure.
+Attempts to create a local::lib directory, including subdirectories and all
+required parent directories. Throws an exception on failure.
 
 =head2 print_environment_vars_for
 
