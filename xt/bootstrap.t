@@ -118,10 +118,12 @@ for my $perl (@perl) {
 
   for my $module (sort keys %modules) {
     my $version = check_version($perl, $module);
-    if (defined $old_versions{$module}) {
-      is $prereqs->{$module}, $modules{$module},
+    my $old_v = $old_versions{$module};
+    my $want_v = $modules{$module};
+    if (defined $old_v) {
+      is $prereqs->{$module}, ($old_v >= $want_v ? undef : $want_v),
         "prereqs correct for $module";
-      cmp_ok $version, '>=', $modules{$module}, "bootstrap upgraded to new enough $module"
+      cmp_ok $version, '>=', $want_v, "bootstrap upgraded to new enough $module"
         or diag "PERL5LIB: $ENV{PERL5LIB}";
     }
     else {
