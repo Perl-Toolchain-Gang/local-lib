@@ -18,7 +18,10 @@ sub mk_temp_dir
 
     mkdir 't/temp';
     my $path = tempdir($name_template, DIR => Cwd::abs_path('t/temp'), CLEANUP => 1);
-    local::lib->ensure_dir_structure_for($path);
+    {
+        local $SIG{__WARN__} = sub {};
+        local::lib->ensure_dir_structure_for($path);
+    }
     # On Win32 the path where the distribution is built usually contains
     # spaces. This is a problem for some parts of the CPAN toolchain, so
     # local::lib uses the GetShortPathName trick do get an alternate

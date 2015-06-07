@@ -630,20 +630,24 @@ sub resolve_relative_path {
 
 sub ensure_dir_structure_for {
   my ($class, $path) = @_;
-  unless (-d $path) {
-    warn "Attempting to create directory ${path}\n";
+  my %dirs;
+  my @dirs = grep ! -d, (
+    $class->lib_paths_for($path),
+    $class->install_base_bin_path($path),
+  );
+  @dirs{@dirs} = ();
+  for my $dir (@dirs) {
+    require File::Basename;
+    my $parent = File::Basename::dirname($dir);
+    unless (exists $dirs{$parent} || -d $parent) {
+      $dirs{$parent} = undef;
+      push @dirs, $parent
+    }
   }
-  require File::Basename;
-  my @dirs;
-  my $mkpath = $class->install_base_arch_path($path);
-  while (!-d $mkpath) {
-    unshift @dirs, $mkpath;
-    $mkpath = File::Basename::dirname($mkpath);
-  }
-  push @dirs, $class->install_base_bin_path($path);
-  mkdir $_ for @dirs;
-  die "Unable to create $path"
-    unless -d $path;
+  warn "Attempting to create directory ${path}\n"
+    if @dirs;
+  mkdir or die "Unable to create $_: $!"
+    for reverse @dirs;
   return;
 }
 
