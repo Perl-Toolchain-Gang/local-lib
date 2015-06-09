@@ -1,13 +1,13 @@
 use strict;
 use warnings;
 use Test::More tests => 2;
-use File::Temp qw(tempdir);
+use lib 't/lib';
+use TempDir;
 use Cwd;
 
 # Test that refs in @INC don't get mangled.
 
-
-my $dir = tempdir('test_local_lib-XXXXX', DIR => Cwd::abs_path('t'), CLEANUP => 1);
+my $dir = mk_temp_dir('test_local_lib-XXXXX');
 
 use local::lib ();
 my $code = sub {};

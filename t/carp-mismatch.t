@@ -32,7 +32,7 @@ mkpath($carpdir);
     close $fh;
 }
 
-local::lib->import($libdir);
+local::lib->import('--no-create', $libdir);
 
 require Carp::Foo;
 is $Carp::Foo::VERSION, '200.0',
