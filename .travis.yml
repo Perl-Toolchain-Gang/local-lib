@@ -9,18 +9,25 @@ perl:
   - "5.12.0"
   - "5.12.5"
   - "5.18.2"
+addons:
+  apt:
+    packages:
+      - bash
+      - dash
+      - ksh
+      - zsh
+      - tcsh
+      - csh
+      - fish
+sudo: false
 before_install:
-  - sudo apt-get update -qq
-  - git clone git://github.com/haarg/perl-travis-helper
-  - source perl-travis-helper/init
-  - build-perl
-  - perl -V
+  - eval $(curl https://travis-perl.github.io/init) --perl
   - build-dist
   - cd $BUILD_DIR
-install:
-  - sudo apt-get install -qq bash dash ksh zsh tcsh csh fish
   - local-lib
+install:
   - cpan-install ExtUtils::MakeMaker~6.58 App::Prove --deps
+after_install:
   - make realclean
 script:
   - prove -lv $(test-dirs)
