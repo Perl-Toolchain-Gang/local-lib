@@ -317,7 +317,8 @@ sub deactivate_all {
 }
 
 sub activate {
-  my ($self, $path) = @_;
+  my ($self, $path, $opts) = @_;
+  $opts ||= {};
   $self = $self->new unless ref $self;
   $path = $self->resolve_path($path);
   $self->ensure_dir_structure_for($path)
@@ -332,7 +333,7 @@ sub activate {
   }
 
   my %args;
-  if (!@active_lls || $active_lls[0] ne $path) {
+  if ($opts->{always} || !@active_lls || $active_lls[0] ne $path) {
     %args = (
       bins  => [ $self->install_base_bin_path($path), @{$self->bins} ],
       libs  => [ $self->install_base_perl_path($path), @{$self->libs} ],
@@ -354,11 +355,11 @@ sub normalize_path {
 }
 
 sub build_environment_vars_for {
-  my $self = $_[0]->new->activate($_[1]);
+  my $self = $_[0]->new->activate($_[1], { always => 1 });
   $self->build_environment_vars;
 }
 sub build_activate_environment_vars_for {
-  my $self = $_[0]->new->activate($_[1]);
+  my $self = $_[0]->new->activate($_[1], { always => 1 });
   $self->build_environment_vars;
 }
 sub build_deactivate_environment_vars_for {
@@ -418,7 +419,7 @@ sub print_environment_vars_for {
 }
 
 sub environment_vars_string_for {
-  my $self = $_[0]->new->activate($_[1]);
+  my $self = $_[0]->new->activate($_[1], { always => 1});
   $self->environment_vars_string;
 }
 sub environment_vars_string {
