@@ -6,6 +6,7 @@ my %META = (
   license => 'perl_5',
   prereqs => {
     configure => { requires => {
+      'ExtUtils::MakeMaker' => '7.00', # cpanm ignores the runtime prereq
     } },
     build => { requires => {
     } },
