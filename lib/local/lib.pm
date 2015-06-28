@@ -138,14 +138,14 @@ DEATH
       die "Unknown import argument: $arg";
     }
     else {
-      push @steps, ['activate', $arg];
+      push @steps, ['activate', $arg, \%opts];
     }
   }
   if (!@steps) {
-    push @steps, ['activate', undef];
+    push @steps, ['activate', undef, \%opts];
   }
 
-  my $self = $class->new(%opts);
+  my $self = $class->new;
 
   for (@steps) {
     my ($method, @args) = @$_;
@@ -176,7 +176,6 @@ sub libs { $_[0]->{libs}   ||= [ \'PERL5LIB' ] }
 sub bins { $_[0]->{bins}   ||= [ \'PATH' ] }
 sub roots { $_[0]->{roots} ||= [ \'PERL_LOCAL_LIB_ROOT' ] }
 sub extra { $_[0]->{extra} ||= {} }
-sub no_create { $_[0]->{no_create} }
 
 my $_archname = $Config{archname};
 my $_version  = $Config{version};
@@ -322,7 +321,7 @@ sub activate {
   $self = $self->new unless ref $self;
   $path = $self->resolve_path($path);
   $self->ensure_dir_structure_for($path)
-    unless $self->no_create;
+    unless $opts->{no_create};
 
   $path = $self->normalize_path($path);
 
