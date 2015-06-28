@@ -92,6 +92,7 @@ sub import {
 
   my @steps;
   my %opts;
+  my %attr;
   my $shelltype;
 
   while (@args) {
@@ -134,6 +135,9 @@ DEATH
     elsif ( $arg eq '--no-create' ) {
       $opts{no_create} = 1;
     }
+    elsif ( $arg eq '--quiet' ) {
+      $attr{quiet} = 1;
+    }
     elsif ( $arg =~ /^--/ ) {
       die "Unknown import argument: $arg";
     }
@@ -145,7 +149,7 @@ DEATH
     push @steps, ['activate', undef, \%opts];
   }
 
-  my $self = $class->new;
+  my $self = $class->new(%attr);
 
   for (@steps) {
     my ($method, @args) = @$_;
@@ -176,6 +180,7 @@ sub libs { $_[0]->{libs}   ||= [ \'PERL5LIB' ] }
 sub bins { $_[0]->{bins}   ||= [ \'PATH' ] }
 sub roots { $_[0]->{roots} ||= [ \'PERL_LOCAL_LIB_ROOT' ] }
 sub extra { $_[0]->{extra} ||= {} }
+sub quiet { $_[0]->{quiet} }
 
 my $_archname = $Config{archname};
 my $_version  = $Config{version};
@@ -320,7 +325,7 @@ sub activate {
   $opts ||= {};
   $self = $self->new unless ref $self;
   $path = $self->resolve_path($path);
-  $self->ensure_dir_structure_for($path)
+  $self->ensure_dir_structure_for($path, { quiet => $self->quiet })
     unless $opts->{no_create};
 
   $path = $self->normalize_path($path);
@@ -629,7 +634,8 @@ sub resolve_relative_path {
 }
 
 sub ensure_dir_structure_for {
-  my ($class, $path) = @_;
+  my ($class, $path, $opts) = @_;
+  $opts ||= {};
   my %dirs;
   my @dirs = grep ! -d, (
     $class->lib_paths_for($path),
@@ -645,7 +651,7 @@ sub ensure_dir_structure_for {
     }
   }
   warn "Attempting to create directory ${path}\n"
-    if @dirs;
+    if !$opts->{quiet} && @dirs;
   mkdir or die "Unable to create $_: $!"
     for reverse @dirs;
   return;

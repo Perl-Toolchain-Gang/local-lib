@@ -67,7 +67,7 @@ for my $dir_base (@dirs) {
     my $ll = "$temp/$ll_dir";
     mkpath(File::Spec->canonpath($ll));
 
-    local::lib->import($ll);
+    local::lib->import($ll, '--quiet');
 
     my $dist_dir = mk_temp_dir("source-$dist_type-XXXXX");
     chdir $dist_dir;
