@@ -25,7 +25,7 @@ sub mk_temp_dir
     # representation of the path that doesn't constain spaces.
     return ($^O eq 'MSWin32')
          ? Win32::GetShortPathName($path)
-	 : $path
+    : $path
 }
 
 1;
