@@ -26,7 +26,7 @@ before_install:
   - cd $BUILD_DIR
   - local-lib
 install:
-  - cpan-install ExtUtils::MakeMaker~6.58 App::Prove --deps
+  - cpan-install --deps
 after_install:
   - make realclean
 script:
