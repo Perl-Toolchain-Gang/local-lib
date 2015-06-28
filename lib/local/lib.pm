@@ -418,6 +418,8 @@ sub print_environment_vars_for {
 }
 
 sub environment_vars_string_for {
+  local $ENV{PERL_LOCAL_LIB_ROOT}
+    if caller eq 'CPAN::FirstTime' && CPAN::FirstTime->VERSION < 5.5305;
   my $self = $_[0]->new->activate($_[1]);
   $self->environment_vars_string;
 }
