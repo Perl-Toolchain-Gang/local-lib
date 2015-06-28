@@ -652,7 +652,7 @@ sub ensure_dir_structure_for {
   }
   warn "Attempting to create directory ${path}\n"
     if !$opts->{quiet} && @dirs;
-  mkdir or die "Unable to create $_: $!"
+  mkdir $_ or die "Unable to create $_: $!"
     for reverse @dirs;
   return;
 }
