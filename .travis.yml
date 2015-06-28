@@ -9,6 +9,8 @@ perl:
   - "5.12.0"
   - "5.12.5"
   - "5.18.2"
+  - "5.20.1"
+  - "5.22.0"
 addons:
   apt:
     packages:
@@ -21,12 +23,8 @@ addons:
       - fish
 sudo: false
 before_install:
-  - eval $(curl https://travis-perl.github.io/init) --perl
-  - build-dist
-  - cd $BUILD_DIR
+  - eval $(curl https://travis-perl.github.io/init) --auto
   - local-lib
-install:
-  - cpan-install --deps
 after_install:
   - make realclean
 script:
