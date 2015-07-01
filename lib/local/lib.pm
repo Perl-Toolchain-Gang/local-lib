@@ -715,9 +715,9 @@ From the shell -
   PATH="/home/username/perl5/bin:$PATH"; export PATH;
   PERL_LOCAL_LIB_ROOT="/home/usename/perl5:$PERL_LOCAL_LIB_ROOT"; export PERL_LOCAL_LIB_ROOT;
 
-From a .bashrc file -
+From a F<.bash_profile> or F<.bashrc> file -
 
-  [ $SHLVL -eq 1 ] && eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)"
+  eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)"
 
 =head2 The bootstrapping technique
 
@@ -771,7 +771,7 @@ starts using our newly generated lib/ directory. If you are using bash or
 any other Bourne shells, you can add this to your shell startup script this
 way:
 
-  echo '[ $SHLVL -eq 1 ] && eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)"' >>~/.bashrc
+  echo 'eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)"' >>~/.bashrc
 
 If you are using C shell, you can do this as follows:
 
@@ -784,7 +784,7 @@ If you passed to bootstrap a directory other than default, you also need to
 give that as import parameter to the call of the local::lib module like this
 way:
 
-  echo '[ $SHLVL -eq 1 ] && eval "$(perl -I$HOME/foo/lib/perl5 -Mlocal::lib=$HOME/foo)"' >>~/.bashrc
+  echo 'eval "$(perl -I$HOME/foo/lib/perl5 -Mlocal::lib=$HOME/foo)"' >>~/.bashrc
 
 After writing your shell configuration file, be sure to re-read it to get the
 changed settings into your current shell's environment. Bourne shells use
@@ -811,11 +811,13 @@ installation to install modules in different directories directly this way:
   cd ../mydir2
   ... REPEAT ...
 
-When used in a C<.bashrc> file, it is recommended that you protect against
-re-activating a directory in a sub-shell.  This can be done by checking the
-C<$SHLVL> variable as shown in synopsis.  Without this, sub-shells created by
-the user or other programs will override changes made to the parent shell's
-environment.
+If you use F<.bashrc> to activate a local::lib automatically, the local::lib
+will be re-enabled in any sub-shells used, overriding adjustments you may have
+made in the parent shell.  To avoid this, you can initialize the local::lib in
+F<.bash_profile> rather than F<.bashrc>, or protect the local::lib invocation
+with a C<$SHLVL> check:
+
+  [ $SHLVL -eq 1 ] && eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)"
 
 If you are working with several C<local::lib> environments, you may want to
 remove some of them from the current environment without disturbing the others.
