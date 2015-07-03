@@ -1,5 +1,18 @@
 Revision history for local::lib
 
+ - work around issue where some cpanm versions wouldn't upgrade
+   ExtUtils::MakeMaker in some cases it should have
+ - added --quiet option to surpress directory creation message
+ - build_environment_vars_for, build_activate_environment_vars_for, and
+   environment_vars_string_for options will always include directories being
+   added, even if they were already in current ENV vars
+ - fixes for author tests
+ - create directory structure under created local::libs, ensuring arch dirs
+   will always be added to @INC by perl
+ - only cause CPAN.pm to prefer ExtUtils::MakeMaker over Module::Build during
+   bootstrap process, not after
+ - bootstrap process refactored
+
 2.000015 - 2014-12-12
  - Avoid using += in Makefile when bootstrapping for portability (RT#100797)
  - adjust quoting of paths with spaces to work with ExtUtils::MakeMaker 7.0,
