@@ -5,8 +5,13 @@ use Test::More 0.81_01;
 use IPC::Open3;
 use File::Temp;
 use File::Spec;
+use File::Find ();
+use File::Path qw(mkpath);
+use File::Basename qw(dirname);
+use File::Copy ();
 use local::lib ();
 use ExtUtils::MakeMaker;
+use Cwd qw(cwd);
 
 sub check_version {
   my ($perl, $module) = @_;
@@ -21,14 +26,10 @@ sub check_version {
 }
 
 my @perl;
-my $force;
 my $verbose;
 while (@ARGV) {
   my $arg = shift @ARGV;
-  if ($arg eq '-f') {
-    $force = 1;
-  }
-  elsif ($arg eq '-v') {
+  if ($arg eq '-v') {
     $verbose = 1;
   }
   elsif ($arg eq '--') {
@@ -43,8 +44,30 @@ while (@ARGV) {
   }
 }
 
-plan skip_all => 'this test will overwrite Makefile.  use -f to force.'
-  if -e 'Makefile' && !$force;
+my $cwd = cwd;
+my $tempdir = File::Temp::tempdir('local-lib-source-XXXXX', CLEANUP => 1, TMPDIR => 1);
+END { chdir $cwd }
+
+my @files = qw(
+  Makefile.PL
+  lib/local/lib.pm
+);
+File::Find::find({ no_chdir => 1, wanted => sub {
+  return if -d;
+  push @files, $File::Find::name;
+}}, 'inc');
+for my $file (@files) {
+  my $dest = File::Spec->catfile($tempdir, $file);
+  mkpath(dirname($dest));
+  File::Copy::copy($file, $dest) or die "couldn't copy $file: $!";
+}
+chdir $tempdir;
+mkdir 'maint';
+{
+  open my $fh, '>', 'maint/Makefile.PL.include';
+  print { $fh } '1';
+  close $fh;
+}
 
 @perl = $^X
   unless @perl;
