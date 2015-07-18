@@ -5,10 +5,8 @@ use Test::More 0.81_01;
 use IPC::Open3;
 use File::Temp;
 use File::Spec;
-use File::Find ();
 use File::Path qw(mkpath);
 use File::Basename qw(dirname);
-use File::Copy ();
 use local::lib ();
 use ExtUtils::MakeMaker;
 use Cwd qw(cwd);
@@ -51,23 +49,26 @@ END { chdir $cwd }
 my @files = qw(
   Makefile.PL
   lib/local/lib.pm
+  inc/CPAN.pm
+  inc/CheckVersion.pm
 );
-File::Find::find({ no_chdir => 1, wanted => sub {
-  return if -d;
-  push @files, $File::Find::name;
-}}, 'inc');
 for my $file (@files) {
   my $dest = File::Spec->catfile($tempdir, $file);
   mkpath(dirname($dest));
-  File::Copy::copy($file, $dest) or die "couldn't copy $file: $!";
-}
-chdir $tempdir;
-mkdir 'maint';
-{
-  open my $fh, '>', 'maint/Makefile.PL.include';
-  print { $fh } '1';
+  my $content = do {
+    local $/;
+    open my $fh, '<:raw', $file
+      or die "can't read $file $!";
+    <$fh>;
+  };
+  $content =~ s{.*do 'maint/Makefile.PL\.include'.*}{};
+  open my $fh, '>:raw', $dest
+    or die "can't write $dest $!";
+  print { $fh } $content;
   close $fh;
 }
+
+chdir $tempdir;
 
 @perl = $^X
   unless @perl;
