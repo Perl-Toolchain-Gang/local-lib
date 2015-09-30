@@ -141,6 +141,7 @@ my @strings = (
   "with'squote",
   'with\\bslash',
   'with%per%cent',
+  'with$dollar',
 );
 
 plan tests => @shells * (@vars * 2 + @strings * 2);
