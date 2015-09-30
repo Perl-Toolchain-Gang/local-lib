@@ -108,7 +108,7 @@ sub import {
     my $arg = shift @args;
     # check for lethal dash first to stop processing before causing problems
     # the fancy dash is U+2212 or \xE2\x88\x92
-    if ($arg =~ /\xE2\x88\x92/ or $arg =~ /−/) {
+    if ($arg =~ /\xE2\x88\x92/) {
       die <<'DEATH';
 WHOA THERE! It looks like you've got some fancy dashes in your commandline!
 These are *not* the traditional -- dashes that software recognizes. You
