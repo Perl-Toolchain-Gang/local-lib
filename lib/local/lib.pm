@@ -85,6 +85,15 @@ sub _rel2abs {
   return _catdir($base, $dir);
 }
 
+our $_DEVNULL;
+sub _devnull {
+  return $_DEVNULL ||=
+    _USE_FSPEC      ? (require File::Spec, File::Spec->devnull)
+    : _WIN32        ? 'nul'
+    : $^O eq 'os2'  ? '/dev/nul'
+    : '/dev/null';
+}
+
 sub import {
   my ($class, @args) = @_;
   push @args, @ARGV
@@ -544,8 +553,21 @@ sub build_fish_env_declaration {
   if (!defined $value) {
     return qq{set -e $name;\n};
   }
-  $value =~ s/$_path_sep/ /g;
-  qq{set -x $name $value;\n};
+
+  if ($name =~ /^(?:CD|MAN)?PATH$/) {
+    $value =~ s/$_path_sep/ /g;
+    my $silent = $name =~ /^(?:CD)?PATH$/ ? " ^"._devnull : '';
+    return qq{set -x $name $value$silent;\n};
+  }
+
+  my $out = '';
+  my $value_without = $value;
+  if ($value_without =~ s/(?:^|$_path_sep)\$$name(?:$_path_sep|$)//g) {
+    $out .= qq{set -q $name; and set -x $name $value;\n};
+    $out .= qq{set -q $name; or };
+  }
+  $out .= qq{set -x $name $value_without;\n};
+  $out;
 }
 
 sub _interpolate {
@@ -672,7 +694,7 @@ sub guess_shelltype {
   for ($shellbin) {
     return
         /csh$/                   ? 'csh'
-      : /fish/                   ? 'fish'
+      : /fish$/                  ? 'fish'
       : /command(?:\.com)?$/i    ? 'cmd'
       : /cmd(?:\.exe)?$/i        ? 'cmd'
       : /4nt(?:\.exe)?$/i        ? 'cmd'
