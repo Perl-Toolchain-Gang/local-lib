@@ -1,6 +1,6 @@
 Revision history for local::lib
 
-2.000_016 - 2015-09-02
+ - fix shell quoting for fish shell
  - work around issue where some cpanm versions wouldn't upgrade
    ExtUtils::MakeMaker in some cases it should have
  - added --quiet option to surpress directory creation message
