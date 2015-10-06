@@ -1,5 +1,6 @@
 Revision history for local::lib
 
+2.000017 - 2015-10-06
  - fix shell quoting for fish shell
  - work around issue where some cpanm versions wouldn't upgrade
    ExtUtils::MakeMaker in some cases it should have
