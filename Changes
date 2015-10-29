@@ -1,5 +1,6 @@
 Revision history for local::lib
 
+2.000018 - 2015-10-29
  - repair CPAN.pm bootstrapping broken by extraneous prerequisite.
  - ensure directories are created in correct order to avoid errors
 
