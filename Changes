@@ -1,5 +1,8 @@
 Revision history for local::lib
 
+ - repair CPAN.pm bootstrapping broken by extraneous prerequisite.
+ - ensure directories are created in correct order to avoid errors
+
 2.000017 - 2015-10-06
  - fix shell quoting for fish shell
  - work around issue where some cpanm versions wouldn't upgrade
