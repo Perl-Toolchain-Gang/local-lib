@@ -658,24 +658,31 @@ sub resolve_relative_path {
 sub ensure_dir_structure_for {
   my ($class, $path, $opts) = @_;
   $opts ||= {};
-  my %dirs;
-  my @dirs = grep ! -d, (
+  my @dirs;
+  foreach my $dir (
     $class->lib_paths_for($path),
     $class->install_base_bin_path($path),
-  );
-  @dirs{@dirs} = ();
-  for my $dir (@dirs) {
-    require File::Basename;
-    my $parent = File::Basename::dirname($dir);
-    unless (exists $dirs{$parent} || -d $parent) {
-      $dirs{$parent} = undef;
-      push @dirs, $parent
+  ) {
+    my $d = $dir;
+    while (!-d $d) {
+      push @dirs, $d;
+      require File::Basename;
+      $d = File::Basename::dirname($d);
     }
   }
+
   warn "Attempting to create directory ${path}\n"
     if !$opts->{quiet} && @dirs;
-  mkdir $_ or die "Unable to create $_: $!"
-    for reverse @dirs;
+
+  my %seen;
+  foreach my $dir (reverse @dirs) {
+    next
+      if $seen{$dir}++;
+
+    mkdir $dir
+      or -d $dir
+      or die "Unable to create $dir: $!"
+  }
   return;
 }
 
