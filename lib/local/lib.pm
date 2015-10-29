@@ -554,6 +554,10 @@ sub build_fish_env_declaration {
     return qq{set -e $name;\n};
   }
 
+  # fish has special handling for PATH, CDPATH, and MANPATH.  They are always
+  # treated as arrays, and joined with ; when storing the environment.  Other
+  # env vars can be arrays, but will be joined without a separator.  We only
+  # really care about PATH, but might as well make this routine more general.
   if ($name =~ /^(?:CD|MAN)?PATH$/) {
     $value =~ s/$_path_sep/ /g;
     my $silent = $name =~ /^(?:CD)?PATH$/ ? " ^"._devnull : '';
