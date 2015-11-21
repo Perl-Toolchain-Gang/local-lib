@@ -1,4 +1,4 @@
-package xt::util;
+package dist_util;
 use strict;
 use warnings;
 

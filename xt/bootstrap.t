@@ -10,7 +10,8 @@ use File::Basename qw(dirname);
 use local::lib ();
 use ExtUtils::MakeMaker;
 use Cwd qw(cwd);
-use xt::util;
+use lib 'xt/lib';
+use dist_util;
 
 sub check_version {
   my ($perl, $module) = @_;

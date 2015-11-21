@@ -25,7 +25,8 @@ use POSIX ();
 use Digest::SHA;
 use Digest::MD5;
 use Data::Dumper;
-use xt::util;
+use lib 'xt/lib';
+use dist_util;
 
 my $local_cpan = File::Temp::tempdir('local-lib-CPAN-XXXXX', TMPDIR => 1);
 note "building fake cpan ($local_cpan)";
