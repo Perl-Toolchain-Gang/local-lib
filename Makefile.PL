@@ -21,6 +21,7 @@ my %META = (
     } },
     develop   => {
       requires => {
+        'Module::Build' => '0.36',
         'Test::EOL'     => 0,
         'Test::NoTabs'  => 0,
         'Test::Pod'     => 0,
