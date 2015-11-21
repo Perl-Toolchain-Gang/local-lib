@@ -5,11 +5,12 @@ use Test::More 0.81_01;
 use IPC::Open3;
 use File::Temp;
 use File::Spec;
-use File::Path qw(mkpath);
+use File::Path qw(rmtree);
 use File::Basename qw(dirname);
 use local::lib ();
 use ExtUtils::MakeMaker;
 use Cwd qw(cwd);
+use xt::util;
 
 sub check_version {
   my ($perl, $module) = @_;
@@ -42,33 +43,14 @@ while (@ARGV) {
   }
 }
 
+my $dist_dir = make_dist_dir;
 my $cwd = cwd;
-my $tempdir = File::Temp::tempdir('local-lib-source-XXXXX', CLEANUP => 1, TMPDIR => 1);
-END { chdir $cwd }
-
-my @files = qw(
-  Makefile.PL
-  lib/local/lib.pm
-  inc/CPAN.pm
-  inc/CheckVersion.pm
-);
-for my $file (@files) {
-  my $dest = File::Spec->catfile($tempdir, $file);
-  mkpath(dirname($dest));
-  my $content = do {
-    local $/;
-    open my $fh, '<:raw', $file
-      or die "can't read $file $!";
-    <$fh>;
-  };
-  $content =~ s{.*do 'maint/Makefile.PL\.include'.*}{};
-  open my $fh, '>:raw', $dest
-    or die "can't write $dest $!";
-  print { $fh } $content;
-  close $fh;
+END {
+  chdir $cwd;
+  rmtree $dist_dir;
 }
 
-chdir $tempdir;
+chdir $dist_dir;
 
 @perl = $^X
   unless @perl;
@@ -108,7 +90,6 @@ for my $perl (@perl) {
   my $ll = File::Spec->catdir($home, 'local-lib');
 
   unlink 'MYMETA.yml';
-  unlink 'META.yml';
   unlink 'Makefile';
 
   open my $null_in, '<', File::Spec->devnull;
@@ -157,5 +138,3 @@ for my $perl (@perl) {
     }
   }
 }
-
-unlink 'Makefile';
