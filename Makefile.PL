@@ -137,8 +137,8 @@ if ($bootstrapping) {
     *init_PERL = sub {
       my $self = shift;
       $self->SUPER::init_PERL(@_);
-      $self->{PERL}     .= ' -I$(INSTALLPRIVLIB)';
-      $self->{FULLPERL} .= ' -I$(INSTALLPRIVLIB)';
+      $self->{PERL}     .= ' "-I$(INSTALLPRIVLIB)"';
+      $self->{FULLPERL} .= ' "-I$(INSTALLPRIVLIB)"';
     };
   }
 
