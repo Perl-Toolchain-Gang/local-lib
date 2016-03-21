@@ -57,6 +57,12 @@ for my $shell (
     test => '-c "exit 0"',
   },
   {
+    name => 'sh -u',
+    exe => 'sh',
+    opt => '-u',
+    test => '-c "exit 0"',
+  },
+  {
     name => 'dash',
     test => '-c "exit 0"',
   },
@@ -105,13 +111,14 @@ for my $shell (
   },
 ) {
   my $name = $shell->{name};
-  $shell->{shell} ||= $shell_path{$name};
-  $shell->{ext}   ||= $name;
+  my $exe = $shell->{exe} || $name;
+  $shell->{shell} ||= $shell_path{$exe};
+  $shell->{ext}   ||= $exe;
   $shell->{perl}  ||= qq{"$^X"};
   if (@ARGV) {
     next
       if !grep {$_ eq $name} @ARGV;
-    my $exec = $shell->{shell} ||= which($name);
+    my $exec = $shell->{shell} ||= which($exe);
     if (!$exec) {
       warn "unable to find executable for $name";
       next;

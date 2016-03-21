@@ -1,5 +1,7 @@
 Revision history for local::lib
 
+ - fix variable interpolation to work when used with sh -u
+
 2.000018 - 2015-10-29
  - repair CPAN.pm bootstrapping broken by extraneous prerequisite.
  - ensure directories are created in correct order to avoid errors

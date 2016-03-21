@@ -478,14 +478,14 @@ sub _build_env_string {
 
 sub build_bourne_env_declaration {
   my ($class, $name, $args) = @_;
-  my $value = $class->_interpolate($args, '${%s}', qr/["\\\$!`]/, '\\%s');
+  my $value = $class->_interpolate($args, '${%s:-}', qr/["\\\$!`]/, '\\%s');
 
   if (!defined $value) {
     return qq{unset $name;\n};
   }
 
-  $value =~ s/(^|\G|$_path_sep)\$\{$name\}$_path_sep/$1\${$name}\${$name+$_path_sep}/g;
-  $value =~ s/$_path_sep\$\{$name\}$/\${$name+$_path_sep}\${$name}/;
+  $value =~ s/(^|\G|$_path_sep)\$\{$name:-\}$_path_sep/$1\${$name}\${$name:+$_path_sep}/g;
+  $value =~ s/$_path_sep\$\{$name:-\}$/\${$name:+$_path_sep\${$name}}/;
 
   qq{${name}="$value"; export ${name};\n}
 }
