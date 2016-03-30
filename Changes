@@ -1,5 +1,6 @@
 Revision history for local::lib
 
+ - fix bootstrapping into directory with spaces
  - fix variable interpolation to work when used with sh -u
 
 2.000018 - 2015-10-29

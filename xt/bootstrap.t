@@ -63,7 +63,7 @@ my %modules = (
   'CPAN'                => '1.82', # sudo support + CPAN::HandleConfig
 );
 
-plan tests => @perl * (2+2*keys %modules);
+plan tests => @perl * 2 * (2+2*keys %modules);
 
 for my $perl (@perl) {
   local @INC = @INC;
@@ -76,7 +76,6 @@ for my $perl (@perl) {
   delete $ENV{PERL_LOCAL_LIB_ROOT};
   delete $ENV{PERL_MM_OPT};
   delete $ENV{PERL_MB_OPT};
-  local $ENV{HOME} = my $home = File::Temp::tempdir('local-lib-home-XXXXX', CLEANUP => 1, TMPDIR => 1);
 
   diag "testing bootstrap with $perl";
   my %old_versions;
@@ -88,54 +87,63 @@ for my $perl (@perl) {
     }
   }
 
-  my $ll = File::Spec->catdir($home, 'local-lib');
+  for my $home_tmpl ('local-lib-home-XXXXX', 'local-lib-home with space-XXXXX') {
+    delete $ENV{PERL5LIB};
+    delete $ENV{PERL_LOCAL_LIB_ROOT};
+    delete $ENV{PERL_MM_OPT};
+    delete $ENV{PERL_MB_OPT};
+    local $ENV{HOME} = my $home = File::Temp::tempdir($home_tmpl, CLEANUP => 1, TMPDIR => 1);
 
-  unlink 'MYMETA.yml';
-  unlink 'Makefile';
+    my $ll = File::Spec->catdir($home, 'local-lib');
+    note "local::lib dir is $ll";
 
-  open my $null_in, '<', File::Spec->devnull;
-  my $pid = open3 $null_in, my $out, undef, $perl, 'Makefile.PL', '--bootstrap='.$ll;
-  while (my $line = <$out>) {
-    note $line
-      if $verbose || $line =~ /^Running |^\s.* -- (?:NOT OK|OK|NA|TIMED OUT)$/;
-  }
-  waitpid $pid, 0;
+    unlink 'MYMETA.yml';
+    unlink 'Makefile';
 
-  is $?, 0, 'Makefile.PL ran successfully';
-
-  ok -e 'Makefile', 'Makefile created';
-
-  my $prereqs = {};
-  open my $fh, '<', 'Makefile'
-    or die "Unable to open Makefile: $!";
-
-  while (<$fh>) {
-    last if /MakeMaker post_initialize section/;
-    my ($p) = m{^[\#]\s+PREREQ_PM\s+=>\s+(.+)}
-      or next;
-
-    while ( $p =~ m/(?:\s)([\w\:]+)=>(?:q\[(.*?)\]|undef),?/g ) {
-      $prereqs->{$1} = $2;
+    open my $null_in, '<', File::Spec->devnull;
+    my $pid = open3 $null_in, my $out, undef, $perl, 'Makefile.PL', '--bootstrap='.$ll;
+    while (my $line = <$out>) {
+      note $line
+        if $verbose || $line =~ /^Running |^\s.* -- (?:NOT OK|OK|NA|TIMED OUT)$/;
     }
-  }
-  close $fh;
+    waitpid $pid, 0;
 
-  local::lib->setup_env_hash_for($ll);
+    is $?, 0, 'Makefile.PL ran successfully';
 
-  for my $module (sort keys %modules) {
-    my $version = check_version($perl, $module);
-    my $old_v = $old_versions{$module};
-    my $want_v = $modules{$module};
-    if (defined $old_v) {
-      is $prereqs->{$module}, ($old_v >= $want_v ? undef : $want_v),
-        "prereqs correct for $module";
-      cmp_ok $version, '>=', $want_v, "bootstrap upgraded to new enough $module"
-        or diag "PERL5LIB: $ENV{PERL5LIB}";
+    ok -e 'Makefile', 'Makefile created';
+
+    my $prereqs = {};
+    open my $fh, '<', 'Makefile'
+      or die "Unable to open Makefile: $!";
+
+    while (<$fh>) {
+      last if /MakeMaker post_initialize section/;
+      my ($p) = m{^[\#]\s+PREREQ_PM\s+=>\s+(.+)}
+        or next;
+
+      while ( $p =~ m/(?:\s)([\w\:]+)=>(?:q\[(.*?)\]|undef),?/g ) {
+        $prereqs->{$1} = $2;
+      }
     }
-    else {
-      ok !exists $prereqs->{$module},
-        "$module not listed as prereq";
-      is $version, undef, "bootstrap didn't install new module $module";
+    close $fh;
+
+    local::lib->setup_env_hash_for($ll);
+
+    for my $module (sort keys %modules) {
+      my $version = check_version($perl, $module);
+      my $old_v = $old_versions{$module};
+      my $want_v = $modules{$module};
+      if (defined $old_v) {
+        is $prereqs->{$module}, ($old_v >= $want_v ? undef : $want_v),
+          "prereqs correct for $module";
+        cmp_ok $version, '>=', $want_v, "bootstrap upgraded to new enough $module"
+          or diag "PERL5LIB: $ENV{PERL5LIB}";
+      }
+      else {
+        ok !exists $prereqs->{$module},
+          "$module not listed as prereq";
+        is $version, undef, "bootstrap didn't install new module $module";
+      }
     }
   }
 }
