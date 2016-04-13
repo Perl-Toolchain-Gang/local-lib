@@ -1421,7 +1421,7 @@ On Win32 systems, C<COMSPEC> is also examined.
 
 IRC:
 
-    Join #local-lib on irc.perl.org.
+    Join #toolchain on irc.perl.org.
 
 =head1 AUTHOR
 
