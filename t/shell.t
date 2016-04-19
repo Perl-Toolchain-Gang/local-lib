@@ -239,7 +239,7 @@ sub call_ll {
 
 sub call_shell {
   my ($info, $script) = @_;
-  $script .= "\n" . qq{$info->{perl} -Mt::lib::ENVDumper -e1\n};
+  $script .= "\n" . qq{$info->{perl} -It/lib -MENVDumper -e1\n};
 
   my ($fh, $file) = File::Temp::tempfile(
     'll-test-script-XXXXX',

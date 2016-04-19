@@ -1,4 +1,4 @@
-package inc::CheckVersion;
+package CheckVersion;
 use strict;
 use warnings;
 

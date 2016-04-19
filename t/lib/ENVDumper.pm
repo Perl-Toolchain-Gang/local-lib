@@ -1,4 +1,4 @@
-package t::lib::ENVDumper;
+package ENVDumper;
 use Data::Dumper;
 
 sub import {

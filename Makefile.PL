@@ -120,7 +120,7 @@ if ($ENV{PERL5_CPANM_IS_RUNNING}) {
 }
 for my $module (grep { $_ ne 'perl' } keys %$requires) {
   my $need_v = $requires->{$module} or next;
-  my $res = system($^X, '-Minc::CheckVersion', '-', $module, $need_v);
+  my $res = system($^X, '-Iinc', '-MCheckVersion', '-', $module, $need_v);
   $res >>= 8;
   if ($res == 0 || $res == 1) {
     $requires->{$module} = undef;
@@ -146,22 +146,22 @@ if ($bootstrapping) {
   local $ENV{PERL_MM_USE_DEFAULT} = 1;
 
   if (@modules || $disable_manpages) {
-    system($^X, '-Minc::CPAN=init_config');
+    system($^X, '-Iinc', '-MCPANBootstrapper=init_config');
   }
   if (@modules) {
-    system($^X, '-Minc::CPAN=install', '-', $_)
+    system($^X, '-Iinc', '-MCPANBootstrapper=install', '-', $_)
       for @modules;
   }
   if (grep { $_ eq 'CPAN' } @modules ) {
     system($^X, '-MCPAN', '-e', 'CPAN::Config->load;CPAN::Config->commit;');
   }
   if ($disable_manpages) {
-    system($^X, '-Minc::CPAN=disable_manpages');
+    system($^X, '-Iinc', '-MCPANBootstrapper=disable_manpages');
   }
 }
 
 if (!$ENV{PERL5_CPANM_IS_RUNNING}) {
-  my $status = system $^X, '-Minc::CPAN=check', '-',
+  my $status = system $^X, '-Iinc', '-MCPANBootstrapper=check', '-',
     $META{prereqs}{runtime}{requires}{CPAN};
   exit $status
     if $status;

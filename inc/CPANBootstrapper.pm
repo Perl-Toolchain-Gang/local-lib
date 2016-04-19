@@ -1,4 +1,4 @@
-package inc::CPAN;
+package CPANBootstrapper;
 use strict;
 use warnings;
 
