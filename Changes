@@ -2,6 +2,7 @@ Revision history for local::lib
 
  - fix bootstrapping into directory with spaces
  - fix variable interpolation to work when used with sh -u
+ - author test enhancements
 
 2.000018 - 2015-10-29
  - repair CPAN.pm bootstrapping broken by extraneous prerequisite.
