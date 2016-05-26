@@ -29,6 +29,15 @@ our $_ROOT = _WIN32 ? do {
 our $_PERL;
 
 sub _cwd {
+  if (my $cwd
+    = defined &Cwd::sys_cwd ? \&Cwd::sys_cwd
+    : defined &Cwd::cwd     ? \&Cwd::cwd
+    : undef
+  ) {
+    no warnings 'redefine';
+    *_cwd = $cwd;
+    goto &$cwd;
+  }
   my $drive = shift;
   return Win32::Cwd()
     if _WIN32 && defined &Win32::Cwd && !$drive;
