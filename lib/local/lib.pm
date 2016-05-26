@@ -119,8 +119,10 @@ sub _devnull {
 
 sub import {
   my ($class, @args) = @_;
-  push @args, @ARGV
-    if $0 eq '-';
+  if ($0 eq '-') {
+    push @args, @ARGV;
+    require Cwd;
+  }
 
   my @steps;
   my %opts;
