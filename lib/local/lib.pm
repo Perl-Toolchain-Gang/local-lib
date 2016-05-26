@@ -42,6 +42,9 @@ sub _cwd {
     elsif (-x $Config::Config{perlpath}) {
       $_PERL = $Config::Config{perlpath};
     }
+    elsif ($_PERL =~ $_DIR_SPLIT && -x $_PERL) {
+      $_PERL = _rel2abs($_PERL);
+    }
     else {
       ($_PERL) =
         map { /(.*)/ }
