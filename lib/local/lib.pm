@@ -2,7 +2,7 @@ package local::lib;
 use 5.006;
 use strict;
 use warnings;
-use Config;
+use Config ();
 
 our $VERSION = '2.000019';
 $VERSION = eval $VERSION;
@@ -14,6 +14,11 @@ BEGIN {
   *_USE_FSPEC = ($^O eq 'MacOS' || $^O eq 'VMS' || $INC{'File/Spec.pm'})
     ? sub(){1} : sub(){0};
 }
+my $_archname = $Config::Config{archname};
+my $_version = $Config::Config{version};
+my @_inc_version_list = reverse split / /, $Config::Config{inc_version_list};
+my $_path_sep = $Config::Config{path_sep};
+
 our $_DIR_JOIN = _WIN32 ? '\\' : '/';
 our $_DIR_SPLIT = (_WIN32 || $^O eq 'cygwin') ? qr{[\\/]}
                                               : qr{/};
@@ -29,15 +34,15 @@ sub _cwd {
     ($_PERL) = $^X =~ /(.+)/; # $^X is internal how could it be tainted?!
     if (_is_abs($_PERL)) {
     }
-    elsif (-x $Config{perlpath}) {
-      $_PERL = $Config{perlpath};
+    elsif (-x $Config::Config{perlpath}) {
+      $_PERL = $Config::Config{perlpath};
     }
     else {
       ($_PERL) =
         map { /(.*)/ }
         grep { -x $_ }
         map { join($_DIR_JOIN, $_, $_PERL) }
-        split /\Q$Config{path_sep}\E/, $ENV{PATH};
+        split /\Q$path_sep\E/, $ENV{PATH};
     }
   }
   local @ENV{qw(PATH IFS CDPATH ENV BASH_ENV)};
@@ -190,11 +195,6 @@ sub bins { $_[0]->{bins}   ||= [ \'PATH' ] }
 sub roots { $_[0]->{roots} ||= [ \'PERL_LOCAL_LIB_ROOT' ] }
 sub extra { $_[0]->{extra} ||= {} }
 sub quiet { $_[0]->{quiet} }
-
-my $_archname = $Config{archname};
-my $_version  = $Config{version};
-my @_inc_version_list = reverse split / /, $Config{inc_version_list};
-my $_path_sep = $Config{path_sep};
 
 sub _as_list {
   my $list = shift;
