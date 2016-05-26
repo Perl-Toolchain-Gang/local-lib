@@ -33,7 +33,10 @@ sub _cwd {
   return Win32::Cwd()
     if _WIN32 && defined &Win32::Cwd && !$drive;
   if (!$_PERL) {
-    ($_PERL) = $^X =~ /(.+)/; # $^X is internal how could it be tainted?!
+    # untaint and validate
+    ($_PERL, my $exe) = $^X =~ /((?:.*$_DIR_SPLIT)?(.+))/;
+    $_PERL = 'perl'
+      if $exe !~ /perl/;
     if (_is_abs($_PERL)) {
     }
     elsif (-x $Config::Config{perlpath}) {
