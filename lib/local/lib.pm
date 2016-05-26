@@ -49,6 +49,7 @@ sub _cwd {
       ($_PERL) =
         map { /(.*)/ }
         grep { -x $_ }
+        map { ($_, _WIN32 ? ("$_.exe") : ()) }
         map { join($_DIR_JOIN, $_, $_PERL) }
         split /\Q$path_sep\E/, $ENV{PATH};
     }
