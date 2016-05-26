@@ -30,6 +30,8 @@ our $_PERL;
 
 sub _cwd {
   my $drive = shift;
+  return Win32::Cwd()
+    if _WIN32 && defined &Win32::Cwd && !$drive;
   if (!$_PERL) {
     ($_PERL) = $^X =~ /(.+)/; # $^X is internal how could it be tainted?!
     if (_is_abs($_PERL)) {
