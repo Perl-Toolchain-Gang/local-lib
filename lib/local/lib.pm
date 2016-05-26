@@ -80,7 +80,7 @@ sub _rel2abs {
     if _is_abs($dir);
 
   $base = _WIN32 && $dir =~ s/^([A-Za-z]:)// ? _cwd("$1")
-        : $base                              ? $base
+        : $base                              ? _rel2abs($base)
                                              : _cwd;
   return _catdir($base, $dir);
 }
