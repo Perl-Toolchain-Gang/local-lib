@@ -1,7 +1,13 @@
 package local::lib;
 use 5.006;
-use strict;
-use warnings;
+BEGIN {
+  if ($ENV{RELEASE_TESTING}) {
+    require strict;
+    strict->import;
+    require warnings;
+    warnings->import;
+  }
+}
 use Config ();
 
 our $VERSION = '2.000019';
