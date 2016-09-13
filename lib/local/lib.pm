@@ -243,7 +243,7 @@ my @_lib_subdirs = (
   [$_version, $_archname],
   [$_version],
   [$_archname],
-  (@_inc_version_list ? \@_inc_version_list : ()),
+  (map [$_], @_inc_version_list)
   [],
 );
 
