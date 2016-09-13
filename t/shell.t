@@ -156,6 +156,9 @@ plan tests => @shells * (@vars * 2 + @strings * 2);
 my $sep = $Config{path_sep};
 
 my $root = File::Spec->rootdir;
+my $home = File::Temp::tempdir(CLEANUP => 1);
+$ENV{HOME} = $home;
+
 for my $shell (@shells) {
   my $ll = local::lib->normalize_path(File::Temp::tempdir(CLEANUP => 1));
   local $ENV{$_}
