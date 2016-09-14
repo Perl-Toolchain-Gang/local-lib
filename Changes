@@ -1,5 +1,13 @@
 Revision history for local::lib
 
+ - fix handling of inc_version_list
+ - don't load strict or warnings outside author mode
+ - load and use Cwd when we're printing and exiting
+ - use loaded Cwd/Win32::Cwd if it's available
+ - handle relative paths in current executable
+ - don't try to run current executable in embedded perl
+ - handle relative directories better
+
 2.000019 - 2016-04-19
  - fix bootstrapping into directory with spaces (PR#4)
  - fix variable interpolation to work when used with sh -u (RT#112711)
