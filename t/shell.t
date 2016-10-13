@@ -109,6 +109,16 @@ for my $shell (
     perl => qq{& '$^X'},
     skip => $^O ne 'MSWin32',
   },
+  {
+    name => 'powershell1',
+    exe => 'powershell.exe',
+    shell => which('powershell.exe'),
+    opt => '-NoProfile -Command "& { . $args[0]; Exit $LastExitCode }"',
+    test => q{-NoProfile -Command "If (-Not (Test-Path variable:PSVersionTable)) { If ((Get-ExecutionPolicy) -eq 'Unrestricted') { exit 0 } } exit 1"},
+    ext => 'ps1',
+    perl => qq{& '$^X'},
+    skip => $^O ne 'MSWin32',
+  },
 ) {
   my $name = $shell->{name};
   my $exe = $shell->{exe} || $name;
