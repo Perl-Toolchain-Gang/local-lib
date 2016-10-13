@@ -103,8 +103,8 @@ for my $shell (
   {
     name => 'powershell.exe',
     shell => which('powershell.exe'),
-    opt => '-NoProfile -ExecutionPolicy Unrestricted -File',
-    test => '-NoProfile -Command "exit 0"',
+    opt => '-Version 2 -NoProfile -ExecutionPolicy Unrestricted -Command "& { . $args[0]; Exit $LastExitCode }"',
+    test => '-Version 2 -NoProfile -ExecutionPolicy Unrestricted -Command "Exit 0"',
     ext => 'ps1',
     perl => qq{& '$^X'},
     skip => $^O ne 'MSWin32',
@@ -130,7 +130,7 @@ for my $shell (
   elsif ($shell->{test}) {
     no warnings 'exec';
     if (system "$shell->{shell} $shell->{test} > $nul 2> $nul") {
-      diag "$name seems broken, skipping";
+      note "$name is unusable, skipping";
       next;
     }
   }
