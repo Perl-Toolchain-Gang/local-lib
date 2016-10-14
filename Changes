@@ -7,6 +7,9 @@ Revision history for local::lib
  - handle relative paths in current executable
  - don't try to run current executable in embedded perl
  - handle relative directories better
+ - fix shell test for powershell 1 and group policy restricted environments
+ - avoid user init files in shell test
+ - use safer format to check environment in shell test
 
 2.000019 - 2016-04-19
  - fix bootstrapping into directory with spaces (PR#4)
