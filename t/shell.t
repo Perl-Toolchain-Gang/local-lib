@@ -21,16 +21,16 @@ sub which {
 }
 
 BEGIN {
-    *quote_literal =
-      $^O ne 'MSWin32'
-        ? sub { $_[0] }
-        : sub {
-          my ($text) = @_;
-          $text =~ s{(\\*)(?="|\z)}{$1$1}g;
-          $text =~ s{"}{\\"}g;
-          $text = qq{"$text"};
-          return $text;
-        };
+  *quote_literal =
+    $^O ne 'MSWin32'
+      ? sub { $_[0] }
+      : sub {
+        my ($text) = @_;
+        $text =~ s{(\\*)(?="|\z)}{$1$1}g;
+        $text =~ s{"}{\\"}g;
+        $text = qq{"$text"};
+        return $text;
+      };
 }
 
 my %shell_path;
@@ -49,6 +49,7 @@ my %shell_path;
 
 my @extra_lib = ('-I' . dirname(dirname($INC{'local/lib.pm'})));
 my $nul = File::Spec->devnull;
+my $perl = local::lib::_perl();
 
 my @shells;
 for my $shell (
@@ -97,7 +98,7 @@ for my $shell (
     opt => '/Q /D /C',
     test => '/Q /D /C "exit 0"',
     ext => 'bat',
-    perl => qq{@"$^X"},
+    perl => qq{@"$perl"},
     skip => $^O ne 'MSWin32',
   },
   {
@@ -106,7 +107,7 @@ for my $shell (
     opt => '-Version 2 -NoProfile -ExecutionPolicy Unrestricted -Command "& { . $args[0]; Exit $LastExitCode }"',
     test => q{-Version 2 -NoProfile -ExecutionPolicy Unrestricted -Command "If ((Get-ExecutionPolicy) -eq 'Unrestricted') { Exit 0 } Exit 1"},
     ext => 'ps1',
-    perl => qq{& '$^X'},
+    perl => qq{& '$perl'},
     skip => $^O ne 'MSWin32',
   },
   {
@@ -116,7 +117,7 @@ for my $shell (
     opt => '-NoProfile -Command "& { . $args[0]; Exit $LastExitCode }"',
     test => q{-NoProfile -Command "If (-Not (Test-Path variable:PSVersionTable)) { If ((Get-ExecutionPolicy) -eq 'Unrestricted') { exit 0 } } exit 1"},
     ext => 'ps1',
-    perl => qq{& '$^X'},
+    perl => qq{& '$perl'},
     skip => $^O ne 'MSWin32',
   },
 ) {
@@ -124,7 +125,7 @@ for my $shell (
   my $exe = $shell->{exe} || $name;
   $shell->{shell} ||= $shell_path{$exe};
   $shell->{ext}   ||= $exe;
-  $shell->{perl}  ||= qq{"$^X"};
+  $shell->{perl}  ||= qq{"$perl"};
   if (@ARGV) {
     next
       if !grep {$_ eq $name} @ARGV;
@@ -242,7 +243,7 @@ sub call_ll {
   open my $in, '<', File::Spec->devnull;
   open my $err, '>', File::Spec->devnull;
   open3 $in, my $out, $err,
-    $^X, @extra_lib, '-Mlocal::lib', '-', '--no-create',
+    $perl, @extra_lib, '-Mlocal::lib', '-', '--no-create',
     map { quote_literal($_) } @options
     or die "blah";
   my $script = do { local $/; <$out> };

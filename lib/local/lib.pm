@@ -34,19 +34,7 @@ our $_ROOT = _WIN32 ? do {
 } : qr{^/};
 our $_PERL;
 
-sub _cwd {
-  if (my $cwd
-    = defined &Cwd::sys_cwd ? \&Cwd::sys_cwd
-    : defined &Cwd::cwd     ? \&Cwd::cwd
-    : undef
-  ) {
-    no warnings 'redefine';
-    *_cwd = $cwd;
-    goto &$cwd;
-  }
-  my $drive = shift;
-  return Win32::Cwd()
-    if _WIN32 && defined &Win32::Cwd && !$drive;
+sub _perl {
   if (!$_PERL) {
     # untaint and validate
     ($_PERL, my $exe) = $^X =~ /((?:.*$_DIR_SPLIT)?(.+))/;
@@ -69,10 +57,27 @@ sub _cwd {
         split /\Q$path_sep\E/, $ENV{PATH};
     }
   }
+  $_PERL;
+}
+
+sub _cwd {
+  if (my $cwd
+    = defined &Cwd::sys_cwd ? \&Cwd::sys_cwd
+    : defined &Cwd::cwd     ? \&Cwd::cwd
+    : undef
+  ) {
+    no warnings 'redefine';
+    *_cwd = $cwd;
+    goto &$cwd;
+  }
+  my $drive = shift;
+  return Win32::Cwd()
+    if _WIN32 && defined &Win32::Cwd && !$drive;
   local @ENV{qw(PATH IFS CDPATH ENV BASH_ENV)};
   my $cmd = $drive ? "eval { Cwd::getdcwd(q($drive)) }"
                    : 'getcwd';
-  my $cwd = `"$_PERL" -MCwd -le "print $cmd"`;
+  my $perl = _perl;
+  my $cwd = `"$perl" -MCwd -le "print $cmd"`;
   chomp $cwd;
   if (!length $cwd && $drive) {
     $cwd = $drive;
