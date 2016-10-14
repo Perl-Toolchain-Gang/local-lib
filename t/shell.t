@@ -8,6 +8,8 @@ use File::Path;
 use Config;
 use local::lib ();
 use IPC::Open3 qw(open3);
+use lib 't/lib';
+use ENVDumper qw(undump);
 
 my @ext = $^O eq 'MSWin32' ? (split /\Q$Config{path_sep}/, $ENV{PATHEXT}) : ();
 sub which {
@@ -253,7 +255,7 @@ sub call_ll {
 
 sub call_shell {
   my ($info, $script) = @_;
-  $script .= "\n" . qq{$info->{perl} -It/lib -MENVDumper -e1\n};
+  $script .= "\n" . qq{$info->{perl} -It/lib -MENVDumper=--dump -e1\n};
 
   my ($fh, $file) = File::Temp::tempfile(
     'll-test-script-XXXXX',
@@ -273,6 +275,5 @@ sub call_shell {
     diag "failed with code: $?";
     return {};
   }
-  my $env = eval $output or die "bad output: $@";
-  $env;
+  undump $output;
 }
