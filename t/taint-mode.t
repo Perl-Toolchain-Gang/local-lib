@@ -34,6 +34,7 @@ my ($fh, $filename) = tempfile(
   DIR => Cwd::abs_path('t/temp'),
   UNLINK => 1,
 );
+binmode $fh;
 
 print $fh <<"EOM";
 #!/usr/bin/perl -T
