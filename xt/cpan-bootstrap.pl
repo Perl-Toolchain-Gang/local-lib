@@ -16,6 +16,16 @@ require ExtUtils::MakeMaker;
   };
 }
 
+my %block_load = map { (my $f = "$_.pm") =~ s{::}{/}g; $f => 1 } qw(
+  CPAN::Config
+  File::HomeDir
+);
+unshift @INC, sub {
+  die "Can't locate $_[1] in \@INC (\@INC contains: @INC).\n"
+    if $block_load{$_[1]};
+  ();
+};
+
 require CPAN;
 my %config = %{ $CPAN::Config } = (
   urllist      => ["$url"],
@@ -29,6 +39,11 @@ my %config = %{ $CPAN::Config } = (
 
 CPAN->import;
 *CPAN::Distribution::check_integrity = sub { 1 };
+*CPAN::HandleConfig::home = sub { $ENV{HOME} };
+*CPAN::HandleConfig::cpan_config_dir_candidates = sub { "$ENV{HOME}/.cpan" };
+*CPAN::HandleConfig::cpan_home_dir_candidates = sub { "$ENV{HOME}/.cpan" };
+*CPAN::HandleConfig::cpan_data_home = sub { "$ENV{HOME}/.cpan" };
+*CPAN::HandleConfig::cpan_home = sub { "$ENV{HOME}/.cpan" };
 CPAN::Config->load;
 %{ $CPAN::Config } = (
   %config,

@@ -139,6 +139,9 @@ my $out = do {
   my %env = $ll_core->build_environment_vars;
   $env{LOCAL_LIB_CPAN_TEST} = $ll_root;
   $env{HOME}                = $home;
+  $env{HOMEDRIVE}           = undef;
+  $env{HOMEPATH}            = undef;
+  $env{USERPROFILE}         = undef;
   $env{CPAN_MIRROR}         = $cpan_url;
   $env{PERL_MM_USE_DEFAULT} = 1;
 
