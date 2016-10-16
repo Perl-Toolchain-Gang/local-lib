@@ -21,6 +21,7 @@ mkpath($carpdir);
 {
     my $heavy = File::Spec->catfile($carpdir, 'Heavy.pm');
     open my $fh, '>', $heavy or die "failed to open $heavy for writing: $!";
+    binmode $fh;
     print $fh "package Carp::Heavy;\nour \$VERSION = '500.0';\n";
     close $fh;
 }
@@ -28,6 +29,7 @@ mkpath($carpdir);
     # another module, simply to ensure that we got the libdir path correct
     my $foo = File::Spec->catfile($carpdir, 'Foo.pm');
     open my $fh, '>', $foo or die "failed to open foo heavy for writing: $!";
+    binmode $fh;
     print $fh "package Carp::Foo;\nour \$VERSION = '200.0';\n";
     close $fh;
 }

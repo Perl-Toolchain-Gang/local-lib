@@ -28,6 +28,7 @@ my @dirs = (
 my %dist_types = (
   EUMM => sub {
     open my $fh, '>', 'Makefile.PL' or die "can't create Makefile.PL: $!";
+    binmode $fh;
     print $fh 'use ExtUtils::MakeMaker; WriteMakefile( NAME => "EUMM" );';
     close $fh;
     system($^X, 'Makefile.PL') && die "Makefile.PL failed";
@@ -35,6 +36,7 @@ my %dist_types = (
   },
   MB => sub {
     open my $fh, '>', 'Build.PL' or die "can't create Build.PL: $!";
+    binmode $fh;
     print $fh <<END_BUILD;
 use Module::Build;
 Module::Build->new(
@@ -73,6 +75,7 @@ for my $dir_base (@dirs) {
     chdir $dist_dir;
     mkdir 'lib';
     open my $fh, '>', "lib/$dist_type.pm";
+    binmode $fh;
     print $fh '1;';
     close $fh;
 

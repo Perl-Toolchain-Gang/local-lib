@@ -73,6 +73,7 @@ ok !grep($_ eq $dir2_lib, @libs),
     DIR => Cwd::abs_path('t/temp'),
     UNLINK => 1,
   );
+  binmode $fh;
 
   print $fh <<'EOM';
 #!/usr/bin/perl -T
@@ -86,6 +87,7 @@ EOM
     or die "can't open null output: $!";
   my $out;
   my $pid = open3($in, $out, $err, $^X, map("-I$_", @INC_CLEAN), '-T', $filename);
+  binmode $out;
   my $cwd = do { local $/; <$out> };
   $cwd =~ s/[\r\n]*\z//;
   $cwd = File::Spec->canonpath($cwd);

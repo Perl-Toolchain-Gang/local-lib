@@ -263,6 +263,7 @@ sub call_shell {
     SUFFIX   => '.'.$info->{ext},
     UNLINK   => 1,
   );
+  binmode $fh;
   print { $fh } $script;
   close $fh;
 
