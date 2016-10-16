@@ -1,10 +1,10 @@
 use strict;
 use warnings;
+use lib 't/lib';
 use Test::More;
 use File::Spec;
 use File::Basename qw(dirname);
-use File::Temp ();
-use File::Path;
+use TempDir;
 use Config;
 use local::lib ();
 use IPC::Open3 qw(open3);
@@ -169,11 +169,11 @@ plan tests => @shells * (@vars * 2 + @strings * 2);
 my $sep = $Config{path_sep};
 
 my $root = File::Spec->rootdir;
-my $home = File::Temp::tempdir(CLEANUP => 1);
+my $home = mk_temp_dir;
 $ENV{HOME} = $home;
 
 for my $shell (@shells) {
-  my $ll = local::lib->normalize_path(File::Temp::tempdir(CLEANUP => 1));
+  my $ll = local::lib->normalize_path(mk_temp_dir);
   local $ENV{$_}
     for @vars;
   delete $ENV{$_}
@@ -257,12 +257,7 @@ sub call_shell {
   my ($info, $script) = @_;
   $script .= "\n" . qq{$info->{perl} -It/lib -MENVDumper=--dump -e1\n};
 
-  my ($fh, $file) = File::Temp::tempfile(
-    'll-test-script-XXXXX',
-    DIR      => File::Spec->tmpdir,
-    SUFFIX   => '.'.$info->{ext},
-    UNLINK   => 1,
-  );
+  my ($fh, $file) = mk_temp_file({SUFFIX => '.'.$info->{ext}});
   binmode $fh;
   print { $fh } $script;
   close $fh;

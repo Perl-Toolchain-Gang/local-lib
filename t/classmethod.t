@@ -1,7 +1,8 @@
 use strict;
 use warnings;
 use Test::More tests => 7;
-use File::Temp;
+use lib 't/lib';
+use TempDir;
 use File::Spec::Functions qw(catdir);
 
 use local::lib ();
@@ -18,7 +19,7 @@ my $c = 'local::lib';
 {
     my $warn = '';
     local $SIG{__WARN__} = sub { $warn .= $_[0] };
-    my $dir = File::Temp::tempdir();
+    my $dir = mk_temp_dir;
     my $ll_dir = catdir($dir, 'splat');
     $c->ensure_dir_structure_for($ll_dir);
     ok -d $ll_dir, 'base dir created';

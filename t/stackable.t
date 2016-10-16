@@ -11,8 +11,8 @@ use TempDir;
 
 delete $ENV{PERL_LOCAL_LIB_ROOT};
 
-my $dir1 = mk_temp_dir('test_local_lib-XXXXX');
-my $dir2 = mk_temp_dir('test_local_lib-XXXXX');
+my $dir1 = mk_temp_ll_dir;
+my $dir2 = mk_temp_ll_dir;
 
 my ($dir1_arch, $dir2_arch) =
   map { File::Spec->catfile($_, 'lib', 'perl5', $Config{archname}) }

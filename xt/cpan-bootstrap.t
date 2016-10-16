@@ -19,16 +19,16 @@ BEGIN {
   plan tests => 2;
 }
 
+use lib 't/lib', 'xt/lib';
 use File::Spec;
-use File::Temp;
+use TempDir;
 use POSIX ();
 use Digest::SHA;
 use Digest::MD5;
 use Data::Dumper;
-use lib 'xt/lib';
 use dist_util;
 
-my $local_cpan = File::Temp::tempdir('local-lib-CPAN-XXXXX', TMPDIR => 1);
+my $local_cpan = mk_temp_dir('CPAN');
 note "building fake cpan ($local_cpan)";
 mkdir "$local_cpan/authors";
 mkdir "$local_cpan/authors/id";
@@ -44,7 +44,7 @@ for my $module (qw(ExtUtils::MakeMaker ExtUtils::Install Module::Build CPAN)) {
   my ($real_mod) = grep -e, map { "$_/$file_name" } @{$ll_core->inc};
   next
     unless $real_mod;
-  my $dist = File::Temp->newdir("$dist_name-fake-XXXXXX");
+  my $dist = mk_temp_dir("$dist_name-fake");
   writefile "$dist/Makefile.PL", <<"END_MAKEFILEPL";
 use strict;
 use warnings;
@@ -123,7 +123,7 @@ sub data { {} }
 1;
 END_MODLIST
 
-my $home = File::Temp::tempdir('local-lib-HOME-XXXXX', TMPDIR => 1);
+my $home = mk_temp_dir('HOME');
 my $ll_root = File::Spec->catdir($home, 'perl5');
 
 my $cpan_url = do {

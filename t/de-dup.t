@@ -3,9 +3,8 @@ use warnings;
 use Test::More tests => 2;
 use lib 't/lib';
 use TempDir;
-use Cwd;
 
-my $dir = mk_temp_dir('test_local_lib-XXXXX');
+my $dir = mk_temp_ll_dir;
 
 use local::lib ();
 

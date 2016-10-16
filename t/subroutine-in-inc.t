@@ -7,7 +7,7 @@ use lib 't/lib';
 use TempDir;
 use local::lib ();
 
-my $dir = mk_temp_dir('sub-in-INC-XXXXX');
+my $dir = mk_temp_ll_dir;
 
 my $base = scalar grep { ref eq 'CODE' } @INC;
 my $sub = sub { () };

@@ -5,7 +5,7 @@ use warnings;
 use File::Copy qw(copy);
 use File::Find ();
 use File::Spec ();
-use File::Temp ();
+use TempDir;
 use IPC::Open3;
 use File::Basename qw(dirname basename fileparse);
 use Cwd qw(cwd);
@@ -48,7 +48,7 @@ sub cap_system {
 }
 
 sub make_dist_dir {
-  my $dist_dir = shift || File::Temp::tempdir('local-lib-dist-XXXXX', TMPDIR => 1);
+  my $dist_dir = shift || mk_temp_dir;
   copy 'Makefile.PL', "$dist_dir/Makefile.PL";
   { open my $fh, '>', "$dist_dir/META.yml"; }
   File::Find::find({ no_chdir => 1, wanted => sub {
@@ -87,12 +87,10 @@ sub tar {
   my $parent = dirname($dir);
   my $tar = shift || do {
     local $^W;
-    (File::Temp::tempdir(
-        "$basename-XXXXX",
-        SUFFIX => '.tar.gz',
-        TMPDIR => 1,
-        OPEN => 0,
-    ))[1];
+    (mk_temp_file($basename, {
+      SUFFIX => '.tar.gz',
+      OPEN => 0,
+    }))[1];
   };
   my $cwd = cwd;
   chdir $parent;

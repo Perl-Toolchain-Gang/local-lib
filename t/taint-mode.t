@@ -8,7 +8,8 @@ use strict;
 use warnings;
 use Cwd; # load before anything else to work around ActiveState bug
 use Test::More tests => 4;
-use File::Temp 'tempfile';
+use lib 't/lib';
+use TempDir;
 use File::Basename qw(basename dirname);
 use File::Spec;
 use IPC::Open3;
@@ -20,23 +21,18 @@ my @INC_CLEAN = @INC;
 
 my $perl = local::lib::_perl;
 
-my $dir1 = mk_temp_dir('used_in_taint-XXXXX');
-my $dir2 = mk_temp_dir('not_used_in_taint-XXXXX');
+my $dir1 = mk_temp_ll_dir('used_in_taint');
+my $dir2 = mk_temp_ll_dir('not_used_in_taint');
 
 # Set up local::lib environment using our temp dir
 require local::lib;
 local::lib->import($dir1);
 local::lib->import($dir2);
 
-mkdir 't/temp';
 {
   # Create a script that has taint mode turned on, and tries to use a
   # local lib to the same temp dir.
-  my ($fh, $filename) = tempfile(
-    'test_local_lib-XXXXX',
-    DIR => Cwd::abs_path('t/temp'),
-    UNLINK => 1,
-  );
+  my ($fh, $filename) = mk_temp_file;
   binmode $fh;
 
   print $fh <<"EOM";
@@ -69,11 +65,7 @@ EOM
 }
 
 {
-  my ($fh, $filename) = tempfile(
-    'test_local_lib-XXXXX',
-    DIR => Cwd::abs_path('t/temp'),
-    UNLINK => 1,
-  );
+  my ($fh, $filename) = mk_temp_file;
   binmode $fh;
 
   print $fh <<'EOM';

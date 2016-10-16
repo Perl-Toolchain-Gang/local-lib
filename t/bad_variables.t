@@ -1,7 +1,6 @@
 use strict;
 use warnings;
 use Test::More tests => 6;
-use File::Temp 'tempdir';
 use Config;
 use local::lib ();
 
@@ -9,9 +8,9 @@ use lib 't/lib'; use TempDir;
 
 delete $ENV{PERL_LOCAL_LIB_ROOT};
 
-my $dir1 = mk_temp_dir('test_local_lib-XXXXX');
-my $dir2 = mk_temp_dir('test_local_lib-XXXXX');
-my $dir3 = mk_temp_dir('test_local_lib-XXXXX');
+my $dir1 = mk_temp_ll_dir;
+my $dir2 = mk_temp_ll_dir;
+my $dir3 = mk_temp_ll_dir;
 
 ok(!(grep { $dir1 eq $_ } @INC), 'new dir is not already in @INC');
 ok(!(grep { $dir1 eq $_ } split /\Q$Config{path_sep}\E/, ($ENV{PERL5LIB}||'')), 'new dir is not already in PERL5LIB');
@@ -34,4 +33,3 @@ ok((!grep { $_ eq $dir3 } local::lib->active_paths), 'junk dir added not include
 
 ok((grep { /\Q$dir1\E/ } @INC), 'new dir has been added to @INC');
 ok((grep { /\Q$dir1\E/ } split /\Q$Config{path_sep}\E/, $ENV{PERL5LIB}), 'new dir has been added to PERL5LIB');
-

@@ -7,7 +7,8 @@ use File::Path qw(mkpath);
 use Cwd;
 use Config;
 
-use lib 't/lib'; use TempDir;
+use lib 't/lib';
+use TempDir;
 
 use local::lib ();
 
@@ -64,14 +65,14 @@ for my $dir_base (@dirs) {
       grep /^MAKE/, keys %ENV
     };
     local $ENV{PERL5LIB} = $ENV{PERL5LIB};
-    my $temp = mk_temp_dir("install-$dist_type-XXXXX");
+    my $temp = mk_temp_dir("install-$dist_type");
     my $ll_dir = "$dist_type-$dir_base";
     my $ll = "$temp/$ll_dir";
     mkpath(File::Spec->canonpath($ll));
 
     local::lib->import($ll, '--quiet');
 
-    my $dist_dir = mk_temp_dir("source-$dist_type-XXXXX");
+    my $dist_dir = mk_temp_dir("source-$dist_type");
     chdir $dist_dir;
     mkdir 'lib';
     open my $fh, '>', "lib/$dist_type.pm";
