@@ -31,7 +31,7 @@ my %dist_types = (
     binmode $fh;
     print $fh 'use ExtUtils::MakeMaker; WriteMakefile( NAME => "EUMM" );';
     close $fh;
-    system($^X, 'Makefile.PL') && die "Makefile.PL failed";
+    system(local::lib::_perl, 'Makefile.PL') && die "Makefile.PL failed";
     system($Config{make}, 'install') && die "$Config{make} install failed";
   },
   MB => sub {
@@ -46,8 +46,8 @@ Module::Build->new(
 )->create_build_script;
 END_BUILD
     close $fh;
-    system($^X, 'Build.PL') && die "Build.PL failed";
-    system($^X, 'Build', 'install') && die "Build install failed";
+    system(local::lib::_perl, 'Build.PL') && die "Build.PL failed";
+    system(local::lib::_perl, 'Build', 'install') && die "Build install failed";
   },
 );
 

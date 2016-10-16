@@ -12,6 +12,7 @@ use Cwd qw(cwd);
 use File::Path qw(mkpath rmtree);
 use Config;
 use IO::File;
+use local::lib ();
 
 use Exporter; *import = \&Exporter::import;
 our @EXPORT = qw(make_dist make_dist_dir cap_system tar writefile);
@@ -70,7 +71,7 @@ sub make_dist {
   my $dist_dir = make_dist_dir();
   my $cwd = cwd;
   chdir $dist_dir;
-  cap_system $^X, 'Makefile.PL';
+  cap_system local::lib::_perl, 'Makefile.PL';
   cap_system $Config{make}, 'manifest';
   cap_system $Config{make}, 'distdir', "DISTVNAME=$distvname";
   tar($distvname, $dist);

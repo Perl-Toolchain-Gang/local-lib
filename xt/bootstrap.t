@@ -53,7 +53,7 @@ END {
 
 chdir $dist_dir;
 
-@perl = $^X
+@perl = local::lib::_perl
   unless @perl;
 
 my %modules = (

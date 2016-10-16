@@ -18,6 +18,8 @@ use lib 't/lib'; use TempDir;
 
 my @INC_CLEAN = @INC;
 
+my $perl = local::lib::_perl;
+
 my $dir1 = mk_temp_dir('used_in_taint-XXXXX');
 my $dir2 = mk_temp_dir('not_used_in_taint-XXXXX');
 
@@ -47,7 +49,7 @@ EOM
 
   open my $in, '<', File::Spec->devnull
     or die "can't open null input: $!";
-  my $pid = open3($in, my $out, undef, $^X, map("-I$_", @INC_CLEAN), '-T', $filename);
+  my $pid = open3($in, my $out, undef, $perl, map("-I$_", @INC_CLEAN), '-T', $filename);
   binmode $out;
   my @libs = <$out>;
   s/[\r\n]*\z// for @libs;
@@ -67,12 +69,6 @@ EOM
 }
 
 {
-  my $perl_file = basename($^X);
-  if (!File::Spec->file_name_is_absolute($^X)) {
-    my $perl_dir = dirname($^X);
-    $ENV{PATH} = join($Config{path_sep}, $ENV{PATH}, $perl_dir);
-  }
-
   my ($fh, $filename) = tempfile(
     'test_local_lib-XXXXX',
     DIR => Cwd::abs_path('t/temp'),
@@ -93,7 +89,7 @@ EOM
   open my $err, '>', File::Spec->devnull
     or die "can't open null output: $!";
   my $out;
-  my $pid = open3($in, $out, $err, $^X, map("-I$_", @INC_CLEAN), '-T', $filename);
+  my $pid = open3($in, $out, $err, $perl, map("-I$_", @INC_CLEAN), '-T', $filename);
   binmode $out;
   my $cwd = do { local $/; <$out> };
   $cwd =~ s/[\r\n]*\z//;

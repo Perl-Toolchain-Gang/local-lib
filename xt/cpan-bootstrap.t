@@ -148,7 +148,7 @@ my $out = do {
     for grep { !defined $env{$_} } keys %env;
 
   note "running CPAN.pm bootstrap";
-  cap_system $^X, "xt/cpan-bootstrap.pl";
+  cap_system local::lib::_perl, "xt/cpan-bootstrap.pl";
 };
 
 $out =~ /^#+\s*ENVIRONMENT\s*#+\s*\n(.*?)\n#+\s*END ENVIRONMENT\s*#+\s*\n/ms;
