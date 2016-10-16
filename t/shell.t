@@ -106,8 +106,8 @@ for my $shell (
   {
     name => 'powershell.exe',
     shell => which('powershell.exe'),
-    opt => '-Version 2 -NoProfile -ExecutionPolicy Unrestricted -Command "& { . $args[0]; Exit $LastExitCode }"',
-    test => q{-Version 2 -NoProfile -ExecutionPolicy Unrestricted -Command "If ((Get-ExecutionPolicy) -eq 'Unrestricted') { Exit 0 } Exit 1"},
+    opt => '-Version 2 -NoProfile -ExecutionPolicy Bypass -Command "& { . $args[0]; Exit $LastExitCode }"',
+    test => q{-Version 2 -NoProfile -ExecutionPolicy Bypass -Command "If ((Get-ExecutionPolicy) -eq 'Unrestricted') { Exit 0 } Exit 1"},
     ext => 'ps1',
     perl => qq{& '$perl'},
     skip => $^O ne 'MSWin32',
