@@ -273,6 +273,7 @@ sub call_shell {
   if ($?) {
     diag "script:\n$script";
     diag "running:\n$cmd";
+    diag "output:\n$output";
     diag "failed with code: $?";
     return {};
   }
