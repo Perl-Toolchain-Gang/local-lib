@@ -1,5 +1,6 @@
 Revision history for local::lib
 
+2.000_020 - 2016-10-18
  - fix handling of inc_version_list
  - don't load strict or warnings outside author mode
  - load and use Cwd when we're printing and exiting
