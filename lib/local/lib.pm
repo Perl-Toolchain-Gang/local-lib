@@ -54,7 +54,7 @@ sub _perl {
         grep { -x $_ }
         map { ($_, _WIN32 ? ("$_.exe") : ()) }
         map { join($_DIR_JOIN, $_, $_PERL) }
-        split /\Q$path_sep\E/, $ENV{PATH};
+        split /\Q$_path_sep\E/, $ENV{PATH};
     }
   }
   $_PERL;
