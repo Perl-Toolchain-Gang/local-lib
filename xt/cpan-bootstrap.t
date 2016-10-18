@@ -142,6 +142,10 @@ my $out = do {
   $env{HOMEDRIVE}           = undef;
   $env{HOMEPATH}            = undef;
   $env{USERPROFILE}         = undef;
+  $env{PREFIX}              = undef;
+  $env{INSTALL_BASE}        = undef;
+  $env{MAKEFLAGS}           = undef;
+  $env{PASTHRU}             = undef;
   $env{CPAN_MIRROR}         = $cpan_url;
   $env{PERL_MM_USE_DEFAULT} = 1;
 
