@@ -723,7 +723,7 @@ sub ensure_dir_structure_for {
 
 sub guess_shelltype {
   my $shellbin
-    = defined $ENV{SHELL}
+    = defined $ENV{SHELL} && length $ENV{SHELL}
       ? ($ENV{SHELL} =~ /([\w.]+)$/)[-1]
     : ( $^O eq 'MSWin32' && exists $ENV{'!EXITCODE'} )
       ? 'bash'
