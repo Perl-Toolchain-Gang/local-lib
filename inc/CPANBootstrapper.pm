@@ -128,7 +128,12 @@ sub cmd_install {
   # Build.PL anymore, but continue to prefer EUMM as a precaution.
   $CPAN::Config->{prefer_installer} = "EUMM";
 
-  force('install', @modules);
+  if (defined &notest) {
+    notest('install', @modules);
+  }
+  else {
+    force('install', @modules);
+  }
 }
 
 sub cmd_disable_manpages {
