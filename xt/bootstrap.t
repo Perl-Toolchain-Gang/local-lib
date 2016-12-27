@@ -103,7 +103,8 @@ for my $perl (@perl) {
     unlink 'Makefile';
 
     open my $null_in, '<', File::Spec->devnull;
-    my $pid = open3 $null_in, my $out, undef, $perl, 'Makefile.PL', '--bootstrap='.$ll;
+    my $pid = open3 $null_in, my $out, undef,
+      $perl, 'Makefile.PL', '--bootstrap='.$ll, '--no-manpages';
     while (my $line = <$out>) {
       note $line
         if $verbose || $line =~ /^Running |^\s.* -- (?:NOT OK|OK|NA|TIMED OUT)$/;
