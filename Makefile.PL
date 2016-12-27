@@ -94,16 +94,16 @@ dashes with normal minus signs.
 DEATH
 }
 
-my $bootstrapping;
 my $disable_manpages;
+if(my ($x) = grep { /^--no-manpages$/ } @ARGV) {
+  $disable_manpages = 1;
+  @ARGV = grep { !/^--no-manpages/ } @ARGV;
+}
+
+my $bootstrapping;
 if (my ($x) = grep { /^--bootstrap(?:=.*)?$/ } @ARGV) {
   @ARGV = grep { !/^--bootstrap(?:=.*)?$/ } @ARGV;
   my ($path) = $x =~ /^--bootstrap(?:=(.*))?$/;
-  if(my ($x) = grep { /^--no-manpages$/ } @ARGV) {
-    $disable_manpages = 1;
-    @ARGV = grep { !/^--no-manpages/ } @ARGV;
-  }
-
   {
     local @INC = @INC;
     unshift(@INC, 'lib');
@@ -125,6 +125,13 @@ for my $module (grep { $_ ne 'perl' } keys %$requires) {
   if ($res == 0 || $res == 1) {
     $requires->{$module} = undef;
   }
+}
+
+if ($disable_manpages) {
+  $ENV{PERL_MM_OPT} = ($ENV{PERL_MM_OPT}||'') . ' INSTALLMAN1DIR=none INSTALLMAN3DIR=none';
+  $ENV{PERL_MB_OPT} = ($ENV{PERL_MB_OPT}||'') . ' --install_path libdoc="" --install_path bindoc=""';
+  $MM_ARGS{INSTALLMAN1DIR} = 'none';
+  $MM_ARGS{INSTALLMAN3DIR} = 'none';
 }
 
 if ($bootstrapping) {
