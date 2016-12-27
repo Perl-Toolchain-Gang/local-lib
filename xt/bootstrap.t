@@ -87,12 +87,14 @@ for my $perl (@perl) {
     }
   }
 
-  for my $home_tmpl ('home', 'home with space') {
+  my $home_base = mk_temp_dir('home-base');
+
+  for my $home_tmpl ('home', 'spaces in home') {
     delete $ENV{PERL5LIB};
     delete $ENV{PERL_LOCAL_LIB_ROOT};
     delete $ENV{PERL_MM_OPT};
     delete $ENV{PERL_MB_OPT};
-    local $ENV{HOME} = my $home = mk_temp_dir($home_tmpl);
+    local $ENV{HOME} = my $home = "$home_base/$home_tmpl";
 
     my $ll = File::Spec->catdir($home, 'local-lib');
     note "local::lib dir is $ll";
