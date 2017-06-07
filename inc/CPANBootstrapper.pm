@@ -167,7 +167,13 @@ sub cmd_check {
   # otherwise, if we're running from CPAN then it will be installed soon
   # enough, and we'll come back here..
   if (eval { require CPAN::HandleConfig; } ) {
-    CPAN::HandleConfig->require_myconfig_or_config;
+    if (CPAN::HandleConfig->can('require_myconfig_or_config')) {
+      CPAN::HandleConfig->require_myconfig_or_config;
+    }
+    else {
+      local *CPAN::HandleConfig::missing_config_data = sub { () };
+      CPAN::HandleConfig->load;
+    }
     if ( $CPAN::Config ) {
       for my $setting (qw(
         makepl_arg make_install_arg
