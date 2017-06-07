@@ -10,7 +10,7 @@ BEGIN {
 }
 use Config ();
 
-our $VERSION = '2.000_021';
+our $VERSION = '2.000022';
 $VERSION = eval $VERSION;
 
 BEGIN {
