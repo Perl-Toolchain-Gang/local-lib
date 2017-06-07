@@ -143,7 +143,7 @@ for my $shell (
   elsif ($shell->{test}) {
     no warnings 'exec';
     if (system "$shell->{shell} $shell->{test} > $nul 2> $nul") {
-      note "$name is unusable, skipping";
+      print "# $name is unusable, skipping\n";
       next;
     }
   }
