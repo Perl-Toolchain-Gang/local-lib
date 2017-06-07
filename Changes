@@ -1,5 +1,7 @@
 Revision history for local::lib
 
+ - releasing as stable
+
 2.000_021 - 2017-04-23
  - account for an empty SHELL variable when detecting shell
  - author test cleanups
