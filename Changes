@@ -1,5 +1,6 @@
 Revision history for local::lib
 
+2.000023 - 2017-06-07
  - fix use of 'note' in test for compatibilty with old Test::More
 
 2.000022 - 2017-06-07
