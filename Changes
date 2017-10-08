@@ -1,5 +1,7 @@
 Revision history for local::lib
 
+ - be compatible with CPAN.pm 1.82 to 1.86_51 during bootstrap process
+
 2.000023 - 2017-06-07
  - fix use of 'note' in test for compatibilty with old Test::More
 
