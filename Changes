@@ -1,5 +1,6 @@
 Revision history for local::lib
 
+2.000024 - 2017-10-08
  - be compatible with CPAN.pm 1.82 to 1.86_51 during bootstrap process
 
 2.000023 - 2017-06-07
