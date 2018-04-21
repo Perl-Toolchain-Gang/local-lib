@@ -1,7 +1,6 @@
 package ENVDumper;
 use strict;
 use warnings;
-use Exporter;
 
 our @EXPORT_OK = qw(dumpenv undump);
 
@@ -25,7 +24,10 @@ sub import {
     print dumpenv();
     exit 0;
   }
-  goto &Exporter::import;
+  elsif (@args) {
+    require Exporter;
+    goto &Exporter::import;
+  }
 }
 
 sub dumpenv {
