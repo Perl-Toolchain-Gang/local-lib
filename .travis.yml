@@ -24,7 +24,6 @@ addons:
       - tcsh
       - csh
       - fish
-sudo: false
 before_install:
   - eval $(curl https://travis-perl.github.io/init) --auto
   - local-lib
