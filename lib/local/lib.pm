@@ -11,7 +11,7 @@ BEGIN {
 use Config ();
 
 our $VERSION = '2.000024';
-$VERSION = eval $VERSION;
+$VERSION =~ tr/_//d;
 
 BEGIN {
   *_WIN32 = ($^O eq 'MSWin32' || $^O eq 'NetWare' || $^O eq 'symbian')
