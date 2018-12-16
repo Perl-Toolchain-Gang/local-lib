@@ -1182,8 +1182,8 @@ installation. Defaults to C<~/perl5>.
 
 =back
 
-Attempts to find the user's home directory. If installed, uses C<File::HomeDir>
-for this purpose. If no definite answer is available, throws an exception.
+Attempts to find the user's home directory.
+If no definite answer is available, throws an exception.
 
 =head2 resolve_relative_path
 
