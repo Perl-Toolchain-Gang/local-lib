@@ -834,10 +834,9 @@ way:
 
 If you are using C shell, you can do this as follows:
 
+  % echo $SHELL
   /bin/csh
-  echo $SHELL
-  /bin/csh
-  echo 'eval `perl -I$HOME/perl5/lib/perl5 -Mlocal::lib`' >> ~/.cshrc
+  $ echo 'eval `perl -I$HOME/perl5/lib/perl5 -Mlocal::lib`' >> ~/.cshrc
 
 After writing your shell configuration file, be sure to re-read it to get the
 changed settings into your current shell's environment. Bourne shells use
