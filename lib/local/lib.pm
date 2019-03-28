@@ -817,11 +817,6 @@ Run this:
 If the system asks you whether it should automatically configure as much
 as possible, you would typically answer yes.
 
-In order to install local::lib into a directory other than the default, you need
-to specify the name of the directory when you call bootstrap, as follows:
-
-  perl Makefile.PL --bootstrap=~/foo
-
 =item 3.
 
 Run this: (local::lib assumes you have make installed on your system)
@@ -844,17 +839,25 @@ If you are using C shell, you can do this as follows:
   /bin/csh
   echo 'eval `perl -I$HOME/perl5/lib/perl5 -Mlocal::lib`' >> ~/.cshrc
 
-If you passed to bootstrap a directory other than default, you also need to
-give that as import parameter to the call of the local::lib module like this
-way:
-
-  echo 'eval "$(perl -I$HOME/foo/lib/perl5 -Mlocal::lib=$HOME/foo)"' >>~/.bashrc
-
 After writing your shell configuration file, be sure to re-read it to get the
 changed settings into your current shell's environment. Bourne shells use
 C<. ~/.bashrc> for this, whereas C shells use C<source ~/.cshrc>.
 
 =back
+
+=head3 Bootstrapping into an alternate directory
+
+In order to install local::lib into a directory other than the default, you need
+to specify the name of the directory when you call bootstrap.  Then, when
+setting up the environment variables, both perl and local::lib must be told the
+location of the bootstrap directory.  The setup process would look as follows:
+
+  perl Makefile.PL --bootstrap=~/foo
+  make test && make install
+  echo 'eval "$(perl -I$HOME/foo/lib/perl5 -Mlocal::lib=$HOME/foo)"' >>~/.bashrc
+  . ~/.bashrc
+
+=head3 Other bootstrapping options
 
 If you're on a slower machine, or are operating under draconian disk space
 limitations, you can disable the automatic generation of manpages from POD when
