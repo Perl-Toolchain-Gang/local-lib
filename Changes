@@ -1,5 +1,9 @@
 Revision history for local::lib
 
+ - reorganized documentation for bootstrapping into a non-standard directory
+ - remove mentions of File::HomeDir from documentation, as it is no longer
+   used
+
 2.000024 - 2017-10-08
  - be compatible with CPAN.pm 1.82 to 1.86_51 during bootstrap process
 
