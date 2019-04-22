@@ -6,12 +6,15 @@ use warnings;
 # at a newer version
 
 use Carp;
-use Test::More tests => 5;
+use Test::More tests => 6;
 use File::Spec;
 use File::Path qw(mkpath rmtree);   # use legacy versions for backcompat
+use Cwd qw(realpath);
 use local::lib ();
 
 is $Carp::Heavy::VERSION, undef, 'Carp::Heavy is not yet loaded';
+
+my $carp_file = File::Spec->rel2abs($INC{'Carp.pm'});
 
 # we do not use File::Temp because it loads Carp::Heavy.
 my $libdir = File::Spec->catdir(File::Spec->tmpdir, 'tmp-carp-newer-' . $$);
@@ -40,7 +43,15 @@ require Carp::Foo;
 is $Carp::Foo::VERSION, '200.0',
   'some other module was loaded from our local::lib';
 
+my $expected_heavy = do {
+  my ($v, $d) = File::Spec->splitpath($carp_file);
+  $d = File::Spec->catdir(File::Spec->splitdir($d), 'Carp');
+  realpath(File::Spec->catpath($v, $d, 'Heavy.pm'));
+};
+
 ok $INC{'Carp/Heavy.pm'}, 'Carp::Heavy has now been loaded';
+is realpath($INC{'Carp/Heavy.pm'}), $expected_heavy,
+  'Carp::Heavy loaded from correct location';
 
 SKIP: {
     skip "Carp::Heavy does not have a version in Carp < 1.22", 1
