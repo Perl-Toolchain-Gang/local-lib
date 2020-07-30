@@ -1,5 +1,6 @@
 Revision history for local::lib
 
+2.000_025 - 2020-07-30
  - add documentation for --quiet option
  - added --always option to always add requested directory to env vars, even
    if they are already included
