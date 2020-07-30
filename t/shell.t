@@ -153,7 +153,13 @@ for my $shell (
 if (!@shells) {
   plan skip_all => 'no supported shells found';
 }
-my @vars = qw(PATH PERL5LIB PERL_LOCAL_LIB_ROOT PERL_MM_OPT PERL_MB_OPT);
+my @vars = qw(
+  PATH
+  PERL5LIB
+  PERL_LOCAL_LIB_ROOT
+  PERL_MM_OPT
+  PERL_MB_OPT
+);
 my @strings = (
   'string',
   'with space',
@@ -170,43 +176,54 @@ my $sep = $Config{path_sep};
 
 my $root = File::Spec->rootdir;
 my $home = mk_temp_dir;
+
 $ENV{HOME} = $home;
+$ENV{XDG_CONFIG_HOME} = $home;
+$ENV{XDG_DATA_HOME} = $home;
 
 for my $shell (@shells) {
-  my $ll = local::lib->normalize_path(mk_temp_dir);
-  local $ENV{$_}
-    for @vars;
-  delete $ENV{$_}
-    for @vars;
-  $ENV{PATH} = $root;
-  my $orig = call_shell($shell, '');
-  my $bin_path = local::lib->install_base_bin_path($ll);
-  mkdir $bin_path;
-  my $env = call_ll($shell, $ll);
-  my %install_opts = local::lib->installer_options_for($ll);
 
-  delete $orig->{$_} for qw(PERL_MM_OPT PERL_MB_OPT);
-  my $want = {
-    PERL_LOCAL_LIB_ROOT => $ll,
-    PATH                => $bin_path,
-    PERL5LIB            => local::lib->install_base_perl_path($ll),
-    (map {; $_ => $install_opts{$_}} qw(PERL_MM_OPT PERL_MB_OPT)),
-  };
-  for my $var (keys %$want) {
-    $want->{$var} = join($sep, $want->{$var}, $orig->{$var} || ()),
-  }
+  SKIP : {
+    local @ENV{@vars} = ('') x @vars;
+    delete @ENV{grep $_ ne 'PATH', @vars};
+    $ENV{PATH} = $root;
 
-  for my $var (@vars) {
-    is $env->{$var}, $want->{$var},
-      "$shell->{name}: activate $var";
-  }
+    my $ll = local::lib->normalize_path(mk_temp_dir);
 
-  $ENV{$_} = $env->{$_} for @vars;
-  $env = call_ll($shell, '--deactivate', "$ll");
+    my $orig = call_shell($shell, '');
+    if (grep +($orig->{$_}||'') ne ($ENV{$_}||''), @vars) {
+      # shell modified vars, we can't trust how are modifications will interact
+      skip +(2 * @vars), "shell init modifies env vars, can't test";
+    }
 
-  for my $var (@vars) {
-    is $env->{$var}, $orig->{$var},
-      "$shell->{name}: deactivate $var";
+    my $bin_path = local::lib->install_base_bin_path($ll);
+    mkdir $bin_path;
+    my $env = call_ll($shell, $ll);
+    my %install_opts = local::lib->installer_options_for($ll);
+
+    delete $orig->{$_} for qw(PERL_MM_OPT PERL_MB_OPT);
+    my $want = {
+      PERL_LOCAL_LIB_ROOT => $ll,
+      PATH                => $bin_path,
+      PERL5LIB            => local::lib->install_base_perl_path($ll),
+      (map {; $_ => $install_opts{$_}} qw(PERL_MM_OPT PERL_MB_OPT)),
+    };
+    for my $var (keys %$want) {
+      $want->{$var} = join($sep, $want->{$var}, $orig->{$var} || ()),
+    }
+
+    for my $var (@vars) {
+      is $env->{$var}, $want->{$var},
+        "$shell->{name}: activate $var";
+    }
+
+    $ENV{$_} = $env->{$_} for @vars;
+    $env = call_ll($shell, '--deactivate', "$ll");
+
+    for my $var (@vars) {
+      is $env->{$var}, $orig->{$var},
+        "$shell->{name}: deactivate $var";
+    }
   }
 
   my $shelltype = do {
