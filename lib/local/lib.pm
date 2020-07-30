@@ -1031,6 +1031,10 @@ was added by C<local::lib>, instead of adding it.
 Remove all directories that were added to search paths by C<local::lib> from the
 search paths.
 
+=head2 --quiet
+
+Don't output any messages about directories being created.
+
 =head2 --always
 
 Always add directories to environment variables, ignoring if they are already
