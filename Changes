@@ -1,5 +1,10 @@
 Revision history for local::lib
 
+ - add documentation for --quiet option
+ - added --always option to always add requested directory to env vars, even
+   if they are already included
+ - improve shell test to be more resiliant against custom init scripts
+ - improved test diagnostics
  - reorganized documentation for bootstrapping into a non-standard directory
  - remove mentions of File::HomeDir from documentation, as it is no longer
    used
