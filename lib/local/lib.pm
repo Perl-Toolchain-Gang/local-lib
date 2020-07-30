@@ -183,6 +183,9 @@ DEATH
     elsif ( $arg eq '--quiet' ) {
       $attr{quiet} = 1;
     }
+    elsif ( $arg eq '--always' ) {
+      $attr{always} = 1;
+    }
     elsif ( $arg =~ /^--/ ) {
       die "Unknown import argument: $arg";
     }
@@ -1027,6 +1030,11 @@ was added by C<local::lib>, instead of adding it.
 
 Remove all directories that were added to search paths by C<local::lib> from the
 search paths.
+
+=head2 --always
+
+Always add directories to environment variables, ignoring if they are already
+included.
 
 =head2 --shelltype
 
