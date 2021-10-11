@@ -71,8 +71,8 @@ sub _cwd {
     goto &$cwd;
   }
   my $drive = shift;
-  return Win32::Cwd()
-    if _WIN32 && defined &Win32::Cwd && !$drive;
+  return Win32::GetCwd()
+    if _WIN32 && defined &Win32::GetCwd && !$drive;
   local @ENV{qw(PATH IFS CDPATH ENV BASH_ENV)};
   my $cmd = $drive ? "eval { Cwd::getdcwd(q($drive)) }"
                    : 'getcwd';
