@@ -594,7 +594,7 @@ sub build_fish_env_declaration {
   # really care about PATH, but might as well make this routine more general.
   if ($name =~ /^(?:CD|MAN)?PATH$/) {
     $value =~ s/$_path_sep/ /g;
-    my $silent = $name =~ /^(?:CD)?PATH$/ ? " ^"._devnull : '';
+    my $silent = $name =~ /^(?:CD)?PATH$/ ? " 2>"._devnull : '';
     return qq{set -x $name $value$silent;\n};
   }
 
