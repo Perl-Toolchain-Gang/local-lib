@@ -1,5 +1,8 @@
 Revision history for local::lib
 
+ - fix output redirection used in fish shell to work with newer versions
+ - fix optional function used on Win32 for finding the current directory
+
 2.000_025 - 2020-07-30
  - add documentation for --quiet option
  - added --always option to always add requested directory to env vars, even
