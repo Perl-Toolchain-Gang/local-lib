@@ -10,7 +10,7 @@ BEGIN {
 }
 use Config ();
 
-our $VERSION = '2.000_025';
+our $VERSION = '2.000_026';
 $VERSION =~ tr/_//d;
 
 BEGIN {
