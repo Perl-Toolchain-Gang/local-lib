@@ -1,5 +1,7 @@
 Revision history for local::lib
 
+ - releasing as stable
+
 2.000_026 - 2021-10-11
  - fix output redirection used in fish shell to work with newer versions
  - fix optional function used on Win32 for finding the current directory
