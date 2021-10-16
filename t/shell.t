@@ -193,7 +193,7 @@ for my $shell (@shells) {
     my $orig = call_shell($shell, '');
     if (grep +($orig->{$_}||'') ne ($ENV{$_}||''), @vars) {
       # shell modified vars, we can't trust how are modifications will interact
-      skip +(2 * @vars), "shell init modifies env vars, can't test";
+      skip "shell init modifies env vars, can't test", +(2 * @vars);
     }
 
     my $bin_path = local::lib->install_base_bin_path($ll);
