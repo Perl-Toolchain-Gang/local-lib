@@ -1,5 +1,7 @@
 Revision history for local::lib
 
+ - fix skips in shell test when shell has unpredictable startup actions
+
 2.000027 - 2021-10-14
  - releasing as stable
 
