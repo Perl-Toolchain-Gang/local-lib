@@ -84,7 +84,9 @@ EOM
   my $pid = open3($in, $out, $err, $perl, map("-I$_", @INC_CLEAN), '-T', $filename);
   binmode $out;
   my $cwd = do { local $/; <$out> };
+  my $errout = do { local $/; <$err> };
   $cwd =~ s/[\r\n]*\z//;
   $cwd = File::Spec->canonpath($cwd);
-  is $cwd, File::Spec->canonpath(Cwd::getcwd()), 'reimplemented cwd matches standard cwd';
+  is $cwd, File::Spec->canonpath(Cwd::getcwd()), 'reimplemented cwd matches standard cwd'
+    or diag $errout;
 }
