@@ -1,5 +1,10 @@
 Revision history for local::lib
 
+ - fix taint protection code to delete environment variables rather than
+   leaving them as an empty string.
+ - fix author test for CPAN.pm's bootstrapping process to work with new
+   versions
+
 2.000028 - 2021-10-17
  - fix skips in shell test when shell has unpredictable startup actions
 
