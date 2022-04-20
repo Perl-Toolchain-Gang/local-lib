@@ -1,5 +1,6 @@
 Revision history for local::lib
 
+2.000029 - 2022-04-20
  - fix taint protection code to delete environment variables rather than
    leaving them as an empty string.
  - fix author test for CPAN.pm's bootstrapping process to work with new
