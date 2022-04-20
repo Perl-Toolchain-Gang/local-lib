@@ -74,6 +74,7 @@ sub _cwd {
   return Win32::GetCwd()
     if _WIN32 && defined &Win32::GetCwd && !$drive;
   local @ENV{qw(PATH IFS CDPATH ENV BASH_ENV)};
+  delete @ENV{qw(PATH IFS CDPATH ENV BASH_ENV)};
   my $cmd = $drive ? "eval { Cwd::getdcwd(q($drive)) }"
                    : 'getcwd';
   my $perl = _perl;
