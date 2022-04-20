@@ -31,6 +31,7 @@ my %config = %{ $CPAN::Config } = (
   urllist      => ["$url"],
   install_help => 'manual',
   check_sigs   => 0,
+  pushy_https  => 0,
   shell        => (
     $^O eq 'MSWin32' ? ($ENV{COMSPEC} || 'cmd.exe')
                      : ($ENV{SHELL}   || '/bin/sh')
